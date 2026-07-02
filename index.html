@@ -1,954 +1,1214 @@
 <!DOCTYPE html>
 <html lang="pt-BR">
 <head>
-<meta charset="UTF-8" />
-<meta name="viewport" content="width=device-width, initial-scale=1" />
-<title>Borderô de Vendas Collina Dreams</title>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>Borderô de Vendas | Collina Dreams</title>
 
-<!-- Flatpickr -->
-<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/flatpickr/dist/themes/dark.css" />
-<script src="https://cdn.jsdelivr.net/npm/flatpickr"></script>
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/flatpickr/dist/themes/dark.css" />
+    <script src="https://cdn.jsdelivr.net/npm/flatpickr"></script>
+    <script src="https://cdn.jsdelivr.net/npm/chart.js@4"></script>
 
-<!-- Chart.js -->
-<script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    <style>
+        :root {
+            --bg-deep: #070b17;
+            --bg-card: #0f1630;
+            --accent: #448aff;
+            --accent-light: #64b5f6;
+            --border: #1a2650;
+            --text: #e0e4f0;
+            --text2: #8a90b0;
+            --danger: #ff5252;
+            --success: #4caf84;
+            --warning: #ffb74d;
+        }
 
-<style>
-  :root {
-    --bg-primary: #0a0e1a;
-    --grad1: #1565c0;
-    --grad2: #64b5f6;
-    --bg-card: #111836;
-    --text: #e8eaed;
-    --text2: #9aa0b4;
-    --border: #1e2a4a;
-    --danger: #ff5252;
-    --success: #4caf84;
-    --warning: #ffb74d;
-  }
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
 
-  * { margin:0; padding:0; box-sizing: border-box; }
-  body {
-    font-family: 'Inter', 'Segoe UI', sans-serif;
-    background: var(--bg-primary);
-    color: var(--text);
-    line-height: 1.5;
-    background-image:
-      radial-gradient(ellipse at 20% 0%, rgba(26, 115, 232, 0.12) 0%, transparent 50%),
-      radial-gradient(ellipse at 80% 100%, rgba(100, 181, 246, 0.08) 0%, transparent 70%),
-      radial-gradient(ellipse at 50% 50%, rgba(68, 138, 255, 0.05) 0%, transparent 80%);
-    min-height: 100vh;
-  }
+        body {
+            font-family: 'Inter', 'Segoe UI', system-ui, -apple-system, sans-serif;
+            background: var(--bg-deep);
+            color: var(--text);
+            min-height: 100vh;
+            line-height: 1.5;
+        }
 
-  .container {
-    max-width: 1560px;
-    margin: 20px auto;
-    padding: 0 20px 40px;
-  }
+        /* ── TELA DE IMPORTACAO ── */
+        #importScreen {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            min-height: 100vh;
+            padding: 20px;
+            background: var(--bg-deep);
+        }
+        .import-card {
+            background: var(--bg-card);
+            border: 2px solid var(--border);
+            border-radius: 20px;
+            padding: 40px 36px;
+            max-width: 800px;
+            width: 100%;
+            box-shadow: 0 20px 60px rgba(0, 0, 0, 0.5);
+            text-align: center;
+        }
+        .import-card h2 {
+            font-size: 1.6rem;
+            margin-bottom: 6px;
+            background: linear-gradient(135deg, var(--accent-light), var(--accent));
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+        }
+        .import-card p {
+            color: var(--text2);
+            margin-bottom: 20px;
+            font-size: 0.9rem;
+        }
+        .import-card textarea {
+            width: 100%;
+            height: 260px;
+            background: #0b0f22;
+            border: 1px solid var(--border);
+            border-radius: 12px;
+            padding: 14px;
+            color: #ccd;
+            font-family: 'Consolas', 'Courier New', monospace;
+            font-size: 0.78rem;
+            resize: vertical;
+            outline: none;
+            transition: border 0.3s;
+        }
+        .import-card textarea:focus {
+            border-color: var(--accent);
+        }
+        .btn-load {
+            display: inline-block;
+            margin-top: 18px;
+            padding: 13px 36px;
+            background: linear-gradient(135deg, var(--accent), #1565c0);
+            color: #fff;
+            border: none;
+            border-radius: 12px;
+            font-size: 1rem;
+            font-weight: 700;
+            cursor: pointer;
+            letter-spacing: 0.5px;
+            transition: all 0.3s;
+        }
+        .btn-load:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 8px 28px rgba(68, 138, 255, 0.35);
+        }
+        .import-status {
+            margin-top: 12px;
+            font-size: 0.85rem;
+            min-height: 24px;
+        }
+        .import-status.success {
+            color: var(--success);
+        }
+        .import-status.error {
+            color: var(--danger);
+        }
+        .import-hint {
+            margin-top: 16px;
+            font-size: 0.72rem;
+            color: #555;
+            text-align: left;
+            background: #0b0f22;
+            padding: 12px 16px;
+            border-radius: 10px;
+            line-height: 1.7;
+        }
+        .import-hint code {
+            background: #1a1f35;
+            padding: 2px 6px;
+            border-radius: 4px;
+            font-size: 0.7rem;
+            color: var(--accent-light);
+        }
 
-  /* ── HEADER ── */
-  header {
-    display: flex;
-    flex-wrap: wrap;
-    justify-content: space-between;
-    align-items: center;
-    background: var(--bg-card);
-    padding: 18px 24px;
-    border-radius: 18px;
-    border: 1px solid var(--border);
-    box-shadow: 0 10px 30px rgba(0,0,0,0.35);
-    margin-bottom: 22px;
-  }
-  header h1 {
-    font-size: 1.5rem;
-    font-weight: 700;
-    background: linear-gradient(135deg, var(--grad2), var(--grad1));
-    -webkit-background-clip: text;
-    -webkit-text-fill-color: transparent;
-    display: flex;
-    align-items: center;
-    gap: 10px;
-  }
-  .filters {
-    display: flex;
-    flex-wrap: wrap;
-    gap: 10px;
-    align-items: center;
-  }
-  .filters input {
-    padding: 9px 14px;
-    border-radius: 10px;
-    border: 1px solid var(--border);
-    background: #1a1f35;
-    color: #eee;
-    font-size: 0.9rem;
-    min-width: 140px;
-    cursor: pointer;
-  }
-  button {
-    padding: 9px 16px;
-    border: none;
-    border-radius: 10px;
-    font-weight: 600;
-    cursor: pointer;
-    font-size: 0.88rem;
-    transition: all 0.3s;
-  }
-  button:hover { opacity: 0.85; transform: translateY(-1px); }
-  .btn-apply {
-    background: linear-gradient(135deg, var(--grad2), var(--grad1));
-    color: #fff;
-  }
-  .btn-reset {
-    background: transparent;
-    border: 1px solid var(--border);
-    color: #aaa;
-  }
+        /* ═══════════ DASHBOARD ═══════════ */
+        #dashboardScreen {
+            display: none;
+        }
+        .container {
+            max-width: 1540px;
+            margin: 0 auto;
+            padding: 20px 24px 40px;
+        }
 
-  /* ── KPIs ── */
-  .kpi-grid {
-    display: grid;
-    grid-template-columns: repeat(auto-fit, minmax(185px, 1fr));
-    gap: 16px;
-    margin-bottom: 22px;
-  }
-  .card-kpi {
-    background: var(--bg-card);
-    border-radius: 16px;
-    padding: 18px 16px;
-    border: 1px solid var(--border);
-    box-shadow: 0 4px 16px rgba(0,0,0,0.25);
-    transition: transform 0.2s;
-  }
-  .card-kpi:hover { transform: translateY(-2px); }
-  .kpi-label {
-    font-size: 0.7rem;
-    text-transform: uppercase;
-    letter-spacing: 1.2px;
-    margin-bottom: 6px;
-    color: #9aa0b4;
-    font-weight: 600;
-  }
-  .kpi-value {
-    font-size: 1.55rem;
-    font-weight: 700;
-    color: #fff;
-    line-height: 1.2;
-  }
-  .kpi-sub {
-    font-size: 0.65rem;
-    color: #7a7a7a;
-    margin-top: 4px;
-  }
+        /* HEADER */
+        header {
+            display: flex;
+            flex-wrap: wrap;
+            align-items: center;
+            justify-content: space-between;
+            gap: 16px;
+            background: var(--bg-card);
+            padding: 18px 24px;
+            border-radius: 18px;
+            border: 1px solid var(--border);
+            margin-bottom: 22px;
+            box-shadow: 0 8px 28px rgba(0, 0, 0, 0.3);
+        }
+        header h1 {
+            font-size: 1.4rem;
+            font-weight: 700;
+            background: linear-gradient(135deg, var(--accent-light), #fff);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+        .header-actions {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 10px;
+            align-items: center;
+        }
+        .header-actions input {
+            padding: 10px 14px;
+            border: 1px solid var(--border);
+            border-radius: 10px;
+            background: #131a33;
+            color: #ddd;
+            font-size: 0.88rem;
+            width: 148px;
+            cursor: pointer;
+            outline: none;
+        }
+        .header-actions input::placeholder {
+            color: #555;
+        }
+        .btn {
+            padding: 10px 18px;
+            border: none;
+            border-radius: 10px;
+            font-weight: 600;
+            font-size: 0.85rem;
+            cursor: pointer;
+            letter-spacing: 0.3px;
+            transition: all 0.25s;
+        }
+        .btn:hover {
+            transform: translateY(-1px);
+            opacity: 0.9;
+        }
+        .btn-primary {
+            background: linear-gradient(135deg, var(--accent), #1565c0);
+            color: #fff;
+        }
+        .btn-outline {
+            background: transparent;
+            border: 1px solid var(--border);
+            color: #999;
+        }
+        .btn-outline:hover {
+            border-color: var(--accent-light);
+            color: #ddd;
+        }
+        .btn-danger {
+            background: transparent;
+            border: 1px solid rgba(255, 82, 82, 0.4);
+            color: var(--danger);
+            font-size: 0.78rem;
+            padding: 8px 14px;
+        }
 
-  /* ── CHARTS ── */
-  .charts-grid {
-    display: flex;
-    flex-wrap: wrap;
-    gap: 20px;
-    margin-bottom: 22px;
-  }
-  .chart-card {
-    flex: 1;
-    min-width: 380px;
-    background: var(--bg-card);
-    border-radius: 16px;
-    padding: 18px;
-    border: 1px solid var(--border);
-    box-shadow: 0 4px 20px rgba(0,0,0,0.25);
-  }
-  .chart-card h3 {
-    font-size: 0.78rem;
-    font-weight: 600;
-    color: #9aa0b4;
-    margin-bottom: 12px;
-    text-align: center;
-    letter-spacing: 0.5px;
-  }
-  .chart-card-full {
-    flex: 1 1 100%;
-  }
-  canvas {
-    width: 100% !important;
-    max-height: 400px;
-  }
+        /* KPIs */
+        .kpi-row {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(180px, 1fr));
+            gap: 14px;
+            margin-bottom: 22px;
+        }
+        .kpi-card {
+            background: var(--bg-card);
+            border-radius: 16px;
+            padding: 18px 20px;
+            border: 1px solid var(--border);
+            transition: transform 0.2s, box-shadow 0.2s;
+            box-shadow: 0 4px 16px rgba(0, 0, 0, 0.2);
+        }
+        .kpi-card:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 10px 28px rgba(0, 0, 0, 0.35);
+        }
+        .kpi-label {
+            font-size: 0.7rem;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+            color: var(--text2);
+            font-weight: 600;
+            margin-bottom: 4px;
+        }
+        .kpi-value {
+            font-size: 1.5rem;
+            font-weight: 700;
+            letter-spacing: -0.5px;
+        }
+        .kpi-sub {
+            font-size: 0.68rem;
+            color: #666;
+            margin-top: 2px;
+        }
 
-  /* ── TABLES ── */
-  .table-container {
-    background: var(--bg-card);
-    border-radius: 16px;
-    padding: 18px;
-    border: 1px solid var(--border);
-    margin-bottom: 22px;
-    overflow-x: auto;
-    box-shadow: 0 4px 20px rgba(0,0,0,0.25);
-  }
-  .table-container h4 {
-    color: #9aa0b4;
-    margin-bottom: 12px;
-    font-size: 0.78rem;
-    font-weight: 600;
-    letter-spacing: 0.5px;
-  }
-  table {
-    width: 100%;
-    border-collapse: collapse;
-    font-size: 0.76rem;
-    min-width: 600px;
-  }
-  th {
-    background: #1a1f35;
-    color: #64b5f6;
-    padding: 11px 10px;
-    text-align: left;
-    font-weight: 600;
-    font-size: 0.72rem;
-    text-transform: uppercase;
-    letter-spacing: 0.6px;
-    border-bottom: 2px solid var(--border);
-    position: sticky;
-    top: 0;
-  }
-  td {
-    padding: 9px 10px;
-    border-bottom: 1px solid rgba(255,255,255,0.06);
-    color: #d0d4e0;
-  }
-  tbody tr:hover { background: rgba(26,115,232,0.06); }
+        /* CHARTS */
+        .charts-row {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(440px, 1fr));
+            gap: 18px;
+            margin-bottom: 22px;
+        }
+        .chart-box {
+            background: var(--bg-card);
+            border-radius: 16px;
+            padding: 20px 22px;
+            border: 1px solid var(--border);
+            box-shadow: 0 4px 18px rgba(0, 0, 0, 0.2);
+        }
+        .chart-box.full {
+            grid-column: 1 / -1;
+        }
+        .chart-box h3 {
+            font-size: 0.78rem;
+            font-weight: 600;
+            color: var(--text2);
+            text-transform: uppercase;
+            letter-spacing: 0.8px;
+            margin-bottom: 14px;
+        }
+        .chart-wrap {
+            position: relative;
+            width: 100%;
+        }
+        .chart-wrap canvas {
+            width: 100% !important;
+        }
 
-  /* ── RANKING SECTION ── */
-  .ranking-grid {
-    display: grid;
-    grid-template-columns: repeat(auto-fit, minmax(400px, 1fr));
-    gap: 20px;
-    margin-bottom: 22px;
-  }
+        /* RANKINGS */
+        .ranking-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(340px, 1fr));
+            gap: 18px;
+            margin-bottom: 22px;
+        }
+        .table-box {
+            background: var(--bg-card);
+            border-radius: 16px;
+            padding: 18px 20px;
+            border: 1px solid var(--border);
+            overflow-x: auto;
+            box-shadow: 0 4px 16px rgba(0, 0, 0, 0.2);
+        }
+        .table-box h4 {
+            color: var(--text2);
+            font-size: 0.74rem;
+            font-weight: 600;
+            text-transform: uppercase;
+            letter-spacing: 0.6px;
+            margin-bottom: 12px;
+        }
+        table {
+            width: 100%;
+            border-collapse: collapse;
+            font-size: 0.74rem;
+            min-width: 320px;
+        }
+        th {
+            background: #131a33;
+            color: var(--accent-light);
+            padding: 9px 10px;
+            text-align: left;
+            font-weight: 600;
+            font-size: 0.68rem;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+            border-bottom: 2px solid var(--border);
+            white-space: nowrap;
+        }
+        td {
+            padding: 8px 10px;
+            border-bottom: 1px solid rgba(255, 255, 255, 0.05);
+            white-space: nowrap;
+        }
+        tbody tr:hover {
+            background: rgba(68, 138, 255, 0.05);
+        }
 
-  /* ── BADGES ── */
-  .badge {
-    display: inline-block;
-    padding: 4px 10px;
-    border-radius: 20px;
-    font-size: 0.7rem;
-    font-weight: 700;
-    letter-spacing: 0.4px;
-  }
-  .badge-ativo { background: rgba(76,175,132,0.18); color: #4caf84; }
-  .badge-cancelado { background: rgba(255,82,82,0.18); color: #ff5252; }
+        /* BADGES */
+        .badge {
+            display: inline-block;
+            padding: 3px 10px;
+            border-radius: 20px;
+            font-size: 0.68rem;
+            font-weight: 700;
+            letter-spacing: 0.4px;
+        }
+        .badge-ativo {
+            background: rgba(76, 175, 132, 0.18);
+            color: var(--success);
+        }
+        .badge-cancelado {
+            background: rgba(255, 82, 82, 0.18);
+            color: var(--danger);
+        }
 
-  /* ── PROGRESS BAR ── */
-  .mini-bar {
-    height: 7px;
-    border-radius: 4px;
-    background: rgba(255,255,255,0.08);
-    margin-top: 3px;
-    overflow: hidden;
-  }
-  .mini-bar-fill {
-    height: 100%;
-    border-radius: 4px;
-  }
+        /* RANKING POSITION */
+        .rank-dot {
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            width: 26px;
+            height: 26px;
+            border-radius: 50%;
+            font-weight: 700;
+            font-size: 0.72rem;
+            flex-shrink: 0;
+        }
+        .rd-1 {
+            background: linear-gradient(135deg, #ffd700, #ffb300);
+            color: #000;
+        }
+        .rd-2 {
+            background: linear-gradient(135deg, #c0c0c0, #9e9e9e);
+            color: #000;
+        }
+        .rd-3 {
+            background: linear-gradient(135deg, #cd7f32, #a0522d);
+            color: #fff;
+        }
+        .rd-n {
+            background: #1a2650;
+            color: #8a90b0;
+        }
 
-  /* ── RESPONSIVE ── */
-  @media(max-width: 768px) {
-    .charts-grid { flex-direction: column; }
-    .ranking-grid { grid-template-columns: 1fr; }
-    .chart-card { min-width: auto; }
-    header { flex-direction: column; gap: 12px; align-items: flex-start; }
-    .filters { width: 100%; }
-    .filters input { flex:1; min-width: auto; }
-  }
+        /* SCROLLBAR */
+        ::-webkit-scrollbar {
+            height: 5px;
+            width: 5px;
+        }
+        ::-webkit-scrollbar-track {
+            background: transparent;
+        }
+        ::-webkit-scrollbar-thumb {
+            background: #1a2650;
+            border-radius: 3px;
+        }
 
-  /* ── TOOLTIP ENHANCEMENT ── */
-  .ranking-pos {
-    display: inline-flex;
-    align-items: center;
-    justify-content: center;
-    width: 26px;
-    height: 26px;
-    border-radius: 50%;
-    font-weight: 700;
-    font-size: 0.75rem;
-  }
-  .pos-1 { background: linear-gradient(135deg, #ffd700, #ffb300); color: #000; }
-  .pos-2 { background: linear-gradient(135deg, #c0c0c0, #9e9e9e); color: #000; }
-  .pos-3 { background: linear-gradient(135deg, #cd7f32, #a0522d); color: #fff; }
-  .pos-normal { background: #1e2a4a; color: #9aa0b4; }
-
-  /* scrollbar */
-  ::-webkit-scrollbar { height:6px; width:6px; }
-  ::-webkit-scrollbar-track { background: #0a0e1a; }
-  ::-webkit-scrollbar-thumb { background: #1e2a4a; border-radius:3px; }
-</style>
+        /* RESPONSIVE */
+        @media (max-width: 768px) {
+            .charts-row {
+                grid-template-columns: 1fr;
+            }
+            .ranking-grid {
+                grid-template-columns: 1fr;
+            }
+            .chart-box {
+                min-width: auto;
+            }
+            header {
+                flex-direction: column;
+                align-items: flex-start;
+            }
+            .header-actions {
+                width: 100%;
+            }
+            .header-actions input {
+                flex: 1;
+                min-width: 0;
+            }
+            .kpi-row {
+                grid-template-columns: repeat(2, 1fr);
+            }
+        }
+    </style>
 </head>
 <body>
 
-<div class="container">
+    <!-- ═══════════════ TELA DE IMPORTAÇÃO ═══════════════ -->
+    <div id="importScreen">
+        <div class="import-card">
+            <h2>📊 Borderô Collina Dreams</h2>
+            <p>Cole abaixo o <strong>CSV completo</strong> da sua planilha (com cabeçalho e todas as linhas)</p>
+            <textarea id="csvInput" placeholder="Cole aqui o CSV completo exportado da planilha...
+            
+Inclua a primeira linha com os nomes das colunas (cabeçalho).
+O separador deve ser ponto-e-vírgula (;).
 
-<!-- ═══════════ HEADER ═══════════ -->
-<header>
-  <h1>🏙️ Borderô Vendas — Collina Dreams</h1>
-  <div class="filters">
-    <input type="text" id="dateRange" placeholder="Selecionar período" />
-    <button class="btn-apply" onclick="aplicarFiltro()">🔍 Filtrar</button>
-    <button class="btn-reset" onclick="resetarFiltro()">↺ Limpar</button>
-  </div>
-</header>
-
-<!-- ═══════════ KPIs ═══════════ -->
-<div class="kpi-grid" id="kpigrid"></div>
-
-<!-- ═══════════ GRÁFICOS PRINCIPAIS ═══════════ -->
-<div class="charts-grid">
-  <div class="chart-card">
-    <h3>📊 VGV & Entrada Efetiva por Dia</h3>
-    <canvas id="chartVgvEntrada"></canvas>
-  </div>
-  <div class="chart-card">
-    <h3>📉 Cancelamento por Faixa de % Entrada Efetiva</h3>
-    <canvas id="chartCancelFaixa"></canvas>
-  </div>
-</div>
-
-<div class="charts-grid">
-  <div class="chart-card">
-    <h3>🧭 Status das Vendas</h3>
-    <canvas id="pieStatus"></canvas>
-  </div>
-  <div class="chart-card">
-    <h3>💳 Formas de Pagamento da Entrada</h3>
-    <canvas id="polarPagamento"></canvas>
-  </div>
-</div>
-
-<!-- ═══════════ RANKINGS ═══════════ -->
-<div class="ranking-grid">
-  <!-- Ranking: Maior Entrada Efetiva (R$) -->
-  <div class="table-container">
-    <h4>🏆 Top 10 — Maior Entrada Efetiva (R$)</h4>
-    <table>
-      <thead><tr><th>#</th><th>Closer</th><th>Entrada Efetiva</th><th>Vendas</th></tr></thead>
-      <tbody id="rankEntradaValor"></tbody>
-    </table>
-  </div>
-
-  <!-- Ranking: Maior % Entrada Efetiva -->
-  <div class="table-container">
-    <h4>📈 Top 10 — Maior % Entrada Efetiva</h4>
-    <table>
-      <thead><tr><th>#</th><th>Closer</th><th>% Médio</th><th>Vendas</th></tr></thead>
-      <tbody id="rankEntradaPerc"></tbody>
-    </table>
-  </div>
-
-  <!-- Ranking: Cancelamentos -->
-  <div class="table-container">
-    <h4>🚫 Top 10 — Mais Cancelamentos</h4>
-    <table>
-      <thead><tr><th>#</th><th>Closer</th><th>Cancelados</th><th>Total</th><th>Taxa</th></tr></thead>
-      <tbody id="rankCancel"></tbody>
-    </table>
-  </div>
-</div>
-
-<!-- ═══════════ GRÁFICO CLOSERS ═══════════ -->
-<div class="chart-card chart-card-full">
-  <h3>🏆 Top 10 Closers por VGV</h3>
-  <canvas id="chartClosers" style="max-height:420px;"></canvas>
-</div>
-
-<!-- ═══════════ TABELA DETALHADA ═══════════ -->
-<div class="table-container">
-  <h4>📝 Lista Completa de Vendas</h4>
-  <table id="tabelaVendas">
-    <thead></thead>
-    <tbody></tbody>
-  </table>
-</div>
-
-</div><!-- /container -->
-
-<script>
-// ╔══════════════════════════════════════════════════════════════╗
-// ║  COLE AQUI O CSV COMPLETO DA SUA PLANILHA                   ║
-// ║  ⚠️ Mantenha o cabeçalho e todas as linhas de dados         ║
-// ╚══════════════════════════════════════════════════════════════╝
-
-const RAW_CSV = `Qtd Total Parcelas;Sala de vendas;Data;Número;Cessionário;Pontos;Valor negociado;Status;Promotor de marketing;Promotor de telemarketing;Liner;Closer;Pep;Total da entrada;Percentual de entrada (%);Parcelas;Quantidade CARTÃO;R$ CARTAO;Quantidade CHEQUE;Valor Parcelas Cheque Entrada;Quantidade BOLETO;R$ BOLETO;Quantidade DINHEIRO;R$ DINHEIRO;;Quantidade de parcelas de crédito recorrente da entrada;Total em crédito recorrente da entrada em valor monetário (R$);Quantidade TRANSFERENCIA;R$ TRANSFERENCIA;;Qtd Parcelas Saldo;;Total do saldo;Percentual de saldo (%);;Qtd Parcelas Cartao Saldo Restante;Valor Parcelas Cartao Saldo Restante;Quantidade de parcelas em crédito recorrente do saldo;Total em crédito recorrente do saldo em valor monetário (R$);Valor Parcelas Dinheiro Saldo Restante;Qtd Parcelas Dinheiro Saldo Restante;Valor Parcelas Boleto Saldo Restante;Qtd Parcelas Boleto Saldo Restante;Valor Parcelas Cheque Saldo Restante;Qtd Parcelas Cheque Saldo Restante;Total Intermediárias;Qtd Parcelas Itermediárias;Percentual Intermediárias;Qtd Parcelas Intermediaria Cartao;Total Intermediaria Cartao;Total Intermediaria Boleto;Qtd Parcelas Intermediaria Boleto;Total Intermediária Dinheiro;Qtd Parcelas Intermediária Dinheiro;Total Intermediaria Cartao Recorrente;Qtd Parcelas Intermediaria Cartao Recorrente;Qtd Parcelas Intermediaria Transferencia;Total Intermediaria Transferencia;Total Intermediaria Cheque;ENTRADA EFETIVA;Qtd Parcelas Intermediaria Cheque
-132;COLLINA - DREAMS DIURNO;02/01/2026;COLLINA- 04/01;THALES DO CARMO ZULCAO;0;80000;ATIVO;JOSYENE FREITAS;;AMANDA DORADO;LUIS ALVES DO AMARAL NETO;;15999,96;20;12;1;1333,33;0;0;11;14666,63;0;0;;0;0;0;0;;120;;64000,04;80;0;0;0;0;0;0;64000,04;120;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0;1333,33;0`;
-
-// ═══════════════ PARSE DO CSV ═══════════════
-// Índices das colunas principais:
-//   Coluna G (índice 6):  Valor negociado  → VGV
-//   Coluna BH (índice 59): ENTRADA EFETIVA
-//   % Entrada Efetiva = BH / G * 100
-
-const rawLines = RAW_CSV.trim().split('\n');
-const headers = rawLines[0].split(';');
-const data = [];
-
-for (let i = 1; i < rawLines.length; i++) {
-  const row = rawLines[i].split(';');
-  if (row.length < 7) continue;
-
-  const valorNegociado = parseFloat((row[6] || '0').replace(',', '.')) || 0;
-  const entradaEfetiva = parseFloat((row[59] || '0').replace(',', '.')) || 0;
-  const percEntradaEfetiva = valorNegociado > 0 ? (entradaEfetiva / valorNegociado) * 100 : 0;
-
-  // Parse da data (formato DD/MM/YYYY)
-  const dateParts = (row[2] || '').split('/');
-  const dateObj = dateParts.length === 3
-    ? new Date(+dateParts[2], +dateParts[1] - 1, +dateParts[0])
-    : null;
-
-  data.push({
-    dataStr: row[2] || '',
-    data: dateObj,
-    valorNegociado: valorNegociado,                    // Coluna G
-    status: (row[7] || '').trim().toUpperCase(),
-    totalEntrada: parseFloat((row[13] || '0').replace(',', '.')) || 0,  // Coluna N (original)
-    percentualEntradaOriginal: parseFloat((row[14] || '0').replace(',', '.')) || 0, // Coluna O
-    entradaEfetiva: entradaEfetiva,                    // Coluna BH
-    percEntradaEfetiva: percEntradaEfetiva,            // BH / G * 100
-    qtdeCartao: parseFloat((row[16] || '0').replace(',', '.')) || 0,
-    valorCartao: parseFloat((row[17] || '0').replace(',', '.')) || 0,
-    qtdeCheque: parseFloat((row[18] || '0').replace(',', '.')) || 0,
-    valorChequeEntrada: parseFloat((row[19] || '0').replace(',', '.')) || 0,
-    qtdeBoleto: parseFloat((row[20] || '0').replace(',', '.')) || 0,
-    valorBoleto: parseFloat((row[21] || '0').replace(',', '.')) || 0,
-    qtdeDinheiro: parseFloat((row[22] || '0').replace(',', '.')) || 0,
-    valorDinheiro: parseFloat((row[23] || '0').replace(',', '.')) || 0,
-    valorTransferencia: parseFloat((row[28] || '0').replace(',', '.')) || 0,
-    closer: (row[11] || '').trim(),
-    promotor: (row[8] || '').trim(),
-    liner: (row[10] || '').trim(),
-    numero: (row[3] || '').trim(),
-    cessionario: (row[4] || '').trim(),
-    sala: (row[1] || '').trim()
-  });
-}
-
-// ═══════════════ ESTADO GLOBAL ═══════════════
-let filtered = [...data];
-let charts = {};
-
-// ═══════════════ CONFIGURAÇÃO DO CALENDÁRIO ═══════════════
-const fp = flatpickr('#dateRange', {
-  mode: 'range',
-  dateFormat: 'd/m/Y',
-  locale: 'pt',
-  onChange: () => aplicarFiltro()
-});
-
-function initDates() {
-  if (data.length === 0) return;
-  const timestamps = data.map(d => d.data ? d.data.getTime() : Infinity).filter(t => t !== Infinity);
-  if (timestamps.length === 0) return;
-  const minD = new Date(Math.min(...timestamps));
-  const maxD = new Date(Math.max(...timestamps));
-  fp.setDate([minD, maxD]);
-}
-
-// ═══════════════ FILTROS ═══════════════
-function aplicarFiltro() {
-  const [start, end] = fp.selectedDates || [];
-  if (start && end) {
-    const s = new Date(start.getFullYear(), start.getMonth(), start.getDate());
-    const e = new Date(end.getFullYear(), end.getMonth(), end.getDate(), 23, 59, 59);
-    filtered = data.filter(d => d.data && d.data >= s && d.data <= e);
-  } else {
-    filtered = [...data];
-  }
-  updateDashboard();
-}
-
-function resetarFiltro() {
-  initDates();
-  filtered = [...data];
-  updateDashboard();
-}
-
-// ═══════════════ UTILITÁRIOS ═══════════════
-function fmtBRL(val) {
-  return val.toLocaleString('pt-BR', { style: 'currency', currency: 'BRL' });
-}
-
-function getFaixaPerc(perc) {
-  if (perc <= 0) return '0% (sem entrada)';
-  if (perc <= 0.5) return '0,1% a 0,5%';
-  if (perc <= 1.0) return '0,6% a 1%';
-  if (perc <= 1.5) return '1,1% a 1,5%';
-  if (perc <= 2.0) return '1,6% a 2%';
-  if (perc <= 5.0) return '2,1% a 5%';
-  return 'Acima de 5,1%';
-}
-
-function posClass(idx) {
-  if (idx === 0) return 'pos-1';
-  if (idx === 1) return 'pos-2';
-  if (idx === 2) return 'pos-3';
-  return 'pos-normal';
-}
-
-function destroyCharts() {
-  Object.values(charts).forEach(c => { try { c.destroy(); } catch (e) { /* ignore */ } });
-  charts = {};
-}
-
-// ═══════════════ ATUALIZAÇÃO DO DASHBOARD ═══════════════
-function updateDashboard() {
-  destroyCharts();
-
-  const qtdVendas = filtered.length;
-
-  // ── KPIs ──
-  const totalVGV = filtered.reduce((s, r) => s + r.valorNegociado, 0);
-  const totalEntradaEfetiva = filtered.reduce((s, r) => s + r.entradaEfetiva, 0);
-  const ticketMedio = qtdVendas > 0 ? totalVGV / qtdVendas : 0;
-  const percEfetivoMedio = qtdVendas > 0
-    ? filtered.reduce((s, r) => s + r.percEntradaEfetiva, 0) / qtdVendas
-    : 0;
-  const ativos = filtered.filter(r => r.status === 'ATIVO').length;
-  const cancelados = filtered.filter(r => r.status === 'CANCELADO').length;
-  const taxaCancel = qtdVendas > 0 ? (cancelados / qtdVendas * 100) : 0;
-
-  document.getElementById('kpigrid').innerHTML = `
-    <div class="card-kpi">
-      <div class="kpi-label">💰 VGV Geral (Col. G)</div>
-      <div class="kpi-value">${fmtBRL(totalVGV)}</div>
+Exemplo da primeira linha:
+Qtd Total Parcelas;Sala de vendas;Data;Número;Cessionário;...;ENTRADA EFETIVA;..."></textarea>
+            <br />
+            <button class="btn-load" onclick="loadCSV()">🚀 Carregar Dados</button>
+            <div class="import-status" id="importStatus"></div>
+            <div class="import-hint">
+                <strong>📋 Instruções:</strong><br />
+                1. Abra sua planilha no Excel ou Google Sheets<br />
+                2. Selecione todas as linhas (Ctrl+A) e copie (Ctrl+C)<br />
+                3. Cole aqui (Ctrl+V)<br />
+                4. Clique em <strong>Carregar Dados</strong><br />
+                <br />
+                <strong>🔑 Colunas obrigatórias:</strong><br />
+                • <code>Valor negociado</code> (coluna G) → VGV<br />
+                • <code>ENTRADA EFETIVA</code> (coluna BH) → Entrada Efetiva<br />
+                • <code>Data</code> → Data da venda<br />
+                • <code>Status</code> → ATIVO / CANCELADO<br />
+                • <code>Closer</code> → Nome do closer<br />
+            </div>
+        </div>
     </div>
-    <div class="card-kpi">
-      <div class="kpi-label">📥 Entrada Efetiva (Col. BH)</div>
-      <div class="kpi-value">${fmtBRL(totalEntradaEfetiva)}</div>
-    </div>
-    <div class="card-kpi">
-      <div class="kpi-label">🛒 Qtd. de Vendas</div>
-      <div class="kpi-value">${qtdVendas}</div>
-      <div class="kpi-sub">cada linha = 1 venda</div>
-    </div>
-    <div class="card-kpi">
-      <div class="kpi-label">🎟️ Ticket Médio</div>
-      <div class="kpi-value">${fmtBRL(ticketMedio)}</div>
-    </div>
-    <div class="card-kpi">
-      <div class="kpi-label">📊 % Entrada Efetiva Médio</div>
-      <div class="kpi-value">${percEfetivoMedio.toFixed(2)}%</div>
-      <div class="kpi-sub">BH ÷ G × 100</div>
-    </div>
-    <div class="card-kpi">
-      <div class="kpi-label">🚫 Taxa de Cancelamento</div>
-      <div class="kpi-value" style="color:${taxaCancel > 30 ? '#ff5252' : taxaCancel > 15 ? '#ffb74d' : '#4caf84'}">${taxaCancel.toFixed(1)}%</div>
-      <div class="kpi-sub">${cancelados} de ${qtdVendas} vendas</div>
-    </div>
-  `;
 
-  // ── GRÁFICO: VGV & Entrada Efetiva por Dia ──
-  const mapDia = {};
-  filtered.forEach(r => {
-    if (!r.data) return;
-    const key = r.data.toLocaleDateString('pt-BR');
-    if (!mapDia[key]) mapDia[key] = { vgv: 0, entrada: 0 };
-    mapDia[key].vgv += r.valorNegociado;
-    mapDia[key].entrada += r.entradaEfetiva;
-  });
-  const labelsDias = Object.keys(mapDia).sort((a, b) => {
-    const [da, ma, aa] = a.split('/');
-    const [db, mb, ab] = b.split('/');
-    return new Date(aa, ma - 1, da) - new Date(ab, mb - 1, db);
-  });
-  const dataVGV = labelsDias.map(l => mapDia[l].vgv);
-  const dataEntrada = labelsDias.map(l => mapDia[l].entrada);
+    <!-- ═══════════════ DASHBOARD ═══════════════ -->
+    <div id="dashboardScreen">
+        <div class="container">
 
-  const ctx1 = document.getElementById('chartVgvEntrada').getContext('2d');
-  charts.vgvEntrada = new Chart(ctx1, {
-    type: 'line',
-    data: {
-      labels: labelsDias,
-      datasets: [
-        {
-          label: 'VGV (R$)',
-          data: dataVGV,
-          borderColor: '#448aff',
-          backgroundColor: 'rgba(68,138,255,0.08)',
-          fill: true,
-          tension: 0.4,
-          yAxisID: 'yLeft',
-          pointRadius: 3,
-          pointBackgroundColor: '#448aff'
-        },
-        {
-          label: 'Entrada Efetiva (R$)',
-          data: dataEntrada,
-          borderColor: '#64b5f6',
-          backgroundColor: 'rgba(100,181,246,0.06)',
-          fill: true,
-          tension: 0.4,
-          yAxisID: 'yRight',
-          pointRadius: 3,
-          pointBackgroundColor: '#64b5f6'
+            <!-- HEADER -->
+            <header>
+                <h1>🏙️ Borderô Vendas — Collina Dreams</h1>
+                <div class="header-actions">
+                    <input type="text" id="dateRange" placeholder="Selecionar período" />
+                    <button class="btn btn-primary" onclick="aplicarFiltro()">🔍 Filtrar</button>
+                    <button class="btn btn-outline" onclick="resetarFiltro()">↺ Limpar</button>
+                    <button class="btn btn-danger" onclick="resetarDados()" title="Recolocar CSV">🔄 Novo CSV</button>
+                </div>
+            </header>
+
+            <!-- KPIs -->
+            <div class="kpi-row" id="kpiGrid"></div>
+
+            <!-- GRÁFICOS LINHA 1 -->
+            <div class="charts-row">
+                <div class="chart-box">
+                    <h3>📈 VGV & Entrada Efetiva por Dia</h3>
+                    <div class="chart-wrap"><canvas id="chartVgvDia"></canvas></div>
+                </div>
+                <div class="chart-box">
+                    <h3>📉 Cancelamento por Faixa de % Entrada Efetiva</h3>
+                    <div class="chart-wrap"><canvas id="chartCancelFaixa"></canvas></div>
+                </div>
+            </div>
+
+            <!-- GRÁFICOS LINHA 2 -->
+            <div class="charts-row">
+                <div class="chart-box">
+                    <h3>🧭 Status das Vendas</h3>
+                    <div class="chart-wrap"><canvas id="chartStatus"></canvas></div>
+                </div>
+                <div class="chart-box">
+                    <h3>💳 Formas de Pagamento da Entrada</h3>
+                    <div class="chart-wrap"><canvas id="chartPagamento"></canvas></div>
+                </div>
+            </div>
+
+            <!-- RANKINGS -->
+            <div class="ranking-grid">
+                <div class="table-box">
+                    <h4>🏆 Top 10 — Maior Entrada Efetiva (R$)</h4>
+                    <table><thead><tr><th>#</th><th>Closer</th><th>Entrada Ef.</th><th>Vendas</th></tr></thead><tbody id="rankValor"></tbody></table>
+                </div>
+                <div class="table-box">
+                    <h4>📈 Top 10 — Maior % Entrada Efetiva</h4>
+                    <table><thead><tr><th>#</th><th>Closer</th><th>% Médio</th><th>Vendas</th></tr></thead><tbody id="rankPerc"></tbody></table>
+                </div>
+                <div class="table-box">
+                    <h4>🚫 Top 10 — Mais Cancelamentos</h4>
+                    <table><thead><tr><th>#</th><th>Closer</th><th>Cancel.</th><th>Total</th><th>Taxa</th></tr></thead><tbody id="rankCancel"></tbody></table>
+                </div>
+            </div>
+
+            <!-- CLOSERS BAR -->
+            <div class="chart-box full">
+                <h3>🏆 Top 10 Closers por VGV</h3>
+                <div class="chart-wrap"><canvas id="chartClosers"></canvas></div>
+            </div>
+
+            <!-- TABELA DETALHADA -->
+            <div class="table-box" style="margin-bottom:20px;">
+                <h4>📝 Lista de Vendas <span id="tabelaCount" style="font-weight:400;color:#666;"></span></h4>
+                <div style="overflow-x:auto;">
+                    <table id="tabelaVendas"><thead></thead><tbody></tbody></table>
+                </div>
+            </div>
+
+        </div>
+    </div>
+
+    <script>
+        // ═══════════════════════════════════════════════════════
+        //  ESTADO GLOBAL
+        // ═══════════════════════════════════════════════════════
+        let allVendas = [];
+        let filtered = [];
+        let charts = {};
+        let colIndex = {}; // mapeamento dinâmico de colunas por nome
+
+        // ═══════════════════════════════════════════════════════
+        //  PARSE DO CSV (ROBUSTO, POR NOME DE COLUNA)
+        // ═══════════════════════════════════════════════════════
+        function parseNumberBR(str) {
+            if (!str || typeof str !== 'string') return 0;
+            str = str.trim();
+            if (str === '' || str === '-') return 0;
+            // Remove pontos de milhar, troca vírgula por ponto
+            let cleaned = str.replace(/\./g, '').replace(',', '.');
+            let val = parseFloat(cleaned);
+            return isNaN(val) ? 0 : val;
         }
-      ]
-    },
-    options: {
-      responsive: true,
-      maintainAspectRatio: false,
-      aspectRatio: 2.2,
-      interaction: { mode: 'index', intersect: false },
-      plugins: {
-        legend: { labels: { color: '#9aa0b4', usePointStyle: true, padding: 14 } },
-        tooltip: {
-          callbacks: {
-            label: ctx => ctx.dataset.label + ': ' + fmtBRL(ctx.parsed.y)
-          }
-        }
-      },
-      scales: {
-        x: {
-          ticks: { color: '#9aa0b4', maxRotation: 45 },
-          grid: { color: 'rgba(30,42,74,0.4)' }
-        },
-        yLeft: {
-          type: 'linear',
-          position: 'left',
-          ticks: { color: '#448aff', callback: v => 'R$ ' + (v / 1000).toFixed(0) + 'k' },
-          grid: { color: 'rgba(30,42,74,0.4)' }
-        },
-        yRight: {
-          type: 'linear',
-          position: 'right',
-          ticks: { color: '#64b5f6', callback: v => 'R$ ' + (v / 1000).toFixed(0) + 'k' },
-          grid: { display: false }
-        }
-      }
-    }
-  });
 
-  // ── GRÁFICO: Cancelamento por Faixa de % Entrada Efetiva ──
-  const faixasLabels = ['0% (sem entrada)', '0,1% a 0,5%', '0,6% a 1%', '1,1% a 1,5%', '1,6% a 2%', '2,1% a 5%', 'Acima de 5,1%'];
-  const faixaMap = {};
-  faixasLabels.forEach(f => { faixaMap[f] = { total: 0, cancelados: 0 }; });
-
-  filtered.forEach(r => {
-    const f = getFaixaPerc(r.percEntradaEfetiva);
-    if (!faixaMap[f]) faixaMap[f] = { total: 0, cancelados: 0 };
-    faixaMap[f].total++;
-    if (r.status === 'CANCELADO') faixaMap[f].cancelados++;
-  });
-
-  const dataCancelFaixa = faixasLabels.map(f => faixaMap[f].cancelados);
-  const dataPercFaixa = faixasLabels.map(f => {
-    const t = faixaMap[f].total || 1;
-    return ((faixaMap[f].cancelados || 0) / t) * 100;
-  });
-
-  const ctx2 = document.getElementById('chartCancelFaixa').getContext('2d');
-  charts.cancelFaixa = new Chart(ctx2, {
-    type: 'bar',
-    data: {
-      labels: faixasLabels,
-      datasets: [
-        {
-          label: 'Qtd. Cancelados',
-          data: dataCancelFaixa,
-          backgroundColor: 'rgba(255,82,82,0.7)',
-          borderColor: '#ff5252',
-          borderWidth: 1,
-          borderRadius: 6,
-          yAxisID: 'yQtd'
-        },
-        {
-          label: '% Cancelamento',
-          data: dataPercFaixa,
-          type: 'line',
-          borderColor: '#ffb74d',
-          backgroundColor: 'rgba(255,183,77,0.1)',
-          yAxisID: 'yPerc',
-          tension: 0.3,
-          fill: false,
-          pointRadius: 5,
-          pointBackgroundColor: '#ffb74d',
-          borderWidth: 2
-        }
-      ]
-    },
-    options: {
-      responsive: true,
-      maintainAspectRatio: false,
-      aspectRatio: 2.2,
-      interaction: { mode: 'index', intersect: false },
-      plugins: {
-        legend: { labels: { color: '#9aa0b4', usePointStyle: true, padding: 14 } },
-        tooltip: {
-          callbacks: {
-            label: function (ctx) {
-              if (ctx.dataset.label === '% Cancelamento') {
-                return ctx.dataset.label + ': ' + ctx.parsed.y.toFixed(1) + '%';
-              }
-              const f = faixasLabels[ctx.dataIndex];
-              return 'Cancelados: ' + ctx.parsed.y + ' / ' + faixaMap[f].total + ' total';
+        function parseDateBR(str) {
+            if (!str || typeof str !== 'string') return null;
+            str = str.trim();
+            // Formato DD/MM/YYYY
+            const parts = str.split('/');
+            if (parts.length === 3) {
+                const d = parseInt(parts[0], 10);
+                const m = parseInt(parts[1], 10) - 1;
+                const y = parseInt(parts[2], 10);
+                const date = new Date(y, m, d);
+                if (!isNaN(date.getTime())) return date;
             }
-          }
+            // Tentar outros formatos
+            const fallback = new Date(str);
+            return isNaN(fallback.getTime()) ? null : fallback;
         }
-      },
-      scales: {
-        x: {
-          ticks: { color: '#9aa0b4', font: { size: 10 } },
-          grid: { display: false }
-        },
-        yQtd: {
-          type: 'linear',
-          position: 'left',
-          ticks: { color: '#ff5252', stepSize: 1 },
-          grid: { color: 'rgba(30,42,74,0.4)' },
-          title: { display: true, text: 'Qtd.', color: '#ff5252' }
-        },
-        yPerc: {
-          type: 'linear',
-          position: 'right',
-          ticks: { color: '#ffb74d', callback: v => v.toFixed(0) + '%' },
-          grid: { display: false },
-          min: 0,
-          max: 100,
-          title: { display: true, text: '%', color: '#ffb74d' }
+
+        function parseCSV(csvText) {
+            // Remove BOM se existir
+            if (csvText.charCodeAt(0) === 0xFEFF) csvText = csvText.slice(1);
+
+            const lines = csvText.trim().split(/\r?\n/);
+            if (lines.length < 2) {
+                throw new Error('CSV precisa ter pelo menos cabeçalho + 1 linha de dados.');
+            }
+
+            // Parse do cabeçalho
+            const headerLine = lines[0];
+            const headers = headerLine.split(';').map(h => h.trim());
+
+            // Mapear nomes de colunas para índices (case-insensitive, trim)
+            const idxMap = {};
+            headers.forEach((h, i) => {
+                const key = h.toUpperCase().replace(/\s+/g, ' ').trim();
+                idxMap[key] = i;
+            });
+
+            console.log('📋 Cabeçalho detectado (' + headers.length + ' colunas):');
+            console.log(headers);
+            console.log('🔍 Mapeamento de colunas:', idxMap);
+
+            // Verificar colunas essenciais
+            const requiredCols = ['VALOR NEGOCIADO', 'ENTRADA EFETIVA', 'DATA', 'STATUS'];
+            const missing = requiredCols.filter(c => !(c in idxMap));
+            if (missing.length > 0) {
+                console.warn('⚠️ Colunas não encontradas:', missing);
+                // Não lançar erro, tentar com o que temos
+            }
+
+            // Guardar mapeamento global
+            colIndex = idxMap;
+
+            // Parse das linhas de dados
+            const vendas = [];
+            for (let i = 1; i < lines.length; i++) {
+                const line = lines[i].trim();
+                if (line === '') continue; // pula linhas vazias
+
+                const cols = line.split(';');
+                if (cols.length < 3) continue; // linha muito curta, ignorar
+
+                // Função helper para pegar valor de coluna pelo nome
+                const get = (colName) => {
+                    const key = colName.toUpperCase().replace(/\s+/g, ' ').trim();
+                    const idx = idxMap[key];
+                    if (idx === undefined || idx >= cols.length) return '';
+                    return (cols[idx] || '').trim();
+                };
+
+                const valorNegociado = parseNumberBR(get('VALOR NEGOCIADO'));
+                const entradaEfetiva = parseNumberBR(get('ENTRADA EFETIVA'));
+                const dataStr = get('DATA');
+                const dataObj = parseDateBR(dataStr);
+                const statusRaw = get('STATUS');
+                const status = statusRaw ? statusRaw.toUpperCase() : '';
+
+                // Pular linhas sem valor negociado (provavelmente inválidas)
+                if (valorNegociado === 0 && entradaEfetiva === 0 && !dataStr) continue;
+
+                const venda = {
+                    dataStr: dataStr,
+                    data: dataObj,
+                    valorNegociado: valorNegociado,
+                    entradaEfetiva: entradaEfetiva,
+                    percEntradaEfetiva: valorNegociado > 0 ? (entradaEfetiva / valorNegociado) * 100 : 0,
+                    status: status,
+                    numero: get('NÚMERO') || get('NUMERO') || '',
+                    cessionario: get('CESSIONÁRIO') || get('CESSIONARIO') || '',
+                    closer: get('CLOSER') || '',
+                    promotor: get('PROMOTOR DE MARKETING') || get('PROMOTOR') || '',
+                    liner: get('LINER') || '',
+                    sala: get('SALA DE VENDAS') || '',
+                    totalEntradaOriginal: parseNumberBR(get('TOTAL DA ENTRADA')),
+                    percentualEntradaOriginal: parseNumberBR(get('PERCENTUAL DE ENTRADA (%)')),
+                    // Formas de pagamento
+                    valorCartao: parseNumberBR(get('R$ CARTAO') || get('R$ CARTÃO')),
+                    valorBoleto: parseNumberBR(get('R$ BOLETO')),
+                    valorDinheiro: parseNumberBR(get('R$ DINHEIRO')),
+                    valorTransferencia: parseNumberBR(get('R$ TRANSFERENCIA') || get('R$ TRANSFERÊNCIA')),
+                    valorCheque: parseNumberBR(get('VALOR PARCELAS CHEQUE ENTRADA')),
+                };
+
+                vendas.push(venda);
+            }
+
+            console.log('✅ ' + vendas.length + ' vendas parseadas com sucesso!');
+            console.log('💰 VGV Total: R$ ' + vendas.reduce((s, v) => s + v.valorNegociado, 0).toLocaleString('pt-BR'));
+            console.log('📥 Entrada Efetiva Total: R$ ' + vendas.reduce((s, v) => s + v.entradaEfetiva, 0).toLocaleString('pt-BR'));
+
+            return vendas;
         }
-      }
-    }
-  });
 
-  // ── GRÁFICO: Status (Donut) ──
-  const ctx3 = document.getElementById('pieStatus').getContext('2d');
-  charts.status = new Chart(ctx3, {
-    type: 'doughnut',
-    data: {
-      labels: ['Ativas', 'Canceladas'],
-      datasets: [{
-        data: [ativos, cancelados],
-        backgroundColor: ['rgba(76,175,132,0.8)', 'rgba(255,82,82,0.8)'],
-        borderColor: ['#4caf84', '#ff5252'],
-        borderWidth: 2
-      }]
-    },
-    options: {
-      responsive: true,
-      maintainAspectRatio: false,
-      aspectRatio: 1.4,
-      plugins: {
-        legend: { labels: { color: '#9aa0b4', usePointStyle: true, padding: 14, font: { size: 12 } } }
-      }
-    }
-  });
+        // ═══════════════════════════════════════════════════════
+        //  CARREGAR CSV
+        // ═══════════════════════════════════════════════════════
+        function loadCSV() {
+            const textarea = document.getElementById('csvInput');
+            const statusEl = document.getElementById('importStatus');
+            const csvText = textarea.value.trim();
 
-  // ── GRÁFICO: Formas de Pagamento (PolarArea) ──
-  const totalCartao = filtered.reduce((s, r) => s + (r.valorCartao || 0), 0);
-  const totalBoleto = filtered.reduce((s, r) => s + (r.valorBoleto || 0), 0);
-  const totalDinheiro = filtered.reduce((s, r) => s + (r.valorDinheiro || 0), 0);
-  const totalTransf = filtered.reduce((s, r) => s + (r.valorTransferencia || 0), 0);
-  const totalCheque = filtered.reduce((s, r) => s + (r.valorChequeEntrada || 0), 0);
+            if (!csvText) {
+                statusEl.className = 'import-status error';
+                statusEl.textContent = '❌ Cole o CSV antes de carregar.';
+                return;
+            }
 
-  const labelsPag = [], dataPag = [], colorsPag = [];
-  if (totalCartao > 0) { labelsPag.push('Cartão'); dataPag.push(totalCartao); colorsPag.push('rgba(68,138,255,0.85)'); }
-  if (totalBoleto > 0) { labelsPag.push('Boleto'); dataPag.push(totalBoleto); colorsPag.push('rgba(100,181,246,0.85)'); }
-  if (totalDinheiro > 0) { labelsPag.push('Dinheiro'); dataPag.push(totalDinheiro); colorsPag.push('rgba(33,150,243,0.85)'); }
-  if (totalTransf > 0) { labelsPag.push('Transferência'); dataPag.push(totalTransf); colorsPag.push('rgba(30,136,229,0.85)'); }
-  if (totalCheque > 0) { labelsPag.push('Cheque'); dataPag.push(totalCheque); colorsPag.push('rgba(25,118,210,0.85)'); }
+            try {
+                const vendas = parseCSV(csvText);
+                if (vendas.length === 0) {
+                    statusEl.className = 'import-status error';
+                    statusEl.textContent = '❌ Nenhuma venda encontrada. Verifique o formato do CSV.';
+                    return;
+                }
 
-  const ctx4 = document.getElementById('polarPagamento').getContext('2d');
-  charts.pago = new Chart(ctx4, {
-    type: 'polarArea',
-    data: {
-      labels: labelsPag,
-      datasets: [{
-        data: dataPag,
-        backgroundColor: colorsPag,
-        borderColor: colorsPag.map(c => c.replace('0.85', '1')),
-        borderWidth: 2
-      }]
-    },
-    options: {
-      responsive: true,
-      maintainAspectRatio: false,
-      aspectRatio: 1.4,
-      plugins: {
-        legend: { labels: { color: '#9aa0b4', usePointStyle: true, padding: 14 } },
-        tooltip: {
-          callbacks: { label: ctx => ctx.label + ': ' + fmtBRL(ctx.parsed.r) }
+                allVendas = vendas;
+                filtered = [...vendas];
+
+                // Salvar no localStorage
+                try {
+                    localStorage.setItem('collina_csv', csvText);
+                } catch (e) {
+                    console.warn('⚠️ CSV muito grande para localStorage. Os dados NÃO serão persistidos.');
+                }
+
+                statusEl.className = 'import-status success';
+                statusEl.textContent = '✅ ' + vendas.length + ' vendas carregadas! VGV Total: R$ ' +
+                    vendas.reduce((s, v) => s + v.valorNegociado, 0).toLocaleString('pt-BR');
+
+                // Mostrar dashboard
+                setTimeout(() => {
+                    document.getElementById('importScreen').style.display = 'none';
+                    document.getElementById('dashboardScreen').style.display = 'block';
+                    initDashboard();
+                }, 600);
+
+            } catch (err) {
+                statusEl.className = 'import-status error';
+                statusEl.textContent = '❌ Erro: ' + err.message;
+                console.error(err);
+            }
         }
-      }
-    }
-  });
 
-  // ── RANKING: Maior Entrada Efetiva (R$) ──
-  const closerEntradaMap = {};
-  filtered.forEach(r => {
-    const name = r.closer || 'Sem info';
-    if (!closerEntradaMap[name]) closerEntradaMap[name] = { entrada: 0, qtd: 0 };
-    closerEntradaMap[name].entrada += r.entradaEfetiva;
-    closerEntradaMap[name].qtd++;
-  });
-  const topEntradaValor = Object.entries(closerEntradaMap)
-    .sort((a, b) => b[1].entrada - a[1].entrada)
-    .slice(0, 10);
-
-  document.getElementById('rankEntradaValor').innerHTML = topEntradaValor.map(([name, val], i) => `
-    <tr>
-      <td><span class="ranking-pos ${posClass(i)}">${i + 1}</span></td>
-      <td><b>${name.length > 22 ? name.slice(0, 20) + '…' : name}</b></td>
-      <td style="color:#64b5f6;font-weight:600;">${fmtBRL(val.entrada)}</td>
-      <td>${val.qtd}</td>
-    </tr>
-  `).join('');
-
-  // ── RANKING: Maior % Entrada Efetiva ──
-  const closerPercMap = {};
-  filtered.forEach(r => {
-    const name = r.closer || 'Sem info';
-    if (!closerPercMap[name]) closerPercMap[name] = { somaPerc: 0, qtd: 0 };
-    closerPercMap[name].somaPerc += r.percEntradaEfetiva;
-    closerPercMap[name].qtd++;
-  });
-  const topEntradaPerc = Object.entries(closerPercMap)
-    .map(([name, val]) => ({ name, percMedio: val.qtd > 0 ? val.somaPerc / val.qtd : 0, qtd: val.qtd }))
-    .sort((a, b) => b.percMedio - a.percMedio)
-    .slice(0, 10);
-
-  document.getElementById('rankEntradaPerc').innerHTML = topEntradaPerc.map((obj, i) => `
-    <tr>
-      <td><span class="ranking-pos ${posClass(i)}">${i + 1}</span></td>
-      <td><b>${obj.name.length > 22 ? obj.name.slice(0, 20) + '…' : obj.name}</b></td>
-      <td style="color:#ffb74d;font-weight:600;">${obj.percMedio.toFixed(2)}%</td>
-      <td>${obj.qtd}</td>
-    </tr>
-  `).join('');
-
-  // ── RANKING: Cancelamentos ──
-  const closerCancelMap = {};
-  filtered.forEach(r => {
-    const name = r.closer || 'Sem info';
-    if (!closerCancelMap[name]) closerCancelMap[name] = { total: 0, cancelados: 0 };
-    closerCancelMap[name].total++;
-    if (r.status === 'CANCELADO') closerCancelMap[name].cancelados++;
-  });
-  const topCancel = Object.entries(closerCancelMap)
-    .map(([name, val]) => ({
-      name,
-      cancelados: val.cancelados,
-      total: val.total,
-      taxa: val.total > 0 ? (val.cancelados / val.total) * 100 : 0
-    }))
-    .sort((a, b) => b.cancelados - a.cancelados)
-    .slice(0, 10);
-
-  document.getElementById('rankCancel').innerHTML = topCancel.map((obj, i) => `
-    <tr>
-      <td><span class="ranking-pos ${posClass(i)}">${i + 1}</span></td>
-      <td><b>${obj.name.length > 22 ? obj.name.slice(0, 20) + '…' : obj.name}</b></td>
-      <td style="color:#ff5252;font-weight:600;">${obj.cancelados}</td>
-      <td>${obj.total}</td>
-      <td>
-        <span style="color:${obj.taxa > 50 ? '#ff5252' : obj.taxa > 20 ? '#ffb74d' : '#4caf84'};font-weight:600;">
-          ${obj.taxa.toFixed(1)}%
-        </span>
-      </td>
-    </tr>
-  `).join('');
-
-  // ── GRÁFICO: Top 10 Closers por VGV ──
-  const closersVGVMap = {};
-  filtered.forEach(r => {
-    const name = r.closer || 'Sem info';
-    if (!closersVGVMap[name]) closersVGVMap[name] = { vgv: 0, qtd: 0 };
-    closersVGVMap[name].vgv += r.valorNegociado;
-    closersVGVMap[name].qtd++;
-  });
-  const topClosers = Object.entries(closersVGVMap)
-    .sort((a, b) => b[1].vgv - a[1].vgv)
-    .slice(0, 10);
-
-  const ctx5 = document.getElementById('chartClosers').getContext('2d');
-  charts.closers = new Chart(ctx5, {
-    type: 'bar',
-    data: {
-      labels: topClosers.map(c => c[0].length > 20 ? c[0].slice(0, 18) + '…' : c[0]),
-      datasets: [{
-        label: 'VGV (R$)',
-        data: topClosers.map(c => c[1].vgv),
-        backgroundColor: topClosers.map((_, i) => {
-          const alphas = [0.9, 0.8, 0.7, 0.6, 0.55, 0.5, 0.45, 0.4, 0.35, 0.3];
-          return `rgba(68,138,255,${alphas[i] || 0.3})`;
-        }),
-        borderColor: '#448aff',
-        borderWidth: 1,
-        borderRadius: 8
-      }]
-    },
-    options: {
-      responsive: true,
-      maintainAspectRatio: false,
-      indexAxis: 'y',
-      plugins: {
-        legend: { display: false },
-        tooltip: {
-          callbacks: {
-            label: ctx => 'VGV: ' + fmtBRL(ctx.parsed.x) + '  |  ' + topClosers[ctx.dataIndex][1].qtd + ' vendas'
-          }
+        // ═══════════════════════════════════════════════════════
+        //  INICIALIZAÇÃO
+        // ═══════════════════════════════════════════════════════
+        function initApp() {
+            // Tentar carregar do localStorage
+            const saved = localStorage.getItem('collina_csv');
+            if (saved && saved.trim().length > 50) {
+                try {
+                    allVendas = parseCSV(saved);
+                    filtered = [...allVendas];
+                    document.getElementById('importScreen').style.display = 'none';
+                    document.getElementById('dashboardScreen').style.display = 'block';
+                    document.getElementById('csvInput').value = saved;
+                    initDashboard();
+                    return;
+                } catch (e) {
+                    console.warn('⚠️ Dados salvos corrompidos, mostrando tela de importação.');
+                    localStorage.removeItem('collina_csv');
+                }
+            }
+            // Mostrar tela de importação
+            document.getElementById('importScreen').style.display = 'flex';
+            document.getElementById('dashboardScreen').style.display = 'none';
         }
-      },
-      scales: {
-        x: {
-          ticks: { color: '#9aa0b4', callback: v => 'R$ ' + (v / 1000).toFixed(0) + 'k' },
-          grid: { color: 'rgba(30,42,74,0.4)' }
-        },
-        y: {
-          ticks: { color: '#e8eaed', font: { size: 11 } },
-          grid: { display: false }
+
+        function resetarDados() {
+            if (confirm('Tem certeza que deseja carregar um novo CSV? Os dados atuais serão perdidos.')) {
+                localStorage.removeItem('collina_csv');
+                allVendas = [];
+                filtered = [];
+                destroyAllCharts();
+                document.getElementById('importScreen').style.display = 'flex';
+                document.getElementById('dashboardScreen').style.display = 'none';
+                document.getElementById('csvInput').value = '';
+                document.getElementById('importStatus').textContent = '';
+                document.getElementById('importStatus').className = 'import-status';
+            }
         }
-      }
-    }
-  });
 
-  // ── TABELA DETALHADA ──
-  document.querySelector('#tabelaVendas thead').innerHTML = `
-    <tr>
-      <th>Data</th>
-      <th>Número</th>
-      <th>Cessionário</th>
-      <th>VGV (Col. G)</th>
-      <th>Entrada Efetiva (BH)</th>
-      <th>% Entrada Efetiva</th>
-      <th>Status</th>
-      <th>Closer</th>
-    </tr>
-  `;
+        // ═══════════════════════════════════════════════════════
+        //  DASHBOARD
+        // ═══════════════════════════════════════════════════════
 
-  const vendasOrdenadas = [...filtered].sort((a, b) => {
-    if (!a.data) return 1;
-    if (!b.data) return -1;
-    return b.data - a.data;
-  }).slice(0, 300);
+        // Flatpickr
+        let fp;
+        let rangeStart = null;
+        let rangeEnd = null;
 
-  document.querySelector('#tabelaVendas tbody').innerHTML = vendasOrdenadas.map(r => `
-    <tr>
-      <td>${r.dataStr}</td>
-      <td>${r.numero}</td>
-      <td>${r.cessionario.length > 25 ? r.cessionario.slice(0, 23) + '…' : r.cessionario}</td>
-      <td style="font-weight:600;">${fmtBRL(r.valorNegociado)}</td>
-      <td style="color:#64b5f6;font-weight:600;">${fmtBRL(r.entradaEfetiva)}</td>
-      <td style="color:#ffb74d;font-weight:600;">${r.percEntradaEfetiva.toFixed(2)}%</td>
-      <td><span class="badge ${r.status === 'ATIVO' ? 'badge-ativo' : 'badge-cancelado'}">${r.status}</span></td>
-      <td>${r.closer.length > 20 ? r.closer.slice(0, 18) + '…' : r.closer}</td>
-    </tr>
-  `).join('');
-}
+        function initDashboard() {
+            // Configurar Flatpickr
+            if (fp) fp.destroy();
 
-// ═══════════════ INICIALIZAÇÃO ═══════════════
-initDates();
-updateDashboard();
+            // Definir range inicial (min/max datas)
+            const validDates = allVendas.filter(v => v.data).map(v => v.data.getTime());
+            let minDate, maxDate;
+            if (validDates.length > 0) {
+                minDate = new Date(Math.min(...validDates));
+                maxDate = new Date(Math.max(...validDates));
+            } else {
+                minDate = new Date(2025, 0, 1);
+                maxDate = new Date();
+            }
 
-console.log('✅ Dashboard Collina Dreams carregado com sucesso!');
-console.log('   📊 ' + data.length + ' vendas carregadas do CSV');
-console.log('   📥 VGV = Coluna G (valor negociado)');
-console.log('   📥 Entrada Efetiva = Coluna BH');
-console.log('   📊 % Entrada Efetiva = BH ÷ G × 100');
-</script>
+            fp = flatpickr('#dateRange', {
+                mode: 'range',
+                dateFormat: 'd/m/Y',
+                locale: 'pt',
+                defaultDate: [minDate, maxDate],
+                onChange: function(selectedDates) {
+                    if (selectedDates.length === 2) {
+                        rangeStart = selectedDates[0];
+                        rangeEnd = selectedDates[1];
+                    }
+                }
+            });
 
+            rangeStart = minDate;
+            rangeEnd = maxDate;
+
+            aplicarFiltro();
+        }
+
+        function aplicarFiltro() {
+            if (rangeStart && rangeEnd) {
+                const s = new Date(rangeStart.getFullYear(), rangeStart.getMonth(), rangeStart.getDate());
+                const e = new Date(rangeEnd.getFullYear(), rangeEnd.getMonth(), rangeEnd.getDate(), 23, 59, 59);
+                filtered = allVendas.filter(v => v.data && v.data >= s && v.data <= e);
+            } else {
+                filtered = [...allVendas];
+            }
+            renderDashboard();
+        }
+
+        function resetarFiltro() {
+            const validDates = allVendas.filter(v => v.data).map(v => v.data.getTime());
+            if (validDates.length > 0) {
+                rangeStart = new Date(Math.min(...validDates));
+                rangeEnd = new Date(Math.max(...validDates));
+                fp.setDate([rangeStart, rangeEnd]);
+            }
+            filtered = [...allVendas];
+            renderDashboard();
+        }
+
+        function destroyAllCharts() {
+            Object.values(charts).forEach(c => {
+                try { c.destroy(); } catch (e) { /* ignore */ }
+            });
+            charts = {};
+        }
+
+        function fmtBRL(val) {
+            return val.toLocaleString('pt-BR', { style: 'currency', currency: 'BRL', minimumFractionDigits: 0,
+                maximumFractionDigits: 0 });
+        }
+
+        function fmtBRL2(val) {
+            return val.toLocaleString('pt-BR', { style: 'currency', currency: 'BRL', minimumFractionDigits: 2,
+                maximumFractionDigits: 2 });
+        }
+
+        function getFaixa(perc) {
+            if (perc <= 0.0099) return '0% (sem entrada)';
+            if (perc <= 0.5) return '0,1% a 0,5%';
+            if (perc <= 1.0) return '0,6% a 1%';
+            if (perc <= 1.5) return '1,1% a 1,5%';
+            if (perc <= 2.0) return '1,6% a 2%';
+            if (perc <= 5.0) return '2,1% a 5%';
+            return 'Acima de 5,1%';
+        }
+
+        const FAIXAS = ['0% (sem entrada)', '0,1% a 0,5%', '0,6% a 1%', '1,1% a 1,5%', '1,6% a 2%', '2,1% a 5%',
+            'Acima de 5,1%'
+        ];
+
+        function rankClass(i) {
+            if (i === 0) return 'rd-1';
+            if (i === 1) return 'rd-2';
+            if (i === 2) return 'rd-3';
+            return 'rd-n';
+        }
+
+        function renderDashboard() {
+            destroyAllCharts();
+            const qtd = filtered.length;
+
+            // ═══ KPIs ═══
+            const totalVGV = filtered.reduce((s, v) => s + v.valorNegociado, 0);
+            const totalEntradaEf = filtered.reduce((s, v) => s + v.entradaEfetiva, 0);
+            const ticketMedio = qtd > 0 ? totalVGV / qtd : 0;
+            const percEfMedio = qtd > 0 ? filtered.reduce((s, v) => s + v.percEntradaEfetiva, 0) / qtd : 0;
+            const ativos = filtered.filter(v => v.status === 'ATIVO').length;
+            const cancelados = filtered.filter(v => v.status === 'CANCELADO').length;
+            const taxaCancel = qtd > 0 ? (cancelados / qtd) * 100 : 0;
+            const entradaMediaPorVenda = qtd > 0 ? totalEntradaEf / qtd : 0;
+
+            document.getElementById('kpiGrid').innerHTML = `
+            <div class="kpi-card">
+              <div class="kpi-label">💰 VGV Geral (Col. G)</div>
+              <div class="kpi-value" style="color:#fff;">${fmtBRL(totalVGV)}</div>
+            </div>
+            <div class="kpi-card">
+              <div class="kpi-label">📥 Entrada Efetiva (Col. BH)</div>
+              <div class="kpi-value" style="color:#64b5f6;">${fmtBRL(totalEntradaEf)}</div>
+            </div>
+            <div class="kpi-card">
+              <div class="kpi-label">🛒 Qtd. Vendas</div>
+              <div class="kpi-value" style="color:#fff;">${qtd}</div>
+              <div class="kpi-sub">${ativos} ativas | ${cancelados} canceladas</div>
+            </div>
+            <div class="kpi-card">
+              <div class="kpi-label">🎟️ Ticket Médio</div>
+              <div class="kpi-value" style="color:#ffb74d;">${fmtBRL(ticketMedio)}</div>
+            </div>
+            <div class="kpi-card">
+              <div class="kpi-label">📊 % Entrada Ef. Médio</div>
+              <div class="kpi-value" style="color:#4caf84;">${percEfMedio.toFixed(2)}%</div>
+              <div class="kpi-sub">BH ÷ G × 100</div>
+            </div>
+            <div class="kpi-card">
+              <div class="kpi-label">🚫 Taxa Cancelamento</div>
+              <div class="kpi-value" style="color:${taxaCancel>30?'#ff5252':taxaCancel>15?'#ffb74d':'#4caf84'}">${taxaCancel.toFixed(1)}%</div>
+              <div class="kpi-sub">${cancelados} de ${qtd}</div>
+            </div>
+          `;
+
+            // ═══ GRÁFICO VGV & ENTRADA POR DIA ═══
+            const dayMap = {};
+            filtered.forEach(v => {
+                if (!v.data) return;
+                const key = v.data.toLocaleDateString('pt-BR');
+                if (!dayMap[key]) dayMap[key] = { vgv: 0, entrada: 0 };
+                dayMap[key].vgv += v.valorNegociado;
+                dayMap[key].entrada += v.entradaEfetiva;
+            });
+            const dayEntries = Object.entries(dayMap).sort((a, b) => {
+                const [da, ma, aa] = a[0].split('/');
+                const [db, mb, ab] = b[0].split('/');
+                return new Date(aa, ma - 1, da) - new Date(ab, mb - 1, db);
+            });
+
+            const ctx1 = document.getElementById('chartVgvDia').getContext('2d');
+            charts.vgvDia = new Chart(ctx1, {
+                type: 'line',
+                data: {
+                    labels: dayEntries.map(e => e[0]),
+                    datasets: [
+                        { label: 'VGV (R$)', data: dayEntries.map(e => e[1].vgv), borderColor: '#448aff',
+                            backgroundColor: 'rgba(68,138,255,0.06)', fill: true, tension: 0.35, yAxisID: 'yL',
+                            pointRadius: 2, pointBackgroundColor: '#448aff' },
+                        { label: 'Entrada Efetiva (R$)', data: dayEntries.map(e => e[1].entrada),
+                            borderColor: '#64b5f6', backgroundColor: 'rgba(100,181,246,0.04)', fill: true,
+                            tension: 0.35, yAxisID: 'yR', pointRadius: 2, pointBackgroundColor: '#64b5f6' }
+                    ]
+                },
+                options: {
+                    responsive: true, maintainAspectRatio: false, aspectRatio: 2.3,
+                    interaction: { mode: 'index', intersect: false },
+                    plugins: { legend: { labels: { color: '#8a90b0', usePointStyle: true, padding: 16,
+                                font: { size: 10 } } },
+                        tooltip: { callbacks: { label: ctx => ctx.dataset.label + ': ' + fmtBRL(ctx.parsed.y) } } },
+                    scales: {
+                        x: { ticks: { color: '#8a90b0', maxTicksLimit: 14, font: { size: 9 } },
+                            grid: { color: 'rgba(26,38,80,0.4)' } },
+                        yL: { type: 'linear', position: 'left',
+                            ticks: { color: '#448aff', callback: v => 'R$' + (v / 1000).toFixed(0) + 'k',
+                                font: { size: 9 } }, grid: { color: 'rgba(26,38,80,0.4)' } },
+                        yR: { type: 'linear', position: 'right',
+                            ticks: { color: '#64b5f6', callback: v => 'R$' + (v / 1000).toFixed(0) + 'k',
+                                font: { size: 9 } }, grid: { display: false } }
+                    }
+                }
+            });
+
+            // ═══ GRÁFICO CANCELAMENTO POR FAIXA ═══
+            const faixaData = {};
+            FAIXAS.forEach(f => { faixaData[f] = { total: 0, cancelados: 0 }; });
+            filtered.forEach(v => {
+                const f = getFaixa(v.percEntradaEfetiva);
+                if (!faixaData[f]) faixaData[f] = { total: 0, cancelados: 0 };
+                faixaData[f].total++;
+                if (v.status === 'CANCELADO') faixaData[f].cancelados++;
+            });
+
+            const ctx2 = document.getElementById('chartCancelFaixa').getContext('2d');
+            charts.cancelFaixa = new Chart(ctx2, {
+                type: 'bar',
+                data: {
+                    labels: FAIXAS,
+                    datasets: [
+                        { label: 'Qtd. Cancelados', data: FAIXAS.map(f => faixaData[f].cancelados),
+                            backgroundColor: 'rgba(255,82,82,0.7)', borderColor: '#ff5252', borderWidth: 1,
+                            borderRadius: 6, yAxisID: 'yA' },
+                        { label: '% Cancelamento', data: FAIXAS.map(f => faixaData[f].total > 0 ? (faixaData[f]
+                                .cancelados / faixaData[f].total) * 100 : 0),
+                            type: 'line', borderColor: '#ffb74d', backgroundColor: 'rgba(255,183,77,0.1)',
+                            yAxisID: 'yB', tension: 0.3, fill: false, pointRadius: 4,
+                            pointBackgroundColor: '#ffb74d', borderWidth: 2 }
+                    ]
+                },
+                options: {
+                    responsive: true, maintainAspectRatio: false, aspectRatio: 2.3,
+                    interaction: { mode: 'index', intersect: false },
+                    plugins: { legend: { labels: { color: '#8a90b0', usePointStyle: true, padding: 16,
+                                font: { size: 10 } } },
+                        tooltip: { callbacks: { label: function(ctx) { if (ctx.dataset.type === 'line')
+                                    return '% Cancelamento: ' + ctx.parsed.y.toFixed(1) + '%'; const f =
+                                    FAIXAS[ctx.dataIndex]; return 'Cancelados: ' + ctx.parsed.y + ' / ' +
+                                    faixaData[f].total + ' total'; } } } },
+                    scales: {
+                        x: { ticks: { color: '#8a90b0', font: { size: 9 } }, grid: { display: false } },
+                        yA: { type: 'linear', position: 'left', ticks: { color: '#ff5252', font: { size: 9 } },
+                            grid: { color: 'rgba(26,38,80,0.4)' }, title: { display: true, text: 'Qtd.',
+                                color: '#ff5252' } },
+                        yB: { type: 'linear', position: 'right', ticks: { color: '#ffb74d',
+                                callback: v => v.toFixed(0) + '%', font: { size: 9 } }, grid: { display: false },
+                            min: 0, max: 100, title: { display: true, text: '%', color: '#ffb74d' } }
+                    }
+                }
+            });
+
+            // ═══ GRÁFICO STATUS ═══
+            const ctx3 = document.getElementById('chartStatus').getContext('2d');
+            charts.status = new Chart(ctx3, {
+                type: 'doughnut',
+                data: {
+                    labels: ['Ativas (' + ativos + ')', 'Canceladas (' + cancelados + ')'],
+                    datasets: [{ data: [ativos, cancelados], backgroundColor: ['rgba(76,175,132,0.8)',
+                            'rgba(255,82,82,0.8)'
+                        ], borderColor: ['#4caf84', '#ff5252'], borderWidth: 2 }]
+                },
+                options: {
+                    responsive: true, maintainAspectRatio: false, aspectRatio: 1.5,
+                    plugins: { legend: { labels: { color: '#8a90b0', usePointStyle: true, padding: 14,
+                                font: { size: 11 } } } }
+                }
+            });
+
+            // ═══ GRÁFICO PAGAMENTO ═══
+            const totC = filtered.reduce((s, v) => s + (v.valorCartao || 0), 0);
+            const totB = filtered.reduce((s, v) => s + (v.valorBoleto || 0), 0);
+            const totD = filtered.reduce((s, v) => s + (v.valorDinheiro || 0), 0);
+            const totT = filtered.reduce((s, v) => s + (v.valorTransferencia || 0), 0);
+            const totCh = filtered.reduce((s, v) => s + (v.valorCheque || 0), 0);
+
+            const pLabels = [],
+                pData = [],
+                pColors = [];
+            if (totC > 0) { pLabels.push('Cartão');
+                pData.push(totC);
+                pColors.push('rgba(68,138,255,0.85)'); }
+            if (totB > 0) { pLabels.push('Boleto');
+                pData.push(totB);
+                pColors.push('rgba(100,181,246,0.85)'); }
+            if (totD > 0) { pLabels.push('Dinheiro');
+                pData.push(totD);
+                pColors.push('rgba(33,150,243,0.85)'); }
+            if (totT > 0) { pLabels.push('Transferência');
+                pData.push(totT);
+                pColors.push('rgba(30,136,229,0.85)'); }
+            if (totCh > 0) { pLabels.push('Cheque');
+                pData.push(totCh);
+                pColors.push('rgba(25,118,210,0.85)'); }
+
+            const ctx4 = document.getElementById('chartPagamento').getContext('2d');
+            charts.pagamento = new Chart(ctx4, {
+                type: 'polarArea',
+                data: {
+                    labels: pLabels,
+                    datasets: [{ data: pData, backgroundColor: pColors,
+                        borderColor: pColors.map(c => c.replace('0.85', '1')), borderWidth: 2 }]
+                },
+                options: {
+                    responsive: true, maintainAspectRatio: false, aspectRatio: 1.5,
+                    plugins: { legend: { labels: { color: '#8a90b0', usePointStyle: true, padding: 14,
+                                font: { size: 10 } } },
+                        tooltip: { callbacks: { label: ctx => ctx.label + ': ' + fmtBRL2(ctx.parsed.r) } } }
+                }
+            });
+
+            // ═══ RANKING ENTRADA EFETIVA (R$) ═══
+            const closerEntradaMap = {};
+            filtered.forEach(v => {
+                const name = v.closer || 'Sem info';
+                if (!closerEntradaMap[name]) closerEntradaMap[name] = { entrada: 0, qtd: 0 };
+                closerEntradaMap[name].entrada += v.entradaEfetiva;
+                closerEntradaMap[name].qtd++;
+            });
+            const topValor = Object.entries(closerEntradaMap)
+                .sort((a, b) => b[1].entrada - a[1].entrada).slice(0, 10);
+
+            document.getElementById('rankValor').innerHTML = topValor.map(([n, d], i) => `
+            <tr>
+              <td><span class="rank-dot ${rankClass(i)}">${i+1}</span></td>
+              <td><b>${n.length>22?n.slice(0,20)+'…':n}</b></td>
+              <td style="color:#64b5f6;font-weight:600;">${fmtBRL(d.entrada)}</td>
+              <td>${d.qtd}</td>
+            </tr>`).join('');
+
+            // ═══ RANKING % ENTRADA EFETIVA ═══
+            const closerPercMap = {};
+            filtered.forEach(v => {
+                const name = v.closer || 'Sem info';
+                if (!closerPercMap[name]) closerPercMap[name] = { soma: 0, qtd: 0, vgvTotal: 0,
+                    entradaTotal: 0 };
+                closerPercMap[name].soma += v.percEntradaEfetiva;
+                closerPercMap[name].qtd++;
+                closerPercMap[name].vgvTotal += v.valorNegociado;
+                closerPercMap[name].entradaTotal += v.entradaEfetiva;
+            });
+            const topPerc = Object.entries(closerPercMap)
+                .map(([n, d]) => ({
+                    name: n,
+                    percMedio: d.qtd > 0 ? d.soma / d.qtd : 0,
+                    percGlobal: d.vgvTotal > 0 ? (d.entradaTotal / d.vgvTotal) * 100 : 0,
+                    qtd: d.qtd
+                }))
+                .sort((a, b) => b.percGlobal - a.percGlobal).slice(0, 10);
+
+            document.getElementById('rankPerc').innerHTML = topPerc.map((o, i) => `
+            <tr>
+              <td><span class="rank-dot ${rankClass(i)}">${i+1}</span></td>
+              <td><b>${o.name.length>22?o.name.slice(0,20)+'…':o.name}</b></td>
+              <td style="color:#ffb74d;font-weight:600;">${o.percGlobal.toFixed(2)}%</td>
+              <td>${o.qtd}</td>
+            </tr>`).join('');
+
+            // ═══ RANKING CANCELAMENTOS ═══
+            const closerCancelMap = {};
+            filtered.forEach(v => {
+                const name = v.closer || 'Sem info';
+                if (!closerCancelMap[name]) closerCancelMap[name] = { total: 0, cancelados: 0 };
+                closerCancelMap[name].total++;
+                if (v.status === 'CANCELADO') closerCancelMap[name].cancelados++;
+            });
+            const topCancel = Object.entries(closerCancelMap)
+                .map(([n, d]) => ({ name: n, cancelados: d.cancelados, total: d.total,
+                    taxa: d.total > 0 ? (d.cancelados / d.total) * 100 : 0 }))
+                .sort((a, b) => b.cancelados - a.cancelados).slice(0, 10);
+
+            document.getElementById('rankCancel').innerHTML = topCancel.map((o, i) => `
+            <tr>
+              <td><span class="rank-dot ${rankClass(i)}">${i+1}</span></td>
+              <td><b>${o.name.length>22?o.name.slice(0,20)+'…':o.name}</b></td>
+              <td style="color:#ff5252;font-weight:600;">${o.cancelados}</td>
+              <td>${o.total}</td>
+              <td style="color:${o.taxa>50?'#ff5252':o.taxa>20?'#ffb74d':'#4caf84'};font-weight:600;">${o.taxa.toFixed(1)}%</td>
+            </tr>`).join('');
+
+            // ═══ GRÁFICO CLOSERS POR VGV ═══
+            const closerVGVMAP = {};
+            filtered.forEach(v => {
+                const name = v.closer || 'Sem info';
+                if (!closerVGVMAP[name]) closerVGVMAP[name] = { vgv: 0, qtd: 0 };
+                closerVGVMAP[name].vgv += v.valorNegociado;
+                closerVGVMAP[name].qtd++;
+            });
+            const topClosers = Object.entries(closerVGVMAP)
+                .sort((a, b) => b[1].vgv - a[1].vgv).slice(0, 10);
+
+            const ctx5 = document.getElementById('chartClosers').getContext('2d');
+            charts.closers = new Chart(ctx5, {
+                type: 'bar',
+                data: {
+                    labels: topClosers.map(c => c[0].length > 20 ? c[0].slice(0, 18) + '…' : c[0]),
+                    datasets: [{
+                        label: 'VGV (R$)',
+                        data: topClosers.map(c => c[1].vgv),
+                        backgroundColor: topClosers.map((_, i) =>
+                            `rgba(68,138,255,${[0.9,0.8,0.7,0.6,0.55,0.5,0.45,0.4,0.35,0.3][i]||0.3})`),
+                        borderColor: '#448aff',
+                        borderWidth: 1,
+                        borderRadius: 8
+                    }]
+                },
+                options: {
+                    responsive: true,
+                    maintainAspectRatio: false,
+                    indexAxis: 'y',
+                    plugins: {
+                        legend: { display: false },
+                        tooltip: { callbacks: { label: ctx => 'VGV: ' + fmtBRL(ctx.parsed.x) + '  |  ' +
+                                    topClosers[ctx.dataIndex][1].qtd + ' vendas' } }
+                    },
+                    scales: {
+                        x: { ticks: { color: '#8a90b0', callback: v => 'R$' + (v / 1000).toFixed(0) + 'k',
+                                font: { size: 9 } }, grid: { color: 'rgba(26,38,80,0.4)' } },
+                        y: { ticks: { color: '#e0e4f0', font: { size: 10 } }, grid: { display: false } }
+                    }
+                }
+            });
+
+            // ═══ TABELA DETALHADA ═══
+            document.getElementById('tabelaCount').textContent = '(' + filtered.length + ' vendas)';
+            document.querySelector('#tabelaVendas thead').innerHTML = `
+            <tr>
+              <th>Data</th><th>Número</th><th>Cessionário</th><th>VGV (G)</th>
+              <th>Entrada Ef. (BH)</th><th>% Entrada Ef.</th><th>Status</th><th>Closer</th>
+            </tr>`;
+
+            const sorted = [...filtered].sort((a, b) => {
+                if (!a.data) return 1;
+                if (!b.data) return -1;
+                return b.data - a.data;
+            });
+
+            document.querySelector('#tabelaVendas tbody').innerHTML = sorted.map(v => `
+            <tr>
+              <td>${v.dataStr}</td>
+              <td>${v.numero}</td>
+              <td>${(v.cessionario||'').length>25?(v.cessionario||'').slice(0,23)+'…':(v.cessionario||'')}</td>
+              <td style="font-weight:600;">${fmtBRL(v.valorNegociado)}</td>
+              <td style="color:#64b5f6;font-weight:600;">${fmtBRL2(v.entradaEfetiva)}</td>
+              <td style="color:#ffb74d;font-weight:600;">${v.percEntradaEfetiva.toFixed(2)}%</td>
+              <td><span class="badge ${v.status==='ATIVO'?'badge-ativo':'badge-cancelado'}">${v.status||'N/A'}</span></td>
+              <td>${(v.closer||'').length>20?(v.closer||'').slice(0,18)+'…':(v.closer||'')}</td>
+            </tr>`).join('');
+        }
+
+        // ═══════════════════════════════════════════════════════
+        //  INICIAR APP
+        // ═══════════════════════════════════════════════════════
+        initApp();
+
+        console.log('🏙️ Borderô Collina Dreams — Pronto!');
+        console.log('   Cole o CSV completo e clique em "Carregar Dados"');
+    </script>
 </body>
 </html>
