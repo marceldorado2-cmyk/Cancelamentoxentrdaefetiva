@@ -113,7 +113,7 @@ h1 {
 .tab-content { display:none; }
 .tab-content.active { display:block; }
 
-/* SUB-TABS (Rankings) */
+/* SUB-TABS */
 .sub-tabs {
   display:flex; gap:4px; margin-bottom:20px; background:rgba(10,108,255,0.05); border:1px solid var(--border);
   border-radius:var(--radius-sm); padding:4px; width:fit-content;
@@ -187,7 +187,6 @@ button {
 
 /* KPIs */
 .kpi-grid { display:grid; grid-template-columns:repeat(5,1fr); gap:16px; margin-bottom:22px; }
-.kpi-grid.kpi-6 { grid-template-columns:repeat(6,1fr); }
 .kpi-card {
   background:var(--bg-card); border:1px solid var(--border); border-radius:var(--radius);
   padding:20px 18px; position:relative; overflow:hidden; backdrop-filter:blur(20px);
@@ -240,6 +239,18 @@ button {
   text-align:left; text-transform:uppercase; color:var(--text-muted); border-bottom:2px solid var(--border);
   white-space:nowrap;
 }
+.ranking-table thead th.sortable {
+  cursor:pointer; user-select:none; transition:all 0.2s;
+  position:relative;
+}
+.ranking-table thead th.sortable:hover {
+  background:rgba(10,108,255,0.18); color:var(--blue-light);
+}
+.ranking-table thead th.sortable::after {
+  content:'⇅'; margin-left:6px; opacity:0.4; font-size:0.8rem;
+}
+.ranking-table thead th.sortable.asc::after { content:'▲'; opacity:1; color:var(--blue-light); }
+.ranking-table thead th.sortable.desc::after { content:'▼'; opacity:1; color:var(--blue-light); }
 .ranking-table tbody td {
   padding:9px 8px; border-bottom:1px solid rgba(10,108,255,0.06); color:var(--text-secondary); white-space:nowrap;
 }
@@ -273,27 +284,17 @@ button {
 .prof-card .prof-value { font-size:1.4rem; font-weight:700; background: linear-gradient(135deg, #e8f0ff, #b0d4ff); -webkit-background-clip:text; -webkit-text-fill-color:transparent; }
 .prof-card .prof-label { font-size:0.7rem; text-transform:uppercase; color:var(--text-muted); font-weight:600; }
 
-/* NO DATA */
-.no-data {
-  text-align:center; padding:40px 20px; color:var(--text-muted);
-}
-.no-data .icon { font-size:2.5rem; margin-bottom:12px; }
-.no-data p { font-size:0.88rem; }
-
 /* RESPONSIVE */
 @media(max-width:1024px){
   .kpi-grid { grid-template-columns:repeat(3,1fr); }
-  .kpi-grid.kpi-6 { grid-template-columns:repeat(3,1fr); }
 }
 @media(max-width:768px){
   .content-grid { grid-template-columns:1fr; }
   .kpi-grid { grid-template-columns:repeat(2,1fr); }
-  .kpi-grid.kpi-6 { grid-template-columns:repeat(2,1fr); }
 }
 @media(max-width:480px){
   body { padding:10px; }
   .kpi-grid { grid-template-columns:1fr 1fr; }
-  .kpi-grid.kpi-6 { grid-template-columns:1fr 1fr; }
   .tabs { flex-direction:column; }
   .tab-btn { min-width:auto; }
   .header { flex-direction:column; gap:10px; text-align:center; }
@@ -336,7 +337,6 @@ button {
   <div class="tabs">
     <button type="button" class="tab-btn active" data-tab="geral">📊 Visão Geral</button>
     <button type="button" class="tab-btn" data-tab="rankings">🏆 Rankings</button>
-    <button type="button" class="tab-btn" data-tab="parcelamento">📅 Parcelamento</button>
     <button type="button" class="tab-btn" data-tab="profissional">👤 Por Profissional</button>
   </div>
 
@@ -499,23 +499,23 @@ button {
       <div class="content-grid full">
         <div class="panel">
           <div class="panel-header">
-            <h3>🥇 Ranking de Closers</h3>
+            <h3>🥇 Ranking de Closers <span style="font-size:0.7rem; color:var(--text-muted); font-weight:400; margin-left:8px;">💡 Clique nas colunas para ordenar</span></h3>
             <span class="badge" id="rankCloserCount">0 closers</span>
           </div>
           <div class="panel-body" style="overflow:auto; max-height:550px;">
             <table class="ranking-table" id="rankCloserTable">
               <thead>
                 <tr>
-                  <th>#</th>
-                  <th>Closer</th>
-                  <th>Vendas</th>
-                  <th>Ativas</th>
-                  <th>VGV</th>
-                  <th>Ent. Efetiva</th>
-                  <th>Cancel.</th>
-                  <th>Taxa Cancel.</th>
-                  <th>Média Parcelas</th>
-                  <th>Ticket Médio</th>
+                  <th class="sortable" data-col="pos">#</th>
+                  <th class="sortable" data-col="nome">Closer</th>
+                  <th class="sortable" data-col="total">Vendas</th>
+                  <th class="sortable" data-col="ativos">Ativas</th>
+                  <th class="sortable" data-col="vgv">VGV</th>
+                  <th class="sortable" data-col="entradaEfetiva">Ent. Efetiva</th>
+                  <th class="sortable" data-col="cancelados">Cancel.</th>
+                  <th class="sortable" data-col="taxaCancel">Taxa Cancel.</th>
+                  <th class="sortable" data-col="mediaParcelas">Média Parcelas</th>
+                  <th class="sortable" data-col="ticketMedio">Ticket Médio</th>
                 </tr>
               </thead>
               <tbody></tbody>
@@ -530,23 +530,23 @@ button {
       <div class="content-grid full">
         <div class="panel">
           <div class="panel-header">
-            <h3>🥈 Ranking de Liners</h3>
+            <h3>🥈 Ranking de Liners <span style="font-size:0.7rem; color:var(--text-muted); font-weight:400; margin-left:8px;">💡 Clique nas colunas para ordenar</span></h3>
             <span class="badge" id="rankLinerCount">0 liners</span>
           </div>
           <div class="panel-body" style="overflow:auto; max-height:550px;">
             <table class="ranking-table" id="rankLinerTable">
               <thead>
                 <tr>
-                  <th>#</th>
-                  <th>Liner</th>
-                  <th>Vendas</th>
-                  <th>Ativas</th>
-                  <th>VGV</th>
-                  <th>Ent. Efetiva</th>
-                  <th>Cancel.</th>
-                  <th>Taxa Cancel.</th>
-                  <th>Média Parcelas</th>
-                  <th>Ticket Médio</th>
+                  <th class="sortable" data-col="pos">#</th>
+                  <th class="sortable" data-col="nome">Liner</th>
+                  <th class="sortable" data-col="total">Vendas</th>
+                  <th class="sortable" data-col="ativos">Ativas</th>
+                  <th class="sortable" data-col="vgv">VGV</th>
+                  <th class="sortable" data-col="entradaEfetiva">Ent. Efetiva</th>
+                  <th class="sortable" data-col="cancelados">Cancel.</th>
+                  <th class="sortable" data-col="taxaCancel">Taxa Cancel.</th>
+                  <th class="sortable" data-col="mediaParcelas">Média Parcelas</th>
+                  <th class="sortable" data-col="ticketMedio">Ticket Médio</th>
                 </tr>
               </thead>
               <tbody></tbody>
@@ -557,91 +557,7 @@ button {
     </div>
   </div>
 
-  <!-- ==================== TAB 3: PARCELAMENTO ==================== -->
-  <div class="tab-content" id="tab-parcelamento">
-    <div class="filter-bar">
-      <div class="filter-group">
-        <label for="parcDateStart">📅 De</label>
-        <input type="date" id="parcDateStart" />
-      </div>
-      <div class="filter-group">
-        <label for="parcDateEnd">Até</label>
-        <input type="date" id="parcDateEnd" />
-      </div>
-      <button type="button" class="btn-filter" onclick="updateParcelamento()">🔍 Filtrar</button>
-      <button type="button" class="btn-reset" onclick="resetFilterParc()">↺ Limpar</button>
-      <div class="period-indicator" id="periodLabelParc">📆 Período: Todos</div>
-    </div>
-
-    <!-- KPIs Parcelamento -->
-    <div class="kpi-grid kpi-6">
-      <div class="kpi-card">
-        <div class="kpi-icon">📋</div>
-        <div class="kpi-label">Cotas com Parcelamento</div>
-        <div class="kpi-value" id="parcKpiCotasParceladas">0</div>
-      </div>
-      <div class="kpi-card">
-        <div class="kpi-icon">📊</div>
-        <div class="kpi-label">Média de Parcelas</div>
-        <div class="kpi-value" id="parcKpiMedia">0</div>
-      </div>
-      <div class="kpi-card">
-        <div class="kpi-icon">💵</div>
-        <div class="kpi-label">Cotas à Vista</div>
-        <div class="kpi-value" id="parcKpiAVista">0</div>
-      </div>
-      <div class="kpi-card">
-        <div class="kpi-icon">📈</div>
-        <div class="kpi-label">Maior Prazo</div>
-        <div class="kpi-value" id="parcKpiMax">0 parcelas</div>
-      </div>
-      <div class="kpi-card">
-        <div class="kpi-icon">🎯</div>
-        <div class="kpi-label">Parcelas + Comum</div>
-        <div class="kpi-value" id="parcKpiModa">-</div>
-      </div>
-      <div class="kpi-card">
-        <div class="kpi-icon">📉</div>
-        <div class="kpi-label">Tx Cancel. Parceladas</div>
-        <div class="kpi-value" id="parcKpiTxCancel">0%</div>
-      </div>
-    </div>
-
-    <!-- Faixas + Gráfico -->
-    <div class="content-grid">
-      <div class="panel">
-        <div class="panel-header">
-          <h3>📅 Faixas por Quantidade de Parcelas</h3>
-          <span class="badge" id="parcFaixaCount">Total: 0</span>
-        </div>
-        <div class="panel-body">
-          <table class="data-table" id="parcFaixaTable">
-            <thead>
-              <tr>
-                <th>Faixa</th>
-                <th>Qtd Cotas</th>
-                <th>% Total</th>
-                <th>VGV</th>
-                <th>Cancel.</th>
-                <th>% Cancel.</th>
-                <th>Média Parcelas</th>
-                <th>Distribuição</th>
-              </tr>
-            </thead>
-            <tbody></tbody>
-          </table>
-        </div>
-      </div>
-      <div class="panel">
-        <div class="panel-header"><h3>📊 Distribuição por Faixa de Parcelas</h3></div>
-        <div class="panel-body" style="height:370px; display:flex; align-items:center; justify-content:center;">
-          <canvas id="chartParcelas"></canvas>
-        </div>
-      </div>
-    </div>
-  </div>
-
-  <!-- ==================== TAB 4: POR PROFISSIONAL ==================== -->
+  <!-- ==================== TAB 3: POR PROFISSIONAL ==================== -->
   <div class="tab-content" id="tab-profissional">
     <div class="filter-bar">
       <div class="filter-group">
@@ -798,8 +714,14 @@ const CSV_FILE = 'dados.csv';
 
 // ==================== VARIÁVEIS GLOBAIS ====================
 let todasVendas = [];
-let chartFaixas, chartStatus, chartVgvMes, chartProfFaixas, chartParcelas;
+let chartFaixas, chartStatus, chartVgvMes, chartProfFaixas;
 let profLiners = [], profClosers = [], profPromotores = [], profTodos = [];
+
+// Estado de ordenação dos rankings
+let currentCloserRank = [];
+let currentLinerRank  = [];
+let sortStateCloser = { col: 'total', dir: 'desc' };
+let sortStateLiner  = { col: 'total', dir: 'desc' };
 
 // ==================== FAIXAS ENTRADA ====================
 const FAIXAS = [
@@ -821,16 +743,6 @@ const FAIXAS_COLORS = {
   '2,1% a 5%':          '#1e90ff',
   'Acima de 5%':         '#0a6cff'
 };
-
-// ==================== FAIXAS PARCELAMENTO ====================
-const FAIXAS_PARC = [
-  { label: 'Sem parcelas',       min: 0,  max: 0,   color: '#95a5a6' },
-  { label: 'Até 6 parcelas',     min: 1,  max: 6,   color: '#e74c3c' },
-  { label: '7 a 13 parcelas',    min: 7,  max: 13,  color: '#ffa502' },
-  { label: '14 a 18 parcelas',   min: 14, max: 18,  color: '#2ed573' },
-  { label: '19 a 24 parcelas',   min: 19, max: 24,  color: '#1e90ff' },
-  { label: 'Acima de 25 parcelas', min: 25, max: 9999, color: '#0a6cff' }
-];
 
 // ==================== FUNÇÕES AUXILIARES ====================
 function parseCurrency(str) {
@@ -867,24 +779,11 @@ function classifyFaixa(pct) {
   return FAIXAS[FAIXAS.length - 1].label;
 }
 
-function classifyFaixaParcelas(p) {
-  for (let i = 0; i < FAIXAS_PARC.length; i++) {
-    if (p >= FAIXAS_PARC[i].min && p <= FAIXAS_PARC[i].max) return FAIXAS_PARC[i].label;
-  }
-  return FAIXAS_PARC[FAIXAS_PARC.length - 1].label;
-}
-
-function getParcColor(faixaLabel) {
-  const found = FAIXAS_PARC.find(f => f.label === faixaLabel);
-  return found ? found.color : '#6db3ff';
-}
-
 function formatCurrency(v) {
   return 'R$ ' + (v || 0).toLocaleString('pt-BR', { minimumFractionDigits: 2, maximumFractionDigits: 2 });
 }
 
 function extractParcelas(cols) {
-  // Tenta coluna P (índice 15), depois fallbacks
   const candidates = [15, 14, 16, 13, 17, 18];
   for (const idx of candidates) {
     if (cols.length > idx) {
@@ -894,7 +793,6 @@ function extractParcelas(cols) {
       if (!isNaN(p) && p > 0 && p <= 240) return p;
     }
   }
-  // Se encontrou 0 explícito, retorna 0
   for (const idx of candidates) {
     if (cols.length > idx) {
       const raw = (cols[idx] || '').toString().trim();
@@ -960,7 +858,6 @@ function processRows(rows) {
     const statusRaw   = (cols[7] || '').toString().toUpperCase().trim();
     const colsLen     = cols.length;
 
-    // --- Extração de parcelas (coluna P) ---
     const parcelas = extractParcelas(cols);
 
     let entradaEfetiva = 0, percentEntradaEfetiva = 0;
@@ -1009,8 +906,7 @@ function processRows(rows) {
       entradaEfetiva, percentEntradaEfetiva,
       liner, closer, promotor,
       parcelas,
-      faixa: classifyFaixa(percentEntradaEfetiva),
-      faixaParcelas: classifyFaixaParcelas(parcelas)
+      faixa: classifyFaixa(percentEntradaEfetiva)
     });
   }
 
@@ -1026,7 +922,6 @@ function processRows(rows) {
   populateProfissionais();
   updateGeral();
   updateRankings();
-  updateParcelamento();
   console.log('✅ Dashboard carregado:', todasVendas.length, 'vendas.');
 }
 
@@ -1391,9 +1286,40 @@ function computeRanking(lista, tipo) {
     .map((r, i) => ({ ...r, pos: i + 1 }));
 }
 
-function renderRankingTable(ranking, tableId, countId, tipoLabel) {
+function sortRankingData(ranking, col, dir) {
+  const sorted = [...ranking];
+  sorted.sort((a, b) => {
+    let va = a[col];
+    let vb = b[col];
+
+    // Para strings (nome), comparação alfabética
+    if (typeof va === 'string') {
+      const cmp = va.localeCompare(vb, 'pt-BR', { sensitivity: 'base' });
+      return dir === 'asc' ? cmp : -cmp;
+    }
+
+    // Para números
+    if (va < vb) return dir === 'asc' ? -1 : 1;
+    if (va > vb) return dir === 'asc' ? 1 : -1;
+    return 0;
+  });
+
+  // Reatribui posições conforme ordenação atual
+  return sorted.map((r, i) => ({ ...r, pos: i + 1 }));
+}
+
+function renderRankingTable(ranking, tableId, countId, tipoLabel, sortState) {
   const tbody = document.querySelector('#' + tableId + ' tbody');
   tbody.innerHTML = '';
+
+  // Atualiza indicadores visuais de ordenação nos cabeçalhos
+  const table = document.getElementById(tableId);
+  table.querySelectorAll('th.sortable').forEach(th => {
+    th.classList.remove('asc', 'desc');
+    if (th.dataset.col === sortState.col) {
+      th.classList.add(sortState.dir);
+    }
+  });
 
   if (ranking.length === 0) {
     tbody.innerHTML = `<tr><td colspan="10" style="text-align:center; padding:30px; color:var(--text-muted);">Nenhum ${tipoLabel} encontrado.</td></tr>`;
@@ -1439,151 +1365,46 @@ function updateRankings() {
   let lista = filterByDate(todasVendas, 'rankDateStart', 'rankDateEnd');
   document.getElementById('periodLabelRank').innerText = getPeriodLabel('rankDateStart', 'rankDateEnd');
 
-  const closerRank = computeRanking(lista, 'closer');
-  const linerRank  = computeRanking(lista, 'liner');
+  // Recalcula rankings brutos (ordenados por total desc por padrão)
+  const closerRaw = computeRanking(lista, 'closer');
+  const linerRaw  = computeRanking(lista, 'liner');
 
-  renderRankingTable(closerRank, 'rankCloserTable', 'rankCloserCount', 'Closer');
-  renderRankingTable(linerRank,  'rankLinerTable',  'rankLinerCount',  'Liner');
+  // Aplica ordenação atual
+  currentCloserRank = sortRankingData(closerRaw, sortStateCloser.col, sortStateCloser.dir);
+  currentLinerRank  = sortRankingData(linerRaw,  sortStateLiner.col,  sortStateLiner.dir);
+
+  renderRankingTable(currentCloserRank, 'rankCloserTable', 'rankCloserCount', 'Closer', sortStateCloser);
+  renderRankingTable(currentLinerRank,  'rankLinerTable',  'rankLinerCount',  'Liner',  sortStateLiner);
 }
 
-// ==================== TAB 3: PARCELAMENTO ====================
-function updateParcelamento() {
-  let lista = filterByDate(todasVendas, 'parcDateStart', 'parcDateEnd');
-  document.getElementById('periodLabelParc').innerText = getPeriodLabel('parcDateStart', 'parcDateEnd');
-
-  renderKPIsParcelamento(lista);
-  renderFaixasParcelamento(lista);
-}
-
-function renderKPIsParcelamento(lista) {
-  const comParcelas = lista.filter(v => v.parcelas > 0);
-  const semParcelas = lista.filter(v => v.parcelas === 0);
-  const somaParcelas = comParcelas.reduce((s, v) => s + v.parcelas, 0);
-  const media = comParcelas.length > 0 ? (somaParcelas / comParcelas.length) : 0;
-  const maxParc = comParcelas.length > 0 ? Math.max(...comParcelas.map(v => v.parcelas)) : 0;
-
-  // Moda
-  const freq = {};
-  comParcelas.forEach(v => { freq[v.parcelas] = (freq[v.parcelas] || 0) + 1; });
-  let moda = '-';
-  let maxFreq = 0;
-  Object.entries(freq).forEach(([k, v]) => {
-    if (v > maxFreq) { maxFreq = v; moda = k; }
-  });
-  const modaStr = moda !== '-' ? moda + 'x (' + maxFreq + ' cotas)' : '-';
-
-  // Taxa de cancelamento entre parceladas
-  const cancelParc = comParcelas.filter(v => v.status === 'CANCELADO').length;
-  const txCancelParc = comParcelas.length > 0 ? (cancelParc / comParcelas.length * 100).toFixed(1) : '0.0';
-
-  document.getElementById('parcKpiCotasParceladas').innerText = comParcelas.length;
-  document.getElementById('parcKpiMedia').innerText          = media.toFixed(1) + 'x';
-  document.getElementById('parcKpiAVista').innerText         = semParcelas.length;
-  document.getElementById('parcKpiMax').innerText            = maxParc > 0 ? maxParc + ' parcelas' : '-';
-  document.getElementById('parcKpiModa').innerText           = modaStr;
-  document.getElementById('parcKpiTxCancel').innerText       = txCancelParc + '%';
-}
-
-function renderFaixasParcelamento(lista) {
-  const countObj = {};
-  FAIXAS_PARC.forEach(f => {
-    countObj[f.label] = { total: 0, cancel: 0, vgv: 0, somaParcelas: 0, countParcelas: 0 };
-  });
-
-  lista.forEach(v => {
-    const faixa = v.faixaParcelas;
-    if (countObj[faixa]) {
-      countObj[faixa].total++;
-      countObj[faixa].vgv += v.valorNeg;
-      if (v.status === 'CANCELADO') countObj[faixa].cancel++;
-      if (v.parcelas > 0) {
-        countObj[faixa].somaParcelas += v.parcelas;
-        countObj[faixa].countParcelas++;
-      }
+function handleRankingSort(tableId, col) {
+  if (tableId === 'rankCloserTable') {
+    if (sortStateCloser.col === col) {
+      sortStateCloser.dir = sortStateCloser.dir === 'asc' ? 'desc' : 'asc';
+    } else {
+      sortStateCloser.col = col;
+      sortStateCloser.dir = 'desc';
     }
-  });
-
-  const totalVendas = lista.length;
-  const maxTotal = Math.max(...Object.values(countObj).map(o => o.total), 1);
-
-  const tbody = document.querySelector('#parcFaixaTable tbody');
-  tbody.innerHTML = '';
-  let totalGeral = 0;
-
-  Object.entries(countObj).forEach(([faixa, d]) => {
-    totalGeral += d.total;
-    const pctTotal = totalVendas > 0 ? (d.total / totalVendas * 100).toFixed(1) : '0.0';
-    const percCancel = d.total > 0 ? (d.cancel / d.total * 100).toFixed(1) : '0.0';
-    const mediaParc = d.countParcelas > 0 ? (d.somaParcelas / d.countParcelas).toFixed(1) : '-';
-    const barW = Math.round((d.total / maxTotal) * 150) || 2;
-    let cancelClass = 'low';
-    const pc = parseFloat(percCancel);
-    if (pc > 40) cancelClass = 'high';
-    else if (pc > 15) cancelClass = 'mid';
-    const color = getParcColor(faixa);
-
-    tbody.innerHTML += `<tr>
-      <td style="font-weight:600; color:#e8f0ff;">${faixa}</td>
-      <td><strong>${d.total}</strong></td>
-      <td>${pctTotal}%</td>
-      <td>${formatCurrency(d.vgv)}</td>
-      <td>${d.cancel}</td>
-      <td><span class="cancel-rate ${cancelClass}">${percCancel}%</span></td>
-      <td>${mediaParc}</td>
-      <td><div style="width:${barW}px; height:8px; background:${color}; border-radius:4px; min-width:2px;"></div></td>
-    </tr>`;
-  });
-
-  document.getElementById('parcFaixaCount').innerText = 'Total: ' + totalGeral;
-
-  // Chart
-  const labels = FAIXAS_PARC.filter(f => countObj[f.label].total > 0).map(f => f.label);
-  const data   = labels.map(f => countObj[f].total);
-  const cores  = labels.map(f => getParcColor(f));
-
-  if (chartParcelas) chartParcelas.destroy();
-  chartParcelas = new Chart(document.getElementById('chartParcelas').getContext('2d'), {
-    type: 'bar',
-    data: {
-      labels: labels,
-      datasets: [{
-        label: 'Qtd Cotas',
-        data: data,
-        backgroundColor: cores.map(c => c + '99'),
-        borderColor: cores,
-        borderWidth: 1.5,
-        borderRadius: 8
-      }]
-    },
-    options: {
-      responsive: true,
-      maintainAspectRatio: true,
-      plugins: {
-        legend: { display: false },
-        tooltip: {
-          callbacks: {
-            label: function (ctx) {
-              const pct = totalVendas > 0 ? (ctx.raw / totalVendas * 100).toFixed(1) : '0';
-              return ctx.raw + ' cotas (' + pct + '%)';
-            }
-          }
-        }
-      },
-      scales: {
-        x: {
-          ticks: { color: '#6080a8', font: { size: 9 }, maxRotation: 45 },
-          grid: { display: false }
-        },
-        y: {
-          ticks: { color: '#6080a8', font: { size: 10 }, stepSize: 1 },
-          grid: { color: 'rgba(10,108,255,0.08)' }
-        }
-      }
+    // Recalcula com base na lista filtrada atual
+    let lista = filterByDate(todasVendas, 'rankDateStart', 'rankDateEnd');
+    const raw = computeRanking(lista, 'closer');
+    currentCloserRank = sortRankingData(raw, sortStateCloser.col, sortStateCloser.dir);
+    renderRankingTable(currentCloserRank, 'rankCloserTable', 'rankCloserCount', 'Closer', sortStateCloser);
+  } else if (tableId === 'rankLinerTable') {
+    if (sortStateLiner.col === col) {
+      sortStateLiner.dir = sortStateLiner.dir === 'asc' ? 'desc' : 'asc';
+    } else {
+      sortStateLiner.col = col;
+      sortStateLiner.dir = 'desc';
     }
-  });
+    let lista = filterByDate(todasVendas, 'rankDateStart', 'rankDateEnd');
+    const raw = computeRanking(lista, 'liner');
+    currentLinerRank = sortRankingData(raw, sortStateLiner.col, sortStateLiner.dir);
+    renderRankingTable(currentLinerRank, 'rankLinerTable', 'rankLinerCount', 'Liner', sortStateLiner);
+  }
 }
 
-// ==================== TAB 4: POR PROFISSIONAL ====================
+// ==================== TAB 3: POR PROFISSIONAL ====================
 function updateProf() {
   let lista = filterByDate(todasVendas, 'profDateStart', 'profDateEnd');
   lista = filterByProf(lista);
@@ -1607,7 +1428,6 @@ function renderKPIsProf(lista) {
     : '0.0';
   const ticketMedio = ativos > 0 ? somaVgv / ativos : 0;
 
-  // Média parcelas
   const comParcelas = lista.filter(v => v.parcelas > 0);
   const somaParc = comParcelas.reduce((s, v) => s + v.parcelas, 0);
   const mediaParc = comParcelas.length > 0 ? (somaParc / comParcelas.length).toFixed(1) + 'x' : '-';
@@ -1672,13 +1492,9 @@ function resetFilterGeral() {
 function resetFilterRank() {
   document.getElementById('rankDateStart').value = '';
   document.getElementById('rankDateEnd').value   = '';
+  sortStateCloser = { col: 'total', dir: 'desc' };
+  sortStateLiner  = { col: 'total', dir: 'desc' };
   updateRankings();
-}
-
-function resetFilterParc() {
-  document.getElementById('parcDateStart').value = '';
-  document.getElementById('parcDateEnd').value   = '';
-  updateParcelamento();
 }
 
 function resetFilterProf() {
@@ -1701,7 +1517,6 @@ function switchTab(tabName) {
   if (content) content.classList.add('active');
 
   if (tabName === 'rankings')    updateRankings();
-  if (tabName === 'parcelamento') updateParcelamento();
   if (tabName === 'profissional') updateProf();
 }
 
@@ -1736,6 +1551,21 @@ document.addEventListener('DOMContentLoaded', function () {
       const subtabName = btn.getAttribute('data-subtab');
       if (subtabName) switchSubTab(subtabName);
     }
+  });
+
+  // Ordenação das tabelas de ranking
+  document.querySelectorAll('#rankCloserTable th.sortable').forEach(th => {
+    th.addEventListener('click', function () {
+      const col = this.dataset.col;
+      if (col) handleRankingSort('rankCloserTable', col);
+    });
+  });
+
+  document.querySelectorAll('#rankLinerTable th.sortable').forEach(th => {
+    th.addEventListener('click', function () {
+      const col = this.dataset.col;
+      if (col) handleRankingSort('rankLinerTable', col);
+    });
   });
 
   // Filtro profissional na aba geral
