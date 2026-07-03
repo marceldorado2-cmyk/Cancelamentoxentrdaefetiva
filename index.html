@@ -3,1179 +3,1370 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Borderô de Vendas — Collina Dreams</title>
-    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/flatpickr/dist/themes/dark.css">
-    <script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.7/dist/chart.umd.min.js">
+    <title>Collina Dreams - Dashboard de Vendas</title>
+    <script src="https://cdn.jsdelivr.net/npm/chart.js@4.5.1/dist/chart.umd.min.js">
     </script>
-    <script src="https://cdn.jsdelivr.net/npm/flatpickr"></script>
-    <script src="https://cdn.jsdelivr.net/npm/flatpickr/dist/l10n/pt.js"></script>
     <style>
         :root {
-            --bg-deep: #060b1a;
-            --bg-card: #0b1229;
-            --blue-1: #0ea5e9;
-            --blue-2: #3b82f6;
-            --blue-3: #6366f1;
-            --blue-light: #38bdf8;
-            --blue-glow: rgba(14, 165, 233, 0.22);
-            --text: #e2e8f0;
-            --text-dim: #8899b4;
-            --text-bright: #f1f5f9;
-            --border: rgba(59, 130, 246, 0.18);
-            --red: #ef4444;
-            --red-soft: #f87171;
-            --green: #22c55e;
-            --green-soft: #4ade80;
-            --radius: 18px;
-            --radius-sm: 11px;
-            --transition: 0.28s cubic-bezier(0.4, 0, 0.2, 1);
+            --bg-deep: #020b1a;
+            --bg-card: #041830;
+            --bg-card-hover: #062245;
+            --blue-primary: #0a6cff;
+            --blue-glow: #3b8bff;
+            --blue-light: #6db3ff;
+            --blue-soft: #9dceff;
+            --text-primary: #e8f0ff;
+            --text-secondary: #a0bde0;
+            --text-muted: #6080a8;
+            --border: rgba(10, 108, 255, 0.2);
+            --border-glow: rgba(10, 108, 255, 0.5);
+            --danger: #ff4470;
+            --danger-bg: rgba(255, 68, 112, 0.15);
+            --success: #00d68f;
+            --success-bg: rgba(0, 214, 143, 0.12);
+            --warning: #ffb020;
+            --warning-bg: rgba(255, 176, 32, 0.12);
+            --radius: 16px;
+            --radius-sm: 10px;
         }
+
         * {
             margin: 0;
             padding: 0;
             box-sizing: border-box;
         }
+
         body {
-            font-family: 'Inter', 'Segoe UI', system-ui, -apple-system, sans-serif;
+            font-family: 'Segoe UI', 'Inter', system-ui, -apple-system, sans-serif;
             background: var(--bg-deep);
-            color: var(--text);
-            min-height: 100vh;
             background-image:
-                radial-gradient(ellipse at 15% 0%, rgba(14, 165, 233, 0.09) 0%, transparent 55%),
-                radial-gradient(ellipse at 85% 100%, rgba(99, 102, 241, 0.07) 0%, transparent 55%),
-                radial-gradient(ellipse at 50% 60%, rgba(59, 130, 246, 0.03) 0%, transparent 70%);
-            background-attachment: fixed;
+                radial-gradient(ellipse at 20% 0%, rgba(10, 108, 255, 0.12) 0%, transparent 60%),
+                radial-gradient(ellipse at 80% 100%, rgba(10, 108, 255, 0.08) 0%, transparent 60%),
+                radial-gradient(ellipse at 50% 50%, rgba(59, 139, 255, 0.04) 0%, transparent 80%);
+            min-height: 100vh;
+            color: var(--text-primary);
+            line-height: 1.6;
+            padding: 0;
+            -webkit-font-smoothing: antialiased;
         }
-        .dashboard {
-            max-width: 1520px;
+
+        /* Scrollbar */
+        ::-webkit-scrollbar {
+            width: 6px;
+            height: 6px;
+        }
+        ::-webkit-scrollbar-track {
+            background: var(--bg-deep);
+        }
+        ::-webkit-scrollbar-thumb {
+            background: var(--blue-primary);
+            border-radius: 3px;
+        }
+
+        .container {
+            max-width: 1440px;
             margin: 0 auto;
-            padding: 22px 18px 44px;
+            padding: 20px 24px;
         }
+
+        /* Header */
         .header {
             display: flex;
             align-items: center;
             justify-content: space-between;
-            flex-wrap: wrap;
-            gap: 14px;
-            margin-bottom: 26px;
-            padding: 22px 30px;
+            padding: 24px 32px;
+            margin-bottom: 28px;
             background: var(--bg-card);
-            border-radius: var(--radius);
             border: 1px solid var(--border);
+            border-radius: var(--radius);
+            backdrop-filter: blur(20px);
+            -webkit-backdrop-filter: blur(20px);
             position: relative;
             overflow: hidden;
         }
         .header::before {
             content: '';
             position: absolute;
-            inset: 0;
-            background: linear-gradient(135deg, rgba(14, 165, 233, 0.10) 0%, rgba(99, 102, 241, 0.04) 100%);
-            pointer-events: none;
+            top: 0;
+            left: 0;
+            right: 0;
+            height: 2px;
+            background: linear-gradient(90deg, transparent, var(--blue-glow), var(--blue-light), var(--blue-glow), transparent);
+            border-radius: 0;
         }
-        .header-title {
-            position: relative;
-            z-index: 1;
+        .header-left {
+            display: flex;
+            align-items: center;
+            gap: 16px;
         }
-        .header-title h1 {
-            font-size: 1.75rem;
+        .header-icon {
+            width: 48px;
+            height: 48px;
+            background: linear-gradient(135deg, var(--blue-primary), var(--blue-glow));
+            border-radius: 14px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 24px;
+            box-shadow: 0 8px 32px rgba(10, 108, 255, 0.3);
+        }
+        .header h1 {
+            font-size: 1.6rem;
             font-weight: 700;
-            letter-spacing: -0.025em;
-            background: linear-gradient(135deg, #38bdf8, #818cf8);
+            letter-spacing: -0.5px;
+            background: linear-gradient(135deg, #e8f0ff, #9dceff);
             -webkit-background-clip: text;
             -webkit-text-fill-color: transparent;
             background-clip: text;
         }
-        .header-title span {
+        .header-subtitle {
             font-size: 0.82rem;
-            color: var(--text-dim);
-            letter-spacing: 0.04em;
+            color: var(--text-muted);
+            letter-spacing: 1px;
             text-transform: uppercase;
-            font-weight: 500;
         }
         .header-badge {
-            position: relative;
-            z-index: 1;
-            padding: 7px 20px;
-            border-radius: 999px;
-            background: rgba(14, 165, 233, 0.13);
-            border: 1px solid rgba(14, 165, 233, 0.28);
-            font-size: 0.78rem;
-            font-weight: 600;
-            color: #38bdf8;
-            letter-spacing: 0.05em;
-            text-transform: uppercase;
-            animation: pulse-glow 2.8s ease-in-out infinite;
+            background: rgba(10, 108, 255, 0.15);
+            border: 1px solid var(--border);
+            border-radius: 50px;
+            padding: 8px 18px;
+            font-size: 0.8rem;
+            color: var(--blue-light);
+            letter-spacing: 0.5px;
+            display: flex;
+            align-items: center;
+            gap: 8px;
         }
-        @keyframes pulse-glow {
+        .header-badge .dot {
+            width: 8px;
+            height: 8px;
+            background: var(--success);
+            border-radius: 50%;
+            box-shadow: 0 0 8px var(--success);
+            animation: pulse-dot 2s infinite;
+        }
+        @keyframes pulse-dot {
             0%,
             100% {
-                box-shadow: 0 0 0 0 rgba(14, 165, 233, 0.28);
+                opacity: 1;
             }
             50% {
-                box-shadow: 0 0 22px 5px rgba(14, 165, 233, 0.14);
+                opacity: 0.4;
             }
         }
+
+        /* Filter Bar */
         .filter-bar {
             display: flex;
             align-items: center;
-            gap: 12px;
+            gap: 16px;
             flex-wrap: wrap;
-            margin-bottom: 22px;
-            padding: 14px 20px;
+            padding: 20px 24px;
+            margin-bottom: 24px;
             background: var(--bg-card);
+            border: 1px solid var(--border);
             border-radius: var(--radius);
-            border: 1px solid var(--border);
+            backdrop-filter: blur(20px);
+            -webkit-backdrop-filter: blur(20px);
         }
-        .filter-bar label {
-            font-size: 0.8rem;
+        .filter-group {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+        .filter-group label {
+            font-size: 0.82rem;
+            color: var(--text-secondary);
             font-weight: 600;
-            color: var(--text-dim);
-            text-transform: uppercase;
-            letter-spacing: 0.05em;
+            letter-spacing: 0.3px;
             white-space: nowrap;
+            text-transform: uppercase;
+            font-size: 0.72rem;
         }
-        .filter-input {
-            background: rgba(8, 16, 38, 0.85);
+        .filter-group input[type="date"] {
+            background: var(--bg-deep);
             border: 1px solid var(--border);
-            color: var(--text-bright);
-            padding: 10px 15px;
+            color: var(--text-primary);
+            padding: 10px 14px;
             border-radius: var(--radius-sm);
             font-size: 0.88rem;
             font-family: inherit;
             outline: none;
-            transition: var(--transition);
-            min-width: 148px;
+            transition: all 0.25s;
             cursor: pointer;
         }
-        .filter-input:focus,
-        .filter-input:hover {
-            border-color: var(--blue-1);
-            box-shadow: 0 0 0 3px rgba(14, 165, 233, 0.09);
+        .filter-group input[type="date"]:focus {
+            border-color: var(--blue-glow);
+            box-shadow: 0 0 0 3px rgba(10, 108, 255, 0.12);
+        }
+        .filter-group input[type="date"]::-webkit-calendar-picker-indicator {
+            filter: invert(0.7) sepia(1) saturate(5) hue-rotate(185deg);
+            cursor: pointer;
+        }
+        .btn-filter {
+            background: linear-gradient(135deg, var(--blue-primary), var(--blue-glow));
+            border: none;
+            color: #fff;
+            padding: 10px 24px;
+            border-radius: 50px;
+            font-weight: 600;
+            font-size: 0.85rem;
+            cursor: pointer;
+            letter-spacing: 0.3px;
+            transition: all 0.3s;
+            box-shadow: 0 4px 20px rgba(10, 108, 255, 0.3);
+            font-family: inherit;
+        }
+        .btn-filter:hover {
+            box-shadow: 0 6px 28px rgba(10, 108, 255, 0.5);
+            transform: translateY(-1px);
         }
         .btn-reset {
-            padding: 10px 22px;
-            border-radius: var(--radius-sm);
-            background: rgba(14, 165, 233, 0.10);
-            border: 1px solid rgba(14, 165, 233, 0.28);
-            color: #38bdf8;
+            background: transparent;
+            border: 1px solid var(--border);
+            color: var(--text-secondary);
+            padding: 10px 20px;
+            border-radius: 50px;
+            font-weight: 500;
+            font-size: 0.85rem;
             cursor: pointer;
-            font-weight: 600;
-            font-size: 0.83rem;
-            transition: var(--transition);
-            letter-spacing: 0.03em;
+            transition: all 0.3s;
+            font-family: inherit;
         }
         .btn-reset:hover {
-            background: rgba(14, 165, 233, 0.20);
-            box-shadow: 0 0 16px rgba(14, 165, 233, 0.18);
+            border-color: var(--blue-glow);
+            color: var(--text-primary);
         }
+        .period-indicator {
+            margin-left: auto;
+            font-size: 0.78rem;
+            color: var(--blue-light);
+            font-weight: 500;
+            letter-spacing: 0.3px;
+            background: rgba(10, 108, 255, 0.1);
+            padding: 8px 16px;
+            border-radius: 50px;
+        }
+
+        /* KPI Cards */
         .kpi-grid {
             display: grid;
-            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
-            gap: 14px;
-            margin-bottom: 22px;
+            grid-template-columns: repeat(5, 1fr);
+            gap: 18px;
+            margin-bottom: 24px;
         }
         .kpi-card {
             background: var(--bg-card);
             border: 1px solid var(--border);
             border-radius: var(--radius);
-            padding: 18px 22px;
+            padding: 22px 20px;
             position: relative;
             overflow: hidden;
-            transition: var(--transition);
+            transition: all 0.3s;
+            backdrop-filter: blur(20px);
+            -webkit-backdrop-filter: blur(20px);
         }
         .kpi-card:hover {
-            border-color: rgba(14, 165, 233, 0.38);
+            border-color: var(--border-glow);
             transform: translateY(-2px);
-            box-shadow: 0 10px 32px rgba(14, 165, 233, 0.07);
+            box-shadow: 0 12px 40px rgba(10, 108, 255, 0.15);
+            background: var(--bg-card-hover);
         }
-        .kpi-card::after {
-            content: '';
-            position: absolute;
-            top: -28%;
-            right: -18%;
-            width: 96px;
-            height: 96px;
-            border-radius: 50%;
-            background: rgba(14, 165, 233, 0.04);
-            pointer-events: none;
+        .kpi-card .kpi-icon {
+            font-size: 1.6rem;
+            margin-bottom: 8px;
         }
-        .kpi-label {
-            font-size: 0.73rem;
+        .kpi-card .kpi-label {
+            font-size: 0.72rem;
             text-transform: uppercase;
-            letter-spacing: 0.07em;
-            color: var(--text-dim);
+            letter-spacing: 0.8px;
+            color: var(--text-muted);
+            margin-bottom: 4px;
             font-weight: 600;
-            margin-bottom: 5px;
-            position: relative;
-            z-index: 1;
         }
-        .kpi-value {
-            font-size: 1.85rem;
+        .kpi-card .kpi-value {
+            font-size: 1.8rem;
             font-weight: 800;
-            letter-spacing: -0.03em;
-            position: relative;
-            z-index: 1;
-            background: linear-gradient(180deg, #f1f5f9 0%, #bae6fd 100%);
+            letter-spacing: -0.5px;
+            background: linear-gradient(135deg, #e8f0ff, #b0d4ff);
             -webkit-background-clip: text;
             -webkit-text-fill-color: transparent;
             background-clip: text;
         }
-        .kpi-sub {
-            font-size: 0.76rem;
-            color: var(--text-dim);
-            margin-top: 3px;
-            position: relative;
-            z-index: 1;
-            font-weight: 500;
+        .kpi-card .kpi-sub {
+            font-size: 0.75rem;
+            color: var(--text-muted);
+            margin-top: 2px;
         }
-        .kpi-accent-red {
-            color: var(--red-soft);
-            -webkit-text-fill-color: var(--red-soft);
+        .kpi-card.accent-danger {
+            border-color: rgba(255, 68, 112, 0.3);
         }
-        .kpi-accent-green {
-            color: var(--green-soft);
-            -webkit-text-fill-color: var(--green-soft);
+        .kpi-card.accent-danger .kpi-value {
+            background: linear-gradient(135deg, #ff6b8a, #ff4470);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
         }
-        .chart-grid {
+        .kpi-card.accent-success {
+            border-color: rgba(0, 214, 143, 0.3);
+        }
+        .kpi-card.accent-success .kpi-value {
+            background: linear-gradient(135deg, #00e69a, #00d68f);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+        }
+        .kpi-card .glow-line {
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            height: 2px;
+            background: linear-gradient(90deg, transparent, var(--blue-glow), transparent);
+        }
+        .kpi-card.accent-danger .glow-line {
+            background: linear-gradient(90deg, transparent, #ff4470, transparent);
+        }
+        .kpi-card.accent-success .glow-line {
+            background: linear-gradient(90deg, transparent, #00d68f, transparent);
+        }
+
+        /* Two-column layout */
+        .content-grid {
             display: grid;
-            grid-template-columns: repeat(auto-fit, minmax(430px, 1fr));
-            gap: 16px;
-            margin-bottom: 22px;
+            grid-template-columns: 1fr 1fr;
+            gap: 20px;
+            margin-bottom: 24px;
         }
-        .chart-card {
-            background: var(--bg-card);
-            border: 1px solid var(--border);
-            border-radius: var(--radius);
-            padding: 20px;
-            transition: var(--transition);
+        .content-grid.full {
+            grid-template-columns: 1fr;
         }
-        .chart-card:hover {
-            border-color: rgba(14, 165, 233, 0.28);
-        }
-        .chart-card.full {
-            grid-column: 1/-1;
-        }
-        .chart-card.half {
-            min-width: 0;
-        }
-        .chart-title {
-            font-size: 0.83rem;
-            font-weight: 700;
-            letter-spacing: 0.035em;
-            text-transform: uppercase;
-            color: var(--text-dim);
-            margin-bottom: 12px;
-        }
-        .chart-wrap {
-            position: relative;
-            width: 100%;
-            height: 310px;
-        }
-        .chart-wrap.tall {
-            height: 410px;
-        }
-        .chart-wrap.short {
-            height: 270px;
-        }
-        .table-card {
+
+        /* Panel */
+        .panel {
             background: var(--bg-card);
             border: 1px solid var(--border);
             border-radius: var(--radius);
             overflow: hidden;
-            margin-bottom: 22px;
+            backdrop-filter: blur(20px);
+            -webkit-backdrop-filter: blur(20px);
         }
-        .table-header-bar {
-            padding: 14px 20px;
+        .panel-header {
+            padding: 18px 22px;
             border-bottom: 1px solid var(--border);
             display: flex;
-            justify-content: space-between;
             align-items: center;
-            flex-wrap: wrap;
-            gap: 10px;
+            justify-content: space-between;
         }
-        .table-header-bar h3 {
-            font-size: 0.83rem;
-            text-transform: uppercase;
-            letter-spacing: 0.05em;
-            color: var(--text-dim);
+        .panel-header h3 {
+            font-size: 0.95rem;
             font-weight: 700;
+            letter-spacing: -0.3px;
+            color: var(--text-primary);
         }
-        .table-scroll {
-            overflow-x: auto;
-            max-height: 440px;
-            overflow-y: auto;
+        .panel-header .badge {
+            font-size: 0.7rem;
+            background: rgba(10, 108, 255, 0.15);
+            color: var(--blue-light);
+            padding: 4px 12px;
+            border-radius: 50px;
+            letter-spacing: 0.5px;
+            font-weight: 600;
         }
-        table {
+        .panel-body {
+            padding: 20px 22px;
+        }
+
+        /* Faixa Table */
+        .faixa-table {
             width: 100%;
             border-collapse: collapse;
-            font-size: 0.77rem;
-            min-width: 1150px;
+            font-size: 0.85rem;
         }
-        table thead {
+        .faixa-table thead th {
+            text-align: left;
+            padding: 12px 14px;
+            font-size: 0.7rem;
+            text-transform: uppercase;
+            letter-spacing: 0.8px;
+            color: var(--text-muted);
+            border-bottom: 2px solid var(--border);
+            font-weight: 700;
+        }
+        .faixa-table tbody td {
+            padding: 14px 14px;
+            border-bottom: 1px solid rgba(10, 108, 255, 0.1);
+            color: var(--text-secondary);
+        }
+        .faixa-table tbody tr {
+            transition: all 0.2s;
+        }
+        .faixa-table tbody tr:hover {
+            background: rgba(10, 108, 255, 0.04);
+        }
+        .faixa-table .faixa-bar {
+            display: inline-block;
+            height: 6px;
+            border-radius: 3px;
+            background: linear-gradient(90deg, var(--blue-primary), var(--blue-light));
+            margin-right: 8px;
+            vertical-align: middle;
+        }
+        .faixa-table .cancel-rate {
+            display: inline-block;
+            padding: 3px 10px;
+            border-radius: 50px;
+            font-weight: 700;
+            font-size: 0.78rem;
+            letter-spacing: 0.3px;
+        }
+        .cancel-rate.low {
+            background: rgba(0, 214, 143, 0.15);
+            color: #00d68f;
+        }
+        .cancel-rate.mid {
+            background: rgba(255, 176, 32, 0.15);
+            color: #ffb020;
+        }
+        .cancel-rate.high {
+            background: rgba(255, 68, 112, 0.18);
+            color: #ff4470;
+        }
+
+        /* Chart container */
+        .chart-wrap {
+            position: relative;
+            width: 100%;
+            height: 320px;
+        }
+        .chart-wrap canvas {
+            width: 100% !important;
+            height: 100% !important;
+        }
+        .chart-wrap.tall {
+            height: 380px;
+        }
+
+        /* Data table */
+        .data-table-wrap {
+            max-height: 500px;
+            overflow-y: auto;
+            overflow-x: auto;
+        }
+        .data-table {
+            width: 100%;
+            border-collapse: collapse;
+            font-size: 0.8rem;
+            min-width: 900px;
+        }
+        .data-table thead {
             position: sticky;
             top: 0;
             z-index: 2;
         }
-        table thead th {
-            background: rgba(14, 165, 233, 0.13);
-            color: #bae6fd;
-            padding: 11px 13px;
+        .data-table thead th {
+            background: var(--bg-card);
+            padding: 12px 10px;
             text-align: left;
-            font-weight: 700;
-            letter-spacing: 0.035em;
+            font-size: 0.68rem;
             text-transform: uppercase;
-            font-size: 0.7rem;
-            border-bottom: 2px solid rgba(14, 165, 233, 0.24);
+            letter-spacing: 0.7px;
+            color: var(--text-muted);
+            border-bottom: 2px solid var(--border);
+            font-weight: 700;
+        }
+        .data-table tbody td {
+            padding: 10px 10px;
+            border-bottom: 1px solid rgba(10, 108, 255, 0.08);
+            color: var(--text-secondary);
             white-space: nowrap;
         }
-        table tbody td {
-            padding: 10px 13px;
-            border-bottom: 1px solid rgba(59, 130, 246, 0.07);
-            white-space: nowrap;
-        }
-        table tbody tr {
-            transition: var(--transition);
-        }
-        table tbody tr:hover {
-            background: rgba(14, 165, 233, 0.04);
+        .data-table tbody tr:hover {
+            background: rgba(10, 108, 255, 0.03);
         }
         .status-badge {
             display: inline-block;
-            padding: 3px 11px;
-            border-radius: 999px;
-            font-size: 0.68rem;
+            padding: 3px 10px;
+            border-radius: 50px;
             font-weight: 700;
-            letter-spacing: 0.04em;
-            text-transform: uppercase;
+            font-size: 0.72rem;
+            letter-spacing: 0.3px;
         }
-        .status-ativo {
-            background: rgba(34, 197, 94, 0.14);
-            color: #4ade80;
-            border: 1px solid rgba(34, 197, 94, 0.28);
+        .status-badge.ativo {
+            background: rgba(0, 214, 143, 0.15);
+            color: #00d68f;
         }
-        .status-cancelado {
-            background: rgba(239, 68, 68, 0.14);
-            color: #f87171;
-            border: 1px solid rgba(239, 68, 68, 0.28);
+        .status-badge.cancelado {
+            background: rgba(255, 68, 112, 0.18);
+            color: #ff4470;
         }
-        .footer {
-            text-align: center;
-            padding: 14px;
-            font-size: 0.7rem;
-            color: var(--text-dim);
-            letter-spacing: 0.05em;
-        }
-        ::-webkit-scrollbar {
-            width: 5px;
-            height: 5px;
-        }
-        ::-webkit-scrollbar-track {
-            background: transparent;
-        }
-        ::-webkit-scrollbar-thumb {
-            background: rgba(14, 165, 233, 0.22);
-            border-radius: 3px;
-        }
-        ::-webkit-scrollbar-thumb:hover {
-            background: rgba(14, 165, 233, 0.42);
-        }
-        .flatpickr-calendar {
-            background: #0b1229 !important;
-            border: 1px solid rgba(59, 130, 246, 0.30) !important;
-            box-shadow: 0 22px 55px rgba(0, 0, 0, 0.65) !important;
-            border-radius: 13px !important;
-        }
-        .flatpickr-day {
-            color: #e2e8f0 !important;
-        }
-        .flatpickr-day:hover {
-            background: rgba(14, 165, 233, 0.32) !important;
-        }
-        .flatpickr-day.selected,
-        .flatpickr-day.startRange,
-        .flatpickr-day.endRange {
-            background: var(--blue-1) !important;
-            border-color: var(--blue-1) !important;
-        }
-        .flatpickr-months .flatpickr-month,
-        .flatpickr-current-month .flatpickr-monthDropdown-months {
-            color: #e2e8f0 !important;
-        }
-        .flatpickr-weekday {
-            color: #8899b4 !important;
-        }
-        .flatpickr-day.flatpickr-disabled {
-            color: #475569 !important;
-        }
-        span.flatpickr-weekday {
-            color: #8899b4 !important;
-        }
-        .flatpickr-months .flatpickr-prev-month svg,
-        .flatpickr-months .flatpickr-next-month svg {
-            fill: #8899b4 !important;
-        }
-        .flatpickr-months .flatpickr-prev-month:hover svg,
-        .flatpickr-months .flatpickr-next-month:hover svg {
-            fill: #38bdf8 !important;
+
+        /* Responsive */
+        @media (max-width: 1200px) {
+            .kpi-grid {
+                grid-template-columns: repeat(3, 1fr);
+            }
+            .content-grid {
+                grid-template-columns: 1fr;
+            }
         }
         @media (max-width: 768px) {
-            .dashboard {
-                padding: 10px 8px 24px;
+            .kpi-grid {
+                grid-template-columns: repeat(2, 1fr);
             }
             .header {
-                padding: 16px;
                 flex-direction: column;
-                align-items: flex-start;
-            }
-            .header-title h1 {
-                font-size: 1.3rem;
-            }
-            .kpi-grid {
-                grid-template-columns: repeat(auto-fit, minmax(145px, 1fr));
-                gap: 10px;
-            }
-            .kpi-value {
-                font-size: 1.35rem;
-            }
-            .chart-grid {
-                grid-template-columns: 1fr;
+                gap: 12px;
+                text-align: center;
             }
             .filter-bar {
                 flex-direction: column;
                 align-items: stretch;
             }
+            .period-indicator {
+                margin-left: 0;
+            }
+            .kpi-card .kpi-value {
+                font-size: 1.4rem;
+            }
+        }
+        @media (max-width: 480px) {
+            .kpi-grid {
+                grid-template-columns: 1fr;
+            }
+            .container {
+                padding: 12px 10px;
+            }
+        }
+
+        /* Empty state */
+        .empty-state {
+            text-align: center;
+            padding: 40px;
+            color: var(--text-muted);
+        }
+        .empty-state .icon {
+            font-size: 3rem;
+            margin-bottom: 12px;
+        }
+
+        /* Animations */
+        @keyframes fadeInUp {
+            from {
+                opacity: 0;
+                transform: translateY(20px);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+        .kpi-card,
+        .panel {
+            animation: fadeInUp 0.5s ease forwards;
+        }
+        .kpi-card:nth-child(2) {
+            animation-delay: 0.05s;
+        }
+        .kpi-card:nth-child(3) {
+            animation-delay: 0.1s;
+        }
+        .kpi-card:nth-child(4) {
+            animation-delay: 0.15s;
+        }
+        .kpi-card:nth-child(5) {
+            animation-delay: 0.2s;
         }
     </style>
 </head>
 <body>
-    <div class="dashboard">
+    <div class="container">
+        <!-- HEADER -->
         <div class="header">
-            <div class="header-title">
-                <span>Collina Dreams · Sala Diurno</span>
-                <h1>Borderô de Vendas</h1>
+            <div class="header-left">
+                <div class="header-icon">🏔️</div>
+                <div>
+                    <h1>Collina Dreams · Bordero de Vendas</h1>
+                    <div class="header-subtitle">Dashboard Analítico</div>
+                </div>
             </div>
-            <div class="header-badge">📊 Dashboard Interativo</div>
-        </div>
-
-        <div class="filter-bar">
-            <label>📅 Período</label>
-            <input type="text" id="date-start" class="filter-input" placeholder="Data Inicial" readonly>
-            <span style="color:var(--text-dim)">até</span>
-            <input type="text" id="date-end" class="filter-input" placeholder="Data Final" readonly>
-            <button class="btn-reset" onclick="resetFilters()">⟳ Limpar Filtro</button>
-            <span style="margin-left:auto;font-size:0.76rem;color:var(--text-dim)" id="filter-info"></span>
-        </div>
-
-        <div class="kpi-grid">
-            <div class="kpi-card">
-                <div class="kpi-label">💰 VGV Total</div>
-                <div class="kpi-value" id="kpi-vgv">R$ 0</div>
-                <div class="kpi-sub" id="kpi-vgv-sub"></div>
-            </div>
-            <div class="kpi-card">
-                <div class="kpi-label">💳 Entrada Efetiva Total</div>
-                <div class="kpi-value" id="kpi-entrada">R$ 0</div>
-                <div class="kpi-sub" id="kpi-entrada-sub"></div>
-            </div>
-            <div class="kpi-card">
-                <div class="kpi-label">📋 Total de Vendas</div>
-                <div class="kpi-value" id="kpi-vendas">0</div>
-                <div class="kpi-sub" id="kpi-vendas-sub"></div>
-            </div>
-            <div class="kpi-card">
-                <div class="kpi-label">🎯 Ticket Médio</div>
-                <div class="kpi-value" id="kpi-ticket">R$ 0</div>
-                <div class="kpi-sub" id="kpi-ticket-sub"></div>
-            </div>
-            <div class="kpi-card">
-                <div class="kpi-label">❌ Cancelamentos</div>
-                <div class="kpi-value kpi-accent-red" id="kpi-cancel">0</div>
-                <div class="kpi-sub" id="kpi-cancel-sub"></div>
-            </div>
-            <div class="kpi-card">
-                <div class="kpi-label">✅ Taxa de Conversão</div>
-                <div class="kpi-value kpi-accent-green" id="kpi-conv">0%</div>
-                <div class="kpi-sub" id="kpi-conv-sub"></div>
+            <div class="header-badge">
+                <span class="dot"></span> Dados em Tempo Real
             </div>
         </div>
 
-        <div class="chart-grid">
-            <div class="chart-card full">
-                <div class="chart-title">
-                    ❌ Cancelamentos por Faixa de % Entrada Efetiva &nbsp;
-                    <span style="font-weight:400;font-size:0.7rem;color:var(--text-dim)">(Entrada Efetiva ÷ VGV × 100)</span>
+        <!-- FILTER BAR -->
+        <div class="filter-bar" id="filterBar">
+            <div class="filter-group">
+                <label>📅 De</label>
+                <input type="date" id="dateStart" title="Data inicial">
+            </div>
+            <div class="filter-group">
+                <label>Até</label>
+                <input type="date" id="dateEnd" title="Data final">
+            </div>
+            <button class="btn-filter" onclick="applyFilter()">🔍 Filtrar</button>
+            <button class="btn-reset" onclick="resetFilter()">↺ Limpar</button>
+            <span class="period-indicator" id="periodLabel">📋 Período: Todos os dados</span>
+        </div>
+
+        <!-- KPI CARDS -->
+        <div class="kpi-grid" id="kpiGrid">
+            <div class="kpi-card">
+                <div class="glow-line"></div>
+                <div class="kpi-icon">💰</div>
+                <div class="kpi-label">VGV Total</div>
+                <div class="kpi-value" id="kpiVgv">R$ 0</div>
+                <div class="kpi-sub">Valor Geral de Vendas</div>
+            </div>
+            <div class="kpi-card accent-success">
+                <div class="glow-line"></div>
+                <div class="kpi-icon">✅</div>
+                <div class="kpi-label">Entrada Efetiva Total</div>
+                <div class="kpi-value" id="kpiEntradaEfetiva">R$ 0</div>
+                <div class="kpi-sub">Soma das entradas efetivas</div>
+            </div>
+            <div class="kpi-card">
+                <div class="glow-line"></div>
+                <div class="kpi-icon">📊</div>
+                <div class="kpi-label">Total de Vendas</div>
+                <div class="kpi-value" id="kpiQtdVendas">0</div>
+                <div class="kpi-sub">Vendas no período</div>
+            </div>
+            <div class="kpi-card accent-danger">
+                <div class="glow-line"></div>
+                <div class="kpi-icon">❌</div>
+                <div class="kpi-label">Cancelamentos</div>
+                <div class="kpi-value" id="kpiCancelamentos">0</div>
+                <div class="kpi-sub">Vendas canceladas</div>
+            </div>
+            <div class="kpi-card">
+                <div class="glow-line"></div>
+                <div class="kpi-icon">📉</div>
+                <div class="kpi-label">Taxa de Cancelamento</div>
+                <div class="kpi-value" id="kpiTaxaCancel">0%</div>
+                <div class="kpi-sub">Sobre total de vendas</div>
+            </div>
+        </div>
+
+        <!-- CONTENT: Faixas Table + Chart -->
+        <div class="content-grid">
+            <!-- FAIXAS DE ENTRADA EFETIVA -->
+            <div class="panel">
+                <div class="panel-header">
+                    <h3>📐 Análise por Faixa de % Entrada Efetiva</h3>
+                    <span class="badge" id="badgeTotalFaixa">Total: 0 vendas</span>
                 </div>
-                <div class="chart-wrap tall">
-                    <canvas id="chartCancelFaixa"></canvas>
+                <div class="panel-body" style="overflow-x:auto;">
+                    <table class="faixa-table">
+                        <thead>
+                            <tr>
+                                <th>Faixa</th>
+                                <th>Qtd. Vendas</th>
+                                <th>Cancelados</th>
+                                <th>% Cancel.</th>
+                                <th>Distribuição</th>
+                            </tr>
+                        </thead>
+                        <tbody id="faixaTableBody"></tbody>
+                    </table>
                 </div>
             </div>
 
-            <div class="chart-card half">
-                <div class="chart-title">📈 VGV por Mês</div>
-                <div class="chart-wrap">
-                    <canvas id="chartVgvMes"></canvas>
+            <!-- CHART: Distribuição por Status -->
+            <div class="panel">
+                <div class="panel-header">
+                    <h3>🍩 Distribuição por Faixa de Entrada Efetiva</h3>
+                    <span class="badge">Gráfico</span>
                 </div>
-            </div>
-
-            <div class="chart-card half">
-                <div class="chart-title">📊 Status das Vendas</div>
-                <div class="chart-wrap">
-                    <canvas id="chartStatus"></canvas>
-                </div>
-            </div>
-
-            <div class="chart-card half">
-                <div class="chart-title">🏆 Top Closers (por VGV)</div>
-                <div class="chart-wrap">
-                    <canvas id="chartClosers"></canvas>
-                </div>
-            </div>
-
-            <div class="chart-card half">
-                <div class="chart-title">📣 Top Promotores de Marketing (por VGV)</div>
-                <div class="chart-wrap">
-                    <canvas id="chartPromotores"></canvas>
-                </div>
-            </div>
-
-            <div class="chart-card half">
-                <div class="chart-title">📐 % Médio de Entrada Efetiva por Mês</div>
-                <div class="chart-wrap short">
-                    <canvas id="chartPercEntrada"></canvas>
-                </div>
-            </div>
-
-            <div class="chart-card half">
-                <div class="chart-title">📉 Cancelamentos por Dia</div>
-                <div class="chart-wrap short">
-                    <canvas id="chartCancelDia"></canvas>
+                <div class="panel-body">
+                    <div class="chart-wrap">
+                        <canvas id="chartFaixas"></canvas>
+                    </div>
                 </div>
             </div>
         </div>
 
-        <div class="table-card">
-            <div class="table-header-bar">
-                <h3>📋 Detalhamento de Vendas</h3>
-                <span style="font-size:0.73rem;color:var(--text-dim)" id="table-count"></span>
+        <!-- CHARTS ROW -->
+        <div class="content-grid">
+            <!-- Status Pie -->
+            <div class="panel">
+                <div class="panel-header">
+                    <h3>📊 Status das Vendas</h3>
+                    <span class="badge">ATIVO vs CANCELADO</span>
+                </div>
+                <div class="panel-body">
+                    <div class="chart-wrap">
+                        <canvas id="chartStatus"></canvas>
+                    </div>
+                </div>
             </div>
-            <div class="table-scroll">
-                <table>
-                    <thead>
-                        <tr>
-                            <th>Data</th>
-                            <th>Número</th>
-                            <th>Cessionário</th>
-                            <th>VGV (R$)</th>
-                            <th>Entrada Efetiva (R$)</th>
-                            <th>% Entrada Efetiva</th>
-                            <th>Status</th>
-                            <th>Closer</th>
-                            <th>Promotor</th>
-                            <th>Liner</th>
-                            <th>Saldo (R$)</th>
-                        </tr>
-                    </thead>
-                    <tbody id="table-body"></tbody>
-                </table>
+            <!-- VGV por Mês -->
+            <div class="panel">
+                <div class="panel-header">
+                    <h3>📈 VGV por Mês</h3>
+                    <span class="badge">Tendência</span>
+                </div>
+                <div class="panel-body">
+                    <div class="chart-wrap">
+                        <canvas id="chartVgvMes"></canvas>
+                    </div>
+                </div>
             </div>
         </div>
 
-        <div class="footer">
-            Collina Dreams · Dashboard Borderô · Dados incorporados
+        <!-- DETAILED TABLE -->
+        <div class="content-grid full">
+            <div class="panel">
+                <div class="panel-header">
+                    <h3>📋 Tabela Detalhada de Vendas</h3>
+                    <span class="badge" id="badgeTableCount">0 registros</span>
+                </div>
+                <div class="panel-body" style="padding:0;">
+                    <div class="data-table-wrap">
+                        <table class="data-table">
+                            <thead>
+                                <tr>
+                                    <th>Data</th>
+                                    <th>Unidade</th>
+                                    <th>Cliente</th>
+                                    <th>VGV</th>
+                                    <th>Entrada</th>
+                                    <th>% Entrada</th>
+                                    <th>Entrada Efetiva</th>
+                                    <th>% Ent. Efetiva</th>
+                                    <th>Status</th>
+                                    <th>Closer</th>
+                                </tr>
+                            </thead>
+                            <tbody id="dataTableBody"></tbody>
+                        </table>
+                    </div>
+                </div>
+            </div>
         </div>
     </div>
 
     <script>
-        // ╔══════════════════════════════════════════════════════════════╗
-        // ║  ⚠️  SUBSTITUA O CONTEÚDO DESTA VARIÁVEL PELO CSV COMPLETO  ║
-        // ║     Abra seu arquivo .CSV no Bloco de Notas, copie TUDO     ║
-        // ║     (Ctrl+A, Ctrl+C) e cole aqui entre as crases (``).      ║
-        // ╚══════════════════════════════════════════════════════════════╝
-        const csvRaw = `Qtd Total Parcelas;Sala de vendas;Data;Número;Cessionário;Pontos;Valor negociado;Status;Promotor de marketing;Promotor de telemarketing;Liner;Closer;Pep;Total da entrada;Percentual de entrada (%);Parcelas;Quantidade CARTÃO;R$ CARTAO;Quantidade CHEQUE;Valor Parcelas Cheque Entrada;Quantidade BOLETO;R$ BOLETO;Quantidade DINHEIRO;R$ DINHEIRO;;Quantidade de parcelas de crédito recorrente da entrada;Total em crédito recorrente da entrada em valor monetário (R$);Quantidade TRANSFERENCIA;R$ TRANSFERENCIA;;Qtd Parcelas Saldo;;Total do saldo;Percentual de saldo (%);;Qtd Parcelas Cartao Saldo Restante;Valor Parcelas Cartao Saldo Restante;Quantidade de parcelas em crédito recorrente do saldo;Total em crédito recorrente do saldo em valor monetário (R$);Valor Parcelas Dinheiro Saldo Restante;Qtd Parcelas Dinheiro Saldo Restante;Valor Parcelas Boleto Saldo Restante;Qtd Parcelas Boleto Saldo Restante;Valor Parcelas Cheque Saldo Restante;Qtd Parcelas Cheque Saldo Restante;Total Intermediárias;Qtd Parcelas Itermediárias;Percentual Intermediárias;Qtd Parcelas Intermediaria Cartao;Total Intermediaria Cartao;Total Intermediaria Boleto;Qtd Parcelas Intermediaria Boleto;Total Intermediária Dinheiro;Qtd Parcelas Intermediária Dinheiro;Total Intermediaria Cartao Recorrente;Qtd Parcelas Intermediaria Cartao Recorrente;Qtd Parcelas Intermediaria Transferencia;Total Intermediaria Transferencia;Total Intermediaria Cheque;ENTRADA EFETIVA;Qtd Parcelas Intermediaria Cheque
-132;COLLINA - DREAMS DIURNO;02/01/2026;COLLINA- 04/01;THALES DO CARMO ZULCAO;0;80000;ATIVO;JOSYENE FREITAS;;AMANDA DORADO;LUIS ALVES DO AMARAL NETO;;15999,96;20;12;1;1333,33;0;0;11;14666,63;0;0;;0;0;0;0;;120;;64000,04;80;0;0;0;0;0;0;64000,04;120;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0;1333,33;0
-135;COLLINA - DREAMS DIURNO;02/01/2026;COLLINA - 12/41;RODRIGO FAUSTINO DA SILVA;0;80000;ATIVO;RAPHAEL BUENO DA SILVA ;;ALEX FONSECA VIVIAN;MARCEL VINICIUS DORADO EUGENI;;18000;22,5;15;1;800;0;0;14;17200;0;0;;0;0;0;0;;120;;62000;77,5;0;0;0;0;0;0;62000;120;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0;800;0
-135;COLLINA - DREAMS DIURNO;02/01/2026;COLLINA - 15/16;RODRIGO FAUSTINO DA SILVA;0;80000;ATIVO;RAPHAEL BUENO DA SILVA ;;ALEX FONSECA VIVIAN;MARCEL VINICIUS DORADO EUGENI;;18000;22,5;15;1;800;0;0;14;17200;0;0;;0;0;0;0;;120;;62000;77,5;0;0;0;0;0;0;62000;120;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0;800;0
-138;COLLINA - DREAMS DIURNO;02/01/2026;COLLINA - 35/02;KARINA LEITE DA COSTA;0;120000;ATIVO;PEDRO HENRIQUE GOMES SANTOS;;RENATA DORADO;FABRICIO LELIS BIGNARDI;;23999,86;20;18;0;0;0;0;17;21599,86;0;0;;0;0;1;2400;;120;;96000,14;80;0;0;0;0;0;0;96000,14;120;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0;2400;0
-138;COLLINA - DREAMS DIURNO;02/01/2026;COLLINA - 35/50;ANTONIO FRANCISCO SILVA JUNIOR;0;120000;ATIVO;PEDRO HENRIQUE GOMES SANTOS;;RENATA DORADO;FABRICIO LELIS BIGNARDI;;23999,86;20;18;0;0;0;0;17;21599,86;0;0;;0;0;1;2400;;120;;96000,14;80;0;0;0;0;0;0;96000,14;120;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0;2400;0
-132;COLLINA - DREAMS DIURNO;02/01/2026;COLLINA - 17/40;DENISE RICCI GENOVA;0;80000;ATIVO;SUENE CINTIA DA SILVA;;AMANDA DORADO;FABRICIO LELIS BIGNARDI;;15999,99;20;12;0;0;0;0;10;13090,9;0;0;;0;0;2;2909,09;;120;;64000,01;80;0;0;0;0;0;0;64000,01;120;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0;2909,09;0
-1;COLLINA - DREAMS DIURNO;03/01/2026;COLLINA - 06/04;GABRIELA CRISTINA OTTOBONI ALVES;0;80000;CANCELADO;ADRIANO MOREIRA ;;ALEX FONSECA VIVIAN;AMANDA DORADO;;1600;2;1;1;1600;0;0;0;0;0;0;;0;0;0;0;;0;;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0;1600;0
-1;COLLINA - DREAMS DIURNO;03/01/2026;COLLINA - 15/32;MARCOS FABIANO FERREIRA;0;80000;CANCELADO;JOSYENE FREITAS;;GABRIELLA FURTADO;LUIS ALVES DO AMARAL NETO;;1600;2;1;1;1600;0;0;0;0;0;0;;0;0;0;0;;0;;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0;1600;0
-1;COLLINA - DREAMS DIURNO;03/01/2026;COLLINA - 12/09;MARCOS FABIANO FERREIRA;0;80000;CANCELADO;JOSYENE FREITAS;;GABRIELLA FURTADO;LUIS ALVES DO AMARAL NETO;;1600;2;1;1;1600;0;0;0;0;0;0;;0;0;0;0;;0;;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0;1600;0
-0;COLLINA - DREAMS DIURNO;04/01/2026;COLLINA - 15/37;KARIME MAUES ARAUJO NASCIMENTO;0;77700;CANCELADO;RICARDO MALTCHIK;;RENATA DORADO;FABRICIO LELIS BIGNARDI;;0;0;0;0;0;0;0;0;0;0;0;;0;0;0;0;;0;;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0
-0;COLLINA - DREAMS DIURNO;04/01/2026;COLLINA - 15/19;KARIME MAUES ARAUJO NASCIMENTO;0;77700;CANCELADO;RICARDO MALTCHIK;;RENATA DORADO;FABRICIO LELIS BIGNARDI;;0;0;0;0;0;0;0;0;0;0;0;;0;0;0;0;;0;;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0
-1;COLLINA - DREAMS DIURNO;04/01/2026;COLLINA - 17/02;ADALMIR RODRIGUES SANTOS;0;80000;CANCELADO;PEDRO HENRIQUE GOMES SANTOS;;AMANDA DORADO;FABRICIO LELIS BIGNARDI;;1600;2;1;1;1600;0;0;0;0;0;0;;0;0;0;0;;0;;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0;1600;0
-0;COLLINA - DREAMS DIURNO;04/01/2026;COLLINA - 17/11;ADALMIR RODRIGUES SANTOS;0;80000;CANCELADO;PEDRO HENRIQUE GOMES SANTOS;;AMANDA DORADO;FABRICIO LELIS BIGNARDI;;0;0;0;0;0;0;0;0;0;0;0;;0;0;0;0;;0;;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0`;
+        // ============================================================
+        // DADOS DO CSV INCORPORADOS
+        // ============================================================
+        const rawCSV = `132;COLLINA - DREAMS DIURNO;02/01/2026;COLLINA- 04/01;THALES DO CARMO ZULCAO;0;80000;ATIVO;JOSYENE FREITAS;;AMANDA DORADO;LUIS ALVES DO AMARAL NETO;;15999,96;20;12;1;1333,33;0;0;11;14666,63;0;0;;0;0;0;0;;120;;64000,04;80;0;0;0;0;0;0;64000,04;120;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0; R$ 1.333,33 ;1,7%;0
+135;COLLINA - DREAMS DIURNO;02/01/2026;COLLINA - 12/41;RODRIGO FAUSTINO DA SILVA;0;80000;ATIVO;RAPHAEL BUENO DA SILVA ;;ALEX FONSECA VIVIAN;MARCEL VINICIUS DORADO EUGENI;;18000;22,5;15;1;800;0;0;14;17200;0;0;;0;0;0;0;;120;;62000;77,5;0;0;0;0;0;0;62000;120;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0; R$ 800,00 ;1,0%;
+135;COLLINA - DREAMS DIURNO;02/01/2026;COLLINA - 15/16;RODRIGO FAUSTINO DA SILVA;0;80000;ATIVO;RAPHAEL BUENO DA SILVA ;;ALEX FONSECA VIVIAN;MARCEL VINICIUS DORADO EUGENI;;18000;22,5;15;1;800;0;0;14;17200;0;0;;0;0;0;0;;120;;62000;77,5;0;0;0;0;0;0;62000;120;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0; R$ 800,00 ;1,0%;
+138;COLLINA - DREAMS DIURNO;02/01/2026;COLLINA - 35/02;KARINA LEITE DA COSTA;0;120000;ATIVO;PEDRO HENRIQUE GOMES SANTOS;;RENATA DORADO;FABRICIO LELIS BIGNARDI;;23999,86;20;18;0;0;0;0;17;21599,86;0;0;;0;0;1;2400;;120;;96000,14;80;0;0;0;0;0;0;96000,14;120;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0; R$ 2.400,00 ;2,0%;
+138;COLLINA - DREAMS DIURNO;02/01/2026;COLLINA - 35/50;ANTONIO FRANCISCO SILVA JUNIOR;0;120000;ATIVO;PEDRO HENRIQUE GOMES SANTOS;;RENATA DORADO;FABRICIO LELIS BIGNARDI;;23999,86;20;18;0;0;0;0;17;21599,86;0;0;;0;0;1;2400;;120;;96000,14;80;0;0;0;0;0;0;96000,14;120;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0; R$ 2.400,00 ;2,0%;
+132;COLLINA - DREAMS DIURNO;02/01/2026;COLLINA - 17/40;DENISE RICCI GENOVA;0;80000;ATIVO;SUENE CINTIA DA SILVA;;AMANDA DORADO;FABRICIO LELIS BIGNARDI;;15999,99;20;12;0;0;0;0;10;13090,9;0;0;;0;0;2;2909,09;;120;;64000,01;80;0;0;0;0;0;0;64000,01;120;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0; R$ 2.909,09 ;3,6%;
+1;COLLINA - DREAMS DIURNO;03/01/2026;COLLINA - 06/04;GABRIELA CRISTINA OTTOBONI ALVES;0;80000;CANCELADO;ADRIANO MOREIRA ;;ALEX FONSECA VIVIAN;AMANDA DORADO;;1600;2;1;1;1600;0;0;0;0;0;0;;0;0;0;0;;0;;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0; R$ 1.600,00 ;2,0%;
+1;COLLINA - DREAMS DIURNO;03/01/2026;COLLINA - 15/32;MARCOS FABIANO FERREIRA;0;80000;CANCELADO;JOSYENE FREITAS;;GABRIELLA FURTADO;LUIS ALVES DO AMARAL NETO;;1600;2;1;1;1600;0;0;0;0;0;0;;0;0;0;0;;0;;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0; R$ 1.600,00 ;2,0%;
+1;COLLINA - DREAMS DIURNO;03/01/2026;COLLINA - 12/09;MARCOS FABIANO FERREIRA;0;80000;CANCELADO;JOSYENE FREITAS;;GABRIELLA FURTADO;LUIS ALVES DO AMARAL NETO;;1600;2;1;1;1600;0;0;0;0;0;0;;0;0;0;0;;0;;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0; R$ 1.600,00 ;2,0%;
+0;COLLINA - DREAMS DIURNO;04/01/2026;COLLINA - 15/37;KARIME MAUES ARAUJO NASCIMENTO;0;77700;CANCELADO;RICARDO MALTCHIK;;RENATA DORADO;FABRICIO LELIS BIGNARDI;;0;0;0;0;0;0;0;0;0;0;0;;0;0;0;0;;0;;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0; R$ -   ;0,0%;
+0;COLLINA - DREAMS DIURNO;04/01/2026;COLLINA - 15/19;KARIME MAUES ARAUJO NASCIMENTO;0;77700;CANCELADO;RICARDO MALTCHIK;;RENATA DORADO;FABRICIO LELIS BIGNARDI;;0;0;0;0;0;0;0;0;0;0;0;;0;0;0;0;;0;;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0; R$ -   ;0,0%;
+1;COLLINA - DREAMS DIURNO;04/01/2026;COLLINA - 17/02;ADALMIR RODRIGUES SANTOS;0;80000;CANCELADO;PEDRO HENRIQUE GOMES SANTOS;;AMANDA DORADO;FABRICIO LELIS BIGNARDI;;1600;2;1;1;1600;0;0;0;0;0;0;;0;0;0;0;;0;;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0; R$ 1.600,00 ;2,0%;
+0;COLLINA - DREAMS DIURNO;04/01/2026;COLLINA - 17/11;ADALMIR RODRIGUES SANTOS;0;80000;CANCELADO;PEDRO HENRIQUE GOMES SANTOS;;AMANDA DORADO;FABRICIO LELIS BIGNARDI;;0;0;0;0;0;0;0;0;0;0;0;;0;0;0;0;;0;;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0; R$ -   ;0,0%;
+133;COLLINA - DREAMS DIURNO;05/01/2026;COLLINA - 15/31;ANNE JACQUELINNE LEITE ROCHA BARREIROS;0;80000;ATIVO;GUILHERME CIRQUEIRA LEAO;;GABRIELLA FURTADO;GUSTAVO CARDOSO WEBER;;15999,99;20;13;1;200;0;0;12;15799,99;0;0;;0;0;0;0;;120;;64000,01;80;0;0;0;0;0;0;64000,01;120;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0; R$ 200,00 ;0,3%;
+1;COLLINA - DREAMS DIURNO;07/01/2026;COLLINA - 12/43;PALOMA TERRA  BARBOSA DE CAMPOS;0;80000;CANCELADO;ADRIANO MOREIRA ;;THAMIRES FERNANDES MOREIRA;FABRICIO LELIS BIGNARDI;;1600;2;1;1;1600;0;0;0;0;0;0;;0;0;0;0;;0;;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0; R$ 1.600,00 ;2,0%;
+132;COLLINA - DREAMS DIURNO;07/01/2026;COLLINA - 02/34;DEBORAH FRANCO DE MEDEIROS MARTINS;0;80000;ATIVO;SUENE CINTIA DA SILVA;;THAMIRES FERNANDES MOREIRA;FABRICIO LELIS BIGNARDI;;16000;20;12;0;0;0;0;11;14400;0;0;;0;0;1;1600;;120;;64000;80;0;0;0;0;0;0;64000;120;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0; R$ 1.600,00 ;2,0%;
+139;COLLINA - DREAMS DIURNO;07/01/2026;COLLINA - 02/01;GABRIELLA FREITAS AMORIM PACHECO;0;80000;ATIVO;MATHEUS ESLEY SILVA;;ALEX FONSECA VIVIAN;FABRICIO LELIS BIGNARDI;;15999,85;20;19;1;800;0;0;16;13552,8;0;0;;0;0;2;1647,05;;120;;64000,15;80;0;0;0;0;0;0;64000,15;120;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0; R$ 2.447,05 ;3,1%;
+136;COLLINA - DREAMS DIURNO;07/01/2026;COLLINA - 40/38;YONATAN AVRAHAM BORER;0;116000;ATIVO;MATHEUS DOMINGOS SANTOS ;;GABRIELLA FURTADO;LUIS ALVES DO AMARAL NETO;;24080;20,76;16;0;0;0;0;12;18060;0;0;;0;0;4;6020;;120;;91920;79,24;0;0;0;0;0;0;91920;120;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0; R$ 6.020,00 ;5,2%;
+137;COLLINA - DREAMS DIURNO;07/01/2026;COLLINA- 04/30;YONATAN AVRAHAM BORER;0;77000;ATIVO;MATHEUS DOMINGOS SANTOS ;;GABRIELLA FURTADO;LUIS ALVES DO AMARAL NETO;;15960;20,73;17;0;0;0;0;12;11970;0;0;;0;0;5;3990;;120;;61040;79,27;0;0;0;0;0;0;61040;120;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0; R$ 3.990,00 ;5,2%;
+136;COLLINA - DREAMS DIURNO;07/01/2026;COLLINA- 04/07;YONATAN AVRAHAM BORER;0;77000;ATIVO;MATHEUS DOMINGOS SANTOS ;;GABRIELLA FURTADO;LUIS ALVES DO AMARAL NETO;;15960;20,73;16;0;0;0;0;12;11970;0;0;;0;0;4;3990;;120;;61040;79,27;0;0;0;0;0;0;61040;120;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0; R$ 3.990,00 ;5,2%;
+1;COLLINA - DREAMS DIURNO;08/01/2026;COLLINA - 02/44;PEDRO IVO CITRO NEGRAO;0;80000;CANCELADO;LUAN DOS SANTOS S. FIRMINO;;GABRIELLA FURTADO;FABRICIO LELIS BIGNARDI;;1600;2;1;1;1600;0;0;0;0;0;0;;0;0;0;0;;0;;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0; R$ 1.600,00 ;2,0%;
+135;COLLINA - DREAMS DIURNO;09/01/2026;COLLINA- 04/27;LEANDRO WILLIAM MARTINS;0;80000;ATIVO;SUENE CINTIA DA SILVA;;RENATA DORADO;KIMBERLY CRISTINA TAVARES ;;15998;20;15;1;1600;0;0;14;14398;0;0;;0;0;0;0;;120;;64002;80;0;0;0;0;0;0;64002;120;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0; R$ 1.600,00 ;2,0%;
+138;COLLINA - DREAMS DIURNO;09/01/2026;COLLINA - 31/07;CAIO MARCELO ASSAD MEDEIROS;0;113551,08;ATIVO;MATHEUS ESLEY SILVA;;GUILHERME SANTOS BATISTA;KIMBERLY CRISTINA TAVARES ;;22710,25;20;18;1;1000;0;0;15;19938,25;0;0;;0;0;2;1772;;120;;90840,83;80;0;0;0;0;0;0;90840,83;120;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0; R$ 2.772,00 ;2,4%;
+1;COLLINA - DREAMS DIURNO;09/01/2026;COLLINA - 16/25;RAFAEL GOBBO DE CASTRO;0;98000;CANCELADO;LARISSA RIBEIRO;;RAMON SILVEIRA PINHEIRO;LUIS ALVES DO AMARAL NETO;;1960;2;1;0;0;0;0;0;0;0;0;;0;0;1;1960;;0;;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0; R$ 1.960,00 ;2,0%;
+1;COLLINA - DREAMS DIURNO;09/01/2026;COLLINA - 12/04;RAFAEL GOBBO DE CASTRO;0;80000;CANCELADO;LARISSA RIBEIRO;;RAMON SILVEIRA PINHEIRO;LUIS ALVES DO AMARAL NETO;;1600;2;1;0;0;0;0;0;0;0;0;;0;0;1;1600;;0;;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0; R$ 1.600,00 ;2,0%;
+6;COLLINA - DREAMS DIURNO;10/01/2026;COLLINA - 13/10;FELIPE MAMEDE ARAUJO;0;80009,79;ATIVO;AMANDA CONCEICAO DA COSTA;;GUILHERME SANTOS BATISTA;KIMBERLY CRISTINA TAVARES ;;1949,27;2,44;2;2;1949,27;0;0;0;0;0;0;;0;0;0;0;;0;;0;0;0;0;0;0;0;0;0;0;0;0;78060,52;4;97,56;0;0;0;0;0;0;0;0;4;78060,52;0;0; R$ 1.949,27 ;2,4%;
+1;COLLINA - DREAMS DIURNO;10/01/2026;COLLINA - 12/16;FELIPE MAMEDE ARAUJO;0;79996,66;CANCELADO;AMANDA CONCEICAO DA COSTA;;GUILHERME SANTOS BATISTA;KIMBERLY CRISTINA TAVARES ;;640;0,8;1;1;640;0;0;0;0;0;0;;0;0;0;0;;0;;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0; R$ 640,00 ;0,8%;
+1;COLLINA - DREAMS DIURNO;10/01/2026;COLLINA - 17/27;FELIPE MAMEDE ARAUJO;0;79986,78;CANCELADO;AMANDA CONCEICAO DA COSTA;;GUILHERME SANTOS BATISTA;KIMBERLY CRISTINA TAVARES ;;640;0,8;1;1;640;0;0;0;0;0;0;;0;0;0;0;;0;;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0; R$ 640,00 ;0,8%;
+1;COLLINA - DREAMS DIURNO;10/01/2026;COLLINA - 16/32;FELIPE MAMEDE ARAUJO;0;79996,66;CANCELADO;AMANDA CONCEICAO DA COSTA;;GUILHERME SANTOS BATISTA;KIMBERLY CRISTINA TAVARES ;;640;0,8;1;1;640;0;0;0;0;0;0;;0;0;0;0;;0;;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0; R$ 640,00 ;0,8%;
+130;COLLINA - DREAMS DIURNO;11/01/2026;COLLINA - 17/06;KAREN PERES YAMAMOTO;0;80000;ATIVO;PEDRO HENRIQUE GOMES SANTOS;;GUILHERME SANTOS BATISTA;FABRICIO LELIS BIGNARDI;;14666,72;18,33;10;0;0;0;0;9;14166,72;0;0;;0;0;1;500;;120;;63999,94;80;0;0;0;0;0;0;63999,94;120;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0; R$ 500,00 ;0,6%;
+130;COLLINA - DREAMS DIURNO;11/01/2026;COLLINA - 17/44;KAREN PERES YAMAMOTO;0;80000;ATIVO;PEDRO HENRIQUE GOMES SANTOS;;GUILHERME SANTOS BATISTA;FABRICIO LELIS BIGNARDI;;14666,72;18,33;10;0;0;0;0;9;14166,72;0;0;;0;0;1;500;;120;;63999,94;80;0;0;0;0;0;0;63999,94;120;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0; R$ 500,00 ;0,6%;
+1;COLLINA - DREAMS DIURNO;11/01/2026;COLLINA - 40/25;PATRICIA DOS SANTOS SILVA ROCHA;0;115000;CANCELADO;LUAN DOS SANTOS S. FIRMINO;;RAMON SILVEIRA PINHEIRO;GUSTAVO CARDOSO WEBER;;3000;2,61;1;0;0;0;0;0;0;0;0;;0;0;1;3000;;0;;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0; R$ 3.000,00 ;2,6%;
+1;COLLINA - DREAMS DIURNO;11/01/2026;COLLINA - 16/31;PATRICIA DOS SANTOS SILVA ROCHA;0;80000;CANCELADO;LUAN DOS SANTOS S. FIRMINO;;RAMON SILVEIRA PINHEIRO;GUSTAVO CARDOSO WEBER;;2000;2,5;1;0;0;0;0;0;0;0;0;;0;0;1;2000;;0;;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0; R$ 2.000,00 ;2,5%;
+133;COLLINA - DREAMS DIURNO;12/01/2026;COLLINA - 17/32;LUIS JOSE CANDIDO;0;80000;ATIVO;RAPHAEL BUENO DA SILVA ;;BIANCA DUARTE;LUIS ALVES DO AMARAL NETO;;16399,99;20,5;13;3;1599,99;0;0;9;14400;0;0;;0;0;1;400;;120;;63600,01;79,5;0;0;0;0;0;0;63600,01;120;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0; R$ 1.999,99 ;2,5%;
+133;COLLINA - DREAMS DIURNO;12/01/2026;COLLINA - 15/05;LUIS JOSE CANDIDO;0;80000;ATIVO;RAPHAEL BUENO DA SILVA ;;BIANCA DUARTE;LUIS ALVES DO AMARAL NETO;;16399,99;20,5;13;3;1599,99;0;0;9;14400;0;0;;0;0;0;0;;120;;63600,01;79,5;0;0;0;0;0;0;63600,01;120;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0; R$ 1.999,99 ;2,5%;
+133;COLLINA - DREAMS DIURNO;12/01/2026;COLLINA - 12/18;LUIS JOSE CANDIDO;0;80000;ATIVO;RAPHAEL BUENO DA SILVA ;;BIANCA DUARTE;LUIS ALVES DO AMARAL NETO;;16399,99;20,5;13;3;1599,99;0;0;9;14400;0;0;;0;0;0;0;;120;;63600,01;79,5;0;0;0;0;0;0;63600,01;120;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0; R$ 1.999,99 ;2,5%;
+133;COLLINA - DREAMS DIURNO;12/01/2026;COLLINA - 16/42;LUIS JOSE CANDIDO;0;80000;ATIVO;RAPHAEL BUENO DA SILVA ;;BIANCA DUARTE;LUIS ALVES DO AMARAL NETO;;16399,99;20,5;13;3;1599,99;0;0;9;14400;0;0;;0;0;1;400;;120;;63600,01;79,5;0;0;0;0;0;0;63600,01;120;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0; R$ 1.999,99 ;2,5%;
+4;COLLINA - DREAMS DIURNO;14/01/2026;COLLINA - 14/34;LUCIA BRAITE ANDRADE NETZER;0;78000;ATIVO;FRANCISCO ANTONIO RODRIGUES;;GUILHERME SANTOS BATISTA;MARCEL VINICIUS DORADO EUGENI;;15800;20,26;1;1;15800;0;0;0;0;0;0;;0;0;0;0;;2;;1036,66;1,33;0;0;0;0;0;0;1036,66;2;0;0;61163,34;1;78,41;0;0;0;0;0;0;0;0;0;0;0;0; R$ 15.800,00 ;20,3%;
+133;COLLINA - DREAMS DIURNO;14/01/2026;COLLINA - 14/21;VANUSA GLORIA CRUZ BAPTISTA;0;80000;ATIVO;SUENE CINTIA DA SILVA;;THAMIRES FERNANDES MOREIRA;GUSTAVO CARDOSO WEBER;;15999,99;20;13;2;1600;0;0;11;14399,99;0;0;;0;0;0;0;;120;;64000,01;80;0;0;0;0;0;0;64000,01;120;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0; R$ 1.600,00 ;2,0%;
+48;COLLINA - DREAMS DIURNO;15/01/2026;COLLINA - 17/13;LAIS MAYHARA BELEZA DE ANDRADE HENRIQUES DOS SANTOS EMMANUEL;0;80000;ATIVO;LARISSA RIBEIRO;;THAMIRES FERNANDES MOREIRA;FABRICIO LELIS BIGNARDI;;16999,92;21,25;12;12;16999,92;0;0;0;0;0;0;;0;0;0;0;;36;;63000,08;78,75;0;0;0;0;0;0;63000,08;36;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0; R$ 16.999,92 ;21,2%;
+1;COLLINA - DREAMS DIURNO;15/01/2026;COLLINA - 15/46;FERNANDA APARECIDA FREDERICE;0;78000;CANCELADO;FELIPE DA SILVA RIBEIRO;;GABRIELLA FURTADO;FABRICIO LELIS BIGNARDI;;16000;20,51;1;0;0;0;0;0;0;0;0;;0;0;1;16000;;0;;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0; R$ 16.000,00 ;20,5%;
+1;COLLINA - DREAMS DIURNO;16/01/2026;COLLINA - 17/16;RENATE KUHN MENEGASSI;0;80000;CANCELADO;FRANCISCO ANTONIO RODRIGUES;;GABRIELLA FURTADO;FABRICIO LELIS BIGNARDI;;1600;2;1;0;0;0;0;0;0;0;0;;0;0;1;1600;;0;;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0; R$ 1.600,00 ;2,0%;
+1;COLLINA - DREAMS DIURNO;16/01/2026;COLLINA - 17/34;RENATE KUHN MENEGASSI;0;80000;CANCELADO;FRANCISCO ANTONIO RODRIGUES;;GABRIELLA FURTADO;FABRICIO LELIS BIGNARDI;;1600;2;1;0;0;0;0;0;0;0;0;;0;0;1;1600;;0;;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0; R$ 1.600,00 ;2,0%;
+132;COLLINA - DREAMS DIURNO;17/01/2026;COLLINA - 12/15;CARLOS AUGUSTO PEREIRA MADEIRA;0;80000;ATIVO;PEDRO HENRIQUE GOMES SANTOS;;WILLIAN LUIZ DA SILVA XAVIER;FABRICIO LELIS BIGNARDI;;16000;20;12;1;1300;0;0;9;11700;0;0;;0;0;1;1300;;120;;64000;80;0;0;0;0;0;0;64000;120;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0; R$ 4.300,00 ;5,4%;
+132;COLLINA - DREAMS DIURNO;17/01/2026;COLLINA - 12/24;CARLOS AUGUSTO PEREIRA MADEIRA;0;80000;ATIVO;PEDRO HENRIQUE GOMES SANTOS;;WILLIAN LUIZ DA SILVA XAVIER;FABRICIO LELIS BIGNARDI;;16000;20;12;1;1300;0;0;9;11700;0;0;;0;0;1;1300;;120;;64000;80;0;0;0;0;0;0;64000;120;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0; R$ 4.300,00 ;5,4%;
+132;COLLINA - DREAMS DIURNO;17/01/2026;COLLINA - 16/33;AMANDA STEPHANIE DA SILVA BUCHUD;0;80000;ATIVO;PEDRO HENRIQUE GOMES SANTOS;;RAMON SILVEIRA PINHEIRO;FABRICIO LELIS BIGNARDI;;15999,99;20;12;0;0;0;0;10;13090,9;0;0;;0;0;1;1309,09;;120;;64000,01;80;0;0;0;0;0;0;64000,01;120;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0; R$ 2.909,09 ;3,6%;
+4;COLLINA - DREAMS DIURNO;17/01/2026;COLLINA - 31/05;SABRINA GOVEIA SEVERIANO;0;115000;CANCELADO;FELIPE DA SILVA RIBEIRO;;THAMIRES FERNANDES MOREIRA;KIMBERLY CRISTINA TAVARES ;;6063,62;5,27;4;4;6063,62;0;0;0;0;0;0;;0;0;0;0;;0;;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0; R$ 6.063,62 ;5,3%;
+2;COLLINA - DREAMS DIURNO;17/01/2026;COLLINA - 30/01;ROBERTO APARECIDO CAPELETTO;0;115000;CANCELADO;PEDRO HENRIQUE GOMES SANTOS;;BIANCA DUARTE;LUIS ALVES DO AMARAL NETO;;15000;13,04;2;0;0;0;0;1;12500;0;0;;0;0;1;2500;;0;;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0; R$ 2.500,00 ;2,2%;
+2;COLLINA - DREAMS DIURNO;17/01/2026;COLLINA - 40/27;ROBERTO APARECIDO CAPELETTO;0;115000;CANCELADO;PEDRO HENRIQUE GOMES SANTOS;;BIANCA DUARTE;LUIS ALVES DO AMARAL NETO;;15000;13,04;2;0;0;0;0;1;12500;0;0;;0;0;1;2500;;0;;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0; R$ 2.500,00 ;2,2%;
+2;COLLINA - DREAMS DIURNO;17/01/2026;COLLINA - 31/51;ROBERTO APARECIDO CAPELETTO;0;115000;CANCELADO;PEDRO HENRIQUE GOMES SANTOS;;BIANCA DUARTE;LUIS ALVES DO AMARAL NETO;;15000;13,04;2;0;0;0;0;1;12500;0;0;;0;0;1;2500;;0;;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0; R$ 2.500,00 ;2,2%;
+2;COLLINA - DREAMS DIURNO;17/01/2026;COLLINA - 31/10;ROBERTO APARECIDO CAPELETTO;0;115000;CANCELADO;PEDRO HENRIQUE GOMES SANTOS;;BIANCA DUARTE;LUIS ALVES DO AMARAL NETO;;15000;13,04;2;0;0;0;0;1;12500;0;0;;0;0;1;2500;;0;;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0; R$ 2.500,00 ;2,2%;
+1;COLLINA - DREAMS DIURNO;18/01/2026;COLLINA - 02/51;CRISTIANE PINHEIRO PATRICIO;0;80000;CANCELADO;AMANDA CONCEICAO DA COSTA;;GUILHERME SANTOS BATISTA;FABRICIO LELIS BIGNARDI;;2000;2,5;1;1;2000;0;0;0;0;0;0;;0;0;0;0;;0;;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0; R$ 2.000,00 ;2,5%;
+139;COLLINA - DREAMS DIURNO;19/01/2026;COLLINA - 16/46;LUIZ GUSTAVO TEREZONI;0;80000;ATIVO;FRANCISCO ANTONIO RODRIGUES;;GABRIELLA FURTADO;LUIS ALVES DO AMARAL NETO;;16000;20;19;1;1600;0;0;17;13600;0;0;;0;0;0;0;;120;;64800;81;0;0;0;0;0;0;64800;120;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0; R$ 2.400,00 ;3,0%;
+1;COLLINA - DREAMS DIURNO;20/01/2026;COLLINA - 16/02;ELENICE DOS SANTOS TEIXEIRA MACEDO;0;80000;CANCELADO;LUAN DOS SANTOS S. FIRMINO;;GUILHERME SANTOS BATISTA;GUSTAVO CARDOSO WEBER;;3000;3,75;1;0;0;0;0;0;0;0;0;;0;0;1;3000;;0;;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0; R$ 3.000,00 ;3,8%;
+1;COLLINA - DREAMS DIURNO;20/01/2026;COLLINA - 17/08;ELENICE DOS SANTOS TEIXEIRA MACEDO;0;80000;CANCELADO;LUAN DOS SANTOS S. FIRMINO;;GUILHERME SANTOS BATISTA;GUSTAVO CARDOSO WEBER;;3000;3,75;1;0;0;0;0;0;0;0;0;;0;0;1;3000;;0;;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0; R$ 3.000,00 ;3,8%;
+138;COLLINA - DREAMS DIURNO;22/01/2026;COLLINA - 35/51;CRISTIANE CRUZ E SOUSA BIANCARDI;0;120000;ATIVO;FRANCISCO ANTONIO RODRIGUES;;RENATA DORADO;FABRICIO LELIS BIGNARDI;;24000,05;20;18;0;0;0;0;16;17882,4;0;0;;0;0;2;6117,65;;120;;95999,95;80;0;0;0;0;0;0;95999,95;120;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0; R$ 6.117,65 ;5,1%;
+46;COLLINA - DREAMS DIURNO;25/01/2026;COLLINA - 23/17;ALLAN GOMES DE MENEZES;0;80000;ATIVO;FELIPE DA SILVA RIBEIRO;;WILLIAN LUIZ DA SILVA XAVIER;FABRICIO LELIS BIGNARDI;;16000;20;10;0;0;0;0;8;12800;0;0;;0;0;2;3200;;36;;64000;80;0;0;0;0;0;0;64000;36;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0; R$ 3.200,00 ;4,0%;
+2;COLLINA - DREAMS DIURNO;25/01/2026;COLLINA - 17/38;ELIER LIMA HERNANDEZ;0;80000;CANCELADO;FRANCISCO ANTONIO RODRIGUES;;RENATA DORADO;FABRICIO LELIS BIGNARDI;;1600;2;2;2;1600;0;0;0;0;0;0;;0;0;0;0;;0;;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0; R$ 1.600,00 ;2,0%;
+1;COLLINA - DREAMS DIURNO;25/01/2026;COLLINA - 15/44;SAIDA VERONICA CLAROS MONTANO;0;80000;CANCELADO;JOSYENE FREITAS;;RAMON SILVEIRA PINHEIRO;RAMON SILVEIRA PINHEIRO;;3333,34;4,17;1;0;0;0;0;0;0;0;0;;0;0;0;0;;0;;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0; R$ 3.333,34 ;4,2%;
+139;COLLINA - DREAMS DIURNO;25/01/2026;COLLINA - 15/33;SAIDA VERONICA CLAROS MONTANO;0;80000;ATIVO;JOSYENE FREITAS;;RAMON SILVEIRA PINHEIRO;RAMON SILVEIRA PINHEIRO;;15999,94;20;19;0;0;0;0;18;12666,6;0;0;;0;0;0;0;;120;;64000,06;80;0;0;0;0;0;0;64000,06;120;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0; R$ 3.333,34 ;4,2%;
+139;COLLINA - DREAMS DIURNO;25/01/2026;COLLINA - 35/03;SAIDA VERONICA CLAROS MONTANO;0;120000;ATIVO;JOSYENE FREITAS;;RAMON SILVEIRA PINHEIRO;RAMON SILVEIRA PINHEIRO;;23999,98;20;19;0;0;0;0;18;20666,64;0;0;;0;0;1;3333,34;;120;;96000,02;80;0;0;0;0;0;0;96000,02;120;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0; R$ 3.333,34 ;2,8%;
+1;COLLINA - DREAMS DIURNO;26/01/2026;COLLINA - 17/43;IGOR SANTANA DE CARVALHO;0;80000;CANCELADO;MATHEUS DOMINGOS SANTOS ;;THAMIRES FERNANDES MOREIRA;FABRICIO LELIS BIGNARDI;;5000;6,25;1;0;0;0;0;0;0;0;0;;0;0;1;5000;;0;;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0; R$ 5.000,00 ;6,3%;
+126;COLLINA - DREAMS DIURNO;27/01/2026;COLLINA- 04/09;GENIVALDO TEIXEIRA BARBOSA;0;77000;ATIVO;LARISSA RIBEIRO;;THAMIRES FERNANDES MOREIRA;FABRICIO LELIS BIGNARDI;;15999,96;20,78;6;6;15999,96;0;0;0;0;0;0;;0;0;0;0;;120;;61000,04;79,22;0;0;0;0;0;0;61000,04;120;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0; R$ 15.999,96 ;20,8%;
+1;COLLINA - DREAMS DIURNO;28/01/2026;COLLINA - 17/20;CHARLES LIMA GONCALVES;0;80000;CANCELADO;PEDRO HENRIQUE GOMES SANTOS;;BIANCA DUARTE;FABRICIO LELIS BIGNARDI;;1600;2;1;0;0;0;0;0;0;0;0;;0;0;1;1600;;0;;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0; R$ 1.600,00 ;2,0%;
+132;COLLINA - DREAMS DIURNO;30/01/2026;COLLINA - 14/24;GILEADE SANTOS SOUZA;0;80000;ATIVO;JOSYENE FREITAS;;GUILHERME SANTOS BATISTA;KIMBERLY CRISTINA TAVARES ;;15999,96;20;12;3;3999,99;0;0;9;11999,97;0;0;;0;0;0;0;;120;;64000,04;80;0;0;0;0;0;0;64000,04;120;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0; R$ 3.999,99 ;5,0%;
+96;COLLINA - DREAMS DIURNO;31/01/2026;COLLINA - 16/39;LUCAS DE OLIVEIRA;0;80000;ATIVO;PEDRO HENRIQUE GOMES SANTOS;;GUILHERME SANTOS BATISTA;LUIS ALVES DO AMARAL NETO;;15999,96;20;12;0;0;0;0;10;13333,3;0;0;;0;0;2;2666,66;;84;;64000,04;80;0;0;0;0;0;0;64000,04;84;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0; R$ 2.666,66 ;3,3%;
+1;COLLINA - DREAMS DIURNO;01/02/2026;COLLINA - 17/37;CAROLINA DE LIMA BRITO;0;80000;CANCELADO;MATHEUS ESLEY SILVA;;GABRIELLA FURTADO;FABRICIO LELIS BIGNARDI;;4000;5;1;0;0;0;0;0;0;0;0;;0;0;0;0;;0;;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0; R$ 4.000,00 ;5,0%;
+2;COLLINA - DREAMS DIURNO;01/02/2026;COLLINA - 17/49;STEPHANI ALMEIDA DOS SANTOS;0;80000;CANCELADO;JOSYENE FREITAS;;RAMON SILVEIRA PINHEIRO;FABRICIO LELIS BIGNARDI;;1600;2;2;1;800;0;0;0;0;0;0;;0;0;1;800;;0;;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0; R$ 1.600,00 ;2,0%;
+138;COLLINA - DREAMS DIURNO;03/02/2026;COLLINA - 15/45;FABIO CARLOS BRANDAO;0;80000;ATIVO;RICARDO MALTCHIK;;AMANDA DORADO;AMANDA DORADO;;15999,84;20;18;1;888,88;0;0;16;14222,08;0;0;;0;0;1;888,88;;120;;64000,16;80;0;0;0;0;0;0;64000,16;120;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0; R$ 1.777,76 ;2,2%;
+138;COLLINA - DREAMS DIURNO;03/02/2026;COLLINA - 16/14;FABIO CARLOS BRANDAO;0;80000;ATIVO;RICARDO MALTCHIK;;AMANDA DORADO;AMANDA DORADO;;15999,84;20;18;1;888,88;0;0;16;14222,08;0;0;;0;0;1;888,88;;120;;64000,16;80;0;0;0;0;0;0;64000,16;120;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0; R$ 1.777,76 ;2,2%;
+138;COLLINA - DREAMS DIURNO;03/02/2026;COLLINA - 17/28;FABIO CARLOS BRANDAO;0;80000;ATIVO;RICARDO MALTCHIK;;AMANDA DORADO;AMANDA DORADO;;15999,84;20;18;1;888,88;0;0;16;14222,08;0;0;;0;0;1;888,88;;120;;64000,16;80;0;0;0;0;0;0;64000,16;120;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0; R$ 1.777,76 ;2,2%;
+121;COLLINA - DREAMS DIURNO;06/02/2026;COLLINA - 12/17;BIANCA MARTINS SILVA;0;80000;ATIVO;LARISSA VITORIA;;GUILHERME SANTOS BATISTA;FABRICIO LELIS BIGNARDI;;16200;20,25;1;1;16200;0;0;0;0;0;0;;0;0;0;0;;120;;63800;79,75;0;0;0;0;0;0;63800;120;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0; R$ 16.200,00 ;20,3%;
+153;COLLINA - DREAMS DIURNO;07/02/2026;COLLINA - 15/47;CLEITON AZEVEDO DOS SANTOS;0;80000;ATIVO;FELIPE DA SILVA RIBEIRO;;RENATA DORADO;KIMBERLY CRISTINA TAVARES ;;16000;20;33;4;1600;0;0;29;14400;0;0;;0;0;0;0;;120;;64000;80;0;0;0;0;0;0;64000;120;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0; R$ 1.600,00 ;2,0%;
+153;COLLINA - DREAMS DIURNO;07/02/2026;COLLINA- 04/29;CLEITON AZEVEDO DOS SANTOS;0;80000;ATIVO;FELIPE DA SILVA RIBEIRO;;RENATA DORADO;KIMBERLY CRISTINA TAVARES ;;16000;20;33;4;1600;0;0;29;14400;0;0;;0;0;0;0;;120;;64000;80;0;0;0;0;0;0;64000;120;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0; R$ 1.600,00 ;2,0%;
+124;COLLINA - DREAMS DIURNO;08/02/2026;COLLINA - 16/49;FERNANDA SILVA LEMOS;0;80000;ATIVO;LUAN DOS SANTOS S. FIRMINO;;RENATA DORADO;KIMBERLY CRISTINA TAVARES ;;16000;20;4;4;16000;0;0;0;0;0;0;;0;0;0;0;;120;;64000;80;0;0;0;0;0;0;64000;120;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0; R$ 16.000,00 ;20,0%;
+124;COLLINA - DREAMS DIURNO;08/02/2026;COLLINA - 12/36;CAIO BOMFIM BÁRIBÁ;0;80000;ATIVO;LUAN DOS SANTOS S. FIRMINO;;RENATA DORADO;KIMBERLY CRISTINA TAVARES ;;16000;20;4;4;16000;0;0;0;0;0;0;;0;0;0;0;;120;;64000;80;0;0;0;0;0;0;64000;120;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0; R$ 16.000,00 ;20,0%;
+132;COLLINA - DREAMS DIURNO;11/02/2026;COLLINA - 16/17;CARLOS DA SILVA;0;80000;ATIVO;LUAN DOS SANTOS S. FIRMINO;;WILLIAN LUIZ DA SILVA XAVIER;FABRICIO LELIS BIGNARDI;;15999,99;20;12;1;1600;0;0;10;13090,9;0;0;;0;0;1;1309,09;;120;;64000,01;80;0;0;0;0;0;0;64000,01;120;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0; R$ 2.909,09 ;3,6%;
+133;COLLINA - DREAMS DIURNO;12/02/2026;COLLINA - 12/30;ITALLO OLIVEIRA DORNELAS;0;80000;ATIVO;LUAN DOS SANTOS S. FIRMINO;;GUILHERME SANTOS BATISTA;KIMBERLY CRISTINA TAVARES ;;16000;20;13;4;1600;0;0;9;14400;0;0;;0;0;0;0;;120;;64000;80;0;0;0;0;0;0;64000;120;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0; R$ 1.600,00 ;2,0%;
+144;COLLINA - DREAMS DIURNO;13/02/2026;COLLINA - 35/33;KEILA CRISTINA PEREIRA;0;120000;ATIVO;FRANCISCO ANTONIO RODRIGUES;;RENATA DORADO;KIMBERLY CRISTINA TAVARES ;;24000;20;24;4;4000;0;0;20;20000;0;0;;0;0;0;0;;120;;96000;80;0;0;0;0;0;0;96000;120;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0; R$ 4.000,00 ;3,3%;
+144;COLLINA - DREAMS DIURNO;13/02/2026;COLLINA - 35/22;HIGOR LUIZ PEREIRA NUNES;0;120000;ATIVO;FRANCISCO ANTONIO RODRIGUES;;RENATA DORADO;KIMBERLY CRISTINA TAVARES ;;24000;20;24;4;4000;0;0;20;20000;0;0;;0;0;0;0;;120;;96000;80;0;0;0;0;0;0;96000;120;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0; R$ 4.000,00 ;3,3%;
+144;COLLINA - DREAMS DIURNO;13/02/2026;COLLINA - 44/15;KEILA CRISTINA PEREIRA;0;120000;ATIVO;FRANCISCO ANTONIO RODRIGUES;;RENATA DORADO;KIMBERLY CRISTINA TAVARES ;;24000;20;24;4;4000;0;0;20;20000;0;0;;0;0;0;0;;120;;96000;80;0;0;0;0;0;0;96000;120;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0; R$ 4.000,00 ;3,3%;
+144;COLLINA - DREAMS DIURNO;13/02/2026;COLLINA - 44/37;HIGOR LUIZ PEREIRA NUNES;0;120000;ATIVO;FRANCISCO ANTONIO RODRIGUES;;RENATA DORADO;KIMBERLY CRISTINA TAVARES ;;24000;20;24;4;4000;0;0;20;20000;0;0;;0;0;0;0;;120;;96000;80;0;0;0;0;0;0;96000;120;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0; R$ 4.000,00 ;3,3%;
+146;COLLINA - DREAMS DIURNO;13/02/2026;COLLINA - 12/39;LETICIA MARQUES PINHEIRO DE OLIVEIRA;0;80000;ATIVO;LARISSA RIBEIRO;;GUILHERME SANTOS BATISTA;KIMBERLY CRISTINA TAVARES ;;16000;20;26;1;800;0;0;24;14400;0;0;;0;0;1;800;;120;;64000;80;0;0;0;0;0;0;64000;120;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0; R$ 1.600,00 ;2,0%;
+2;COLLINA - DREAMS DIURNO;14/02/2026;COLLINA - 12/11;CARLOS EDUARDO CANDIDO FERREIRA;0;80000;CANCELADO;RAPHAEL BUENO DA SILVA ;;GUILHERME SANTOS BATISTA;FABRICIO LELIS BIGNARDI;;1714;2,14;2;0;0;0;0;0;0;0;0;;0;0;2;1714;;0;;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0; R$ 1.714,00 ;2,1%;
+2;COLLINA - DREAMS DIURNO;15/02/2026;COLLINA - 15/48;GABRIEL FEU;0;78000;CANCELADO;LARISSA VITORIA;;THAMIRES FERNANDES MOREIRA;FABRICIO LELIS BIGNARDI;;15000;19,23;1;1;15000;0;0;0;0;0;0;;0;0;0;0;;1;;1312,5;1,68;0;0;0;0;0;0;1312,5;1;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0; R$ 15.000,00 ;19,2%;
+3;COLLINA - DREAMS DIURNO;15/02/2026;COLLINA - 15/17;GABRIEL FEU;0;78000;CANCELADO;LARISSA VITORIA;;THAMIRES FERNANDES MOREIRA;FABRICIO LELIS BIGNARDI;;15000;19,23;2;0;0;0;0;0;0;0;0;;0;0;1;10000;;1;;1312,5;1,68;0;0;0;0;0;0;1312,5;1;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0; R$ 15.000,00 ;19,2%;
+121;COLLINA - DREAMS DIURNO;15/02/2026;COLLINA - 02/41;ROBSON FORAO FERREIRA;0;80000;ATIVO;RAPHAEL BUENO DA SILVA ;;BIANCA DUARTE;LUIS ALVES DO AMARAL NETO;;16000;20;1;1;16000;0;0;0;0;0;0;;0;0;0;0;;120;;64000;80;0;0;0;0;0;0;64000;120;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0; R$ 16.000,00 ;20,0%;
+1;COLLINA - DREAMS DIURNO;15/02/2026;COLLINA - 12/25;ALINE MACIEL VIEIRA LIMA;0;80000;CANCELADO;RAPHAEL BUENO DA SILVA ;;GABRIELLA FURTADO;FABRICIO LELIS BIGNARDI;;1600;2;1;1;1600;0;0;0;0;0;0;;0;0;0;0;;0;;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0; R$ 1.600,00 ;2,0%;
+136;COLLINA - DREAMS DIURNO;16/02/2026;COLLINA - 15/34;SILVIA HELENA TOGNOLI;0;80000;ATIVO;LARISSA VITORIA;;GUILHERME SANTOS BATISTA;GUILHERME SANTOS BATISTA;;16000;20;16;8;8000;0;0;8;8000;0;0;;0;0;0;0;;120;;64000;80;0;0;0;0;0;0;64000;120;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0; R$ 8.000,00 ;10,0%;
+141;COLLINA - DREAMS DIURNO;16/02/2026;COLLINA - 17/12;CARLA RODRIGUES DA SILVA;0;80000;ATIVO;LARISSA VITORIA;;WILLIAN LUIZ DA SILVA XAVIER;FABRICIO LELIS BIGNARDI;;16000;20;21;0;0;0;0;17;12240;0;0;;0;0;4;3760;;120;;64000;80;0;0;0;0;0;0;64000;120;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0; R$ 3.760,00 ;4,7%;
+37;COLLINA - DREAMS DIURNO;18/02/2026;COLLINA - 12/05;THIAGO DOUTOR PELEGRINE;0;80000;ATIVO;JOSYENE FREITAS;;BIANCA DUARTE;FABRICIO LELIS BIGNARDI;;16100;20,12;2;0;0;0;0;1;6100;0;0;;0;0;1;10000;;35;;63900;79,88;0;0;0;0;0;0;62125;35;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0; R$ 10.000,00 ;12,5%;
+36;COLLINA - DREAMS DIURNO;18/02/2026;COLLINA - 12/51;THIAGO DOUTOR PELEGRINE;0;80000;ATIVO;JOSYENE FREITAS;;BIANCA DUARTE;FABRICIO LELIS BIGNARDI;;16100;20,12;2;0;0;0;0;1;6100;0;0;;0;0;0;0;;34;;63900;79,88;0;0;0;0;0;0;60350;34;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0; R$ 10.000,00 ;12,5%;
+133;COLLINA - DREAMS DIURNO;20/02/2026;COLLINA - 35/41;KLEBER SANTOS FERREIRA;0;120000;ATIVO;FELIPE DA SILVA RIBEIRO;;RENATA DORADO;KIMBERLY CRISTINA TAVARES ;;24000;20;13;1;12000;0;0;11;11000;0;0;;0;0;1;1000;;120;;96000;80;0;0;0;0;0;0;96000;120;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0; R$ 13.000,00 ;10,8%;
+145;COLLINA - DREAMS DIURNO;21/02/2026;COLLINA - 12/42;ROGERIO VIERA DOS SANTOS;0;80000;ATIVO;LARISSA VITORIA;;RENATA DORADO;KIMBERLY CRISTINA TAVARES ;;16000,07;20;25;1;333,33;0;0;23;15333,41;0;0;;0;0;0;0;;120;;63999,93;80;0;0;0;0;0;0;63999,93;120;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0; R$ 666,66 ;0,8%;
+145;COLLINA - DREAMS DIURNO;21/02/2026;COLLINA - 14/38;ROGERIO VIERA DOS SANTOS;0;80000;ATIVO;LARISSA VITORIA;;RENATA DORADO;KIMBERLY CRISTINA TAVARES ;;16000,07;20;25;1;333,33;0;0;23;15333,41;0;0;;0;0;0;0;;120;;63999,93;80;0;0;0;0;0;0;63999,93;120;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0; R$ 666,66 ;0,8%;
+144;COLLINA - DREAMS DIURNO;21/02/2026;COLLINA - 12/38;EDUARDO SERENA JUNIOR;0;80000;ATIVO;LARISSA VITORIA;;RENATA DORADO;KIMBERLY CRISTINA TAVARES ;;16000,08;20;24;1;666,67;0;0;23;15333,41;0;0;;0;0;0;0;;120;;63999,92;80;0;0;0;0;0;0;63999,92;120;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0; R$ 666,67 ;0,8%;
+144;COLLINA - DREAMS DIURNO;21/02/2026;COLLINA - 14/44;EDUARDO SERENA JUNIOR;0;80000;ATIVO;LARISSA VITORIA;;RENATA DORADO;KIMBERLY CRISTINA TAVARES ;;16000,08;20;24;1;666,67;0;0;23;15333,41;0;0;;0;0;0;0;;120;;63999,92;80;0;0;0;0;0;0;63999,92;120;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0; R$ 666,67 ;0,8%;
+1;COLLINA - DREAMS DIURNO;21/02/2026;COLLINA - 15/26;THALITTA CRISTINA ANDRADE RIBEIRO;0;80000;CANCELADO;FELIPE DA SILVA RIBEIRO;;GABRIELLA FURTADO;GUSTAVO CARDOSO WEBER;;1600;2;1;0;0;0;0;0;0;0;0;;0;0;0;0;;0;;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0; R$ 1.600,00 ;2,0%;
+1;COLLINA - DREAMS DIURNO;21/02/2026;COLLINA - 15/46;WALDYR FERREIRA DE BRITO JUNIOR;0;80000;CANCELADO;RICARDO MALTCHIK;;GUSTAVO CARDOSO WEBER;GUSTAVO CARDOSO WEBER;;1600;2;1;0;0;0;0;0;0;0;0;;0;0;0;0;;0;;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0; R$ 1.600,00 ;2,0%;
+145;COLLINA - DREAMS DIURNO;22/02/2026;COLLINA - 02/02;EVERTON APARECIDO ANTONIO MARTINS;0;80000;ATIVO;RICARDO MALTCHIK;;GABRIELLA FURTADO;FABRICIO LELIS BIGNARDI;;16000;20;25;0;0;0;0;24;15360;0;0;;0;0;0;0;;120;;64000;80;0;0;0;0;0;0;64000;120;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0; R$ 640,00 ;0,8%;
+138;COLLINA - DREAMS DIURNO;25/02/2026;COLLINA - 16/03;RAFAEL PEREIRA ALVES;0;80000;ATIVO;RAPHAEL BUENO DA SILVA ;;GABRIELLA FURTADO;MARCIO DENNEY;;15999,84;20;18;0;0;0;0;17;15110,95;0;0;;0;0;0;0;;120;;64000,16;80;0;0;0;0;0;0;64000,16;120;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0; R$ 888,89 ;1,1%;
+133;COLLINA - DREAMS DIURNO;27/02/2026;COLLINA - 17/33;BIANCA PAULA DA SILVA;0;80000;ATIVO;LARISSA RIBEIRO;;THAMIRES FERNANDES MOREIRA;FABRICIO LELIS BIGNARDI;;16000;20;13;0;0;0;0;8;8000;0;0;;0;0;4;4000;;120;;64000;80;0;0;0;0;0;0;64000;120;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0; R$ 8.000,00 ;10,0%;
+136;COLLINA - DREAMS DIURNO;28/02/2026;COLLINA - 16/06;THAIS GARCIA;0;80000;ATIVO;SERGIO CEZAR DA SILVA ;;GABRIELLA FURTADO;LUIS ALVES DO AMARAL NETO;;15999,9;20;16;0;0;0;0;15;15433,9;0;0;;0;0;0;0;;120;;64000,1;80;0;0;0;0;0;0;64000,1;120;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0; R$ 566,00 ;0,7%;
+1;COLLINA - DREAMS DIURNO;28/02/2026;COLLINA - 16/16;ARMANDO NEVES GOMES FRAU;0;80000;CANCELADO;LARISSA VITORIA;;AMANDA DORADO;AMANDA DORADO;;1600;2;1;0;0;0;0;0;0;0;0;;0;0;0;0;;0;;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0; R$ 1.600,00 ;2,0%;
+1;COLLINA - DREAMS DIURNO;01/03/2026;COLLINA - 16/41;JAQUELINE SILVA OLIVEIRA;0;85000;CANCELADO;ADRIANO MOREIRA ;;AMANDA DORADO;AMANDA DORADO;;566,66;0,67;1;1;566,66;0;0;0;0;0;0;;0;0;0;0;;0;;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0; R$ 566,66 ;0,7%;
+1;COLLINA - DREAMS DIURNO;01/03/2026;COLLINA - 20/50;JAQUELINE SILVA OLIVEIRA;0;85000;CANCELADO;ADRIANO MOREIRA ;;AMANDA DORADO;AMANDA DORADO;;566,66;0,67;1;1;566,66;0;0;0;0;0;0;;0;0;0;0;;0;;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0; R$ 566,66 ;0,7%;
+1;COLLINA - DREAMS DIURNO;01/03/2026;COLLINA - 23/01;JAQUELINE SILVA OLIVEIRA;0;85000;CANCELADO;ADRIANO MOREIRA ;;AMANDA DORADO;AMANDA DORADO;;566,66;0,67;1;1;566,66;0;0;0;0;0;0;;0;0;0;0;;0;;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0; R$ 566,66 ;0,7%;
+1;COLLINA - DREAMS DIURNO;01/03/2026;COLLINA - 12/08;RAFAEL FRANCISCO SANTOS DE SOUZA;0;80000;CANCELADO;PEDRO HENRIQUE GOMES SANTOS;;BIANCA DUARTE;KIMBERLY CRISTINA TAVARES ;;888,88;1,11;1;1;888,88;0;0;0;0;0;0;;0;0;0;0;;0;;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0; R$ 888,88 ;1,1%;
+132;COLLINA - DREAMS DIURNO;03/03/2026;COLLINA - 12/33;JEAN CARLOS MARTINS BARBOSA;0;80000;ATIVO;RAPHAEL BUENO DA SILVA ;;GABRIELLA FURTADO;FABRICIO LELIS BIGNARDI;;15999,99;20;12;0;0;0;0;11;14399,99;0;0;;0;0;0;0;;120;;64000,01;80;0;0;0;0;0;0;64000,01;120;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0; R$ 1.600,00 ;2,0%;
+139;COLLINA - DREAMS DIURNO;04/03/2026;COLLINA - 40/48;UESLEI FERNANDO TONELOTE;0;113500;ATIVO;PEDRO HENRIQUE GOMES SANTOS;;RENATA DORADO;FABRICIO LELIS BIGNARDI;;22700;20;19;1;2270;0;0;18;20430;0;0;;0;0;0;0;;120;;90800;80;0;0;0;0;0;0;90800;120;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0; R$ 2.270,00 ;2,0%;
+132;COLLINA - DREAMS DIURNO;04/03/2026;COLLINA - 15/37;PRISCILA SILVA DE FREITAS;0;80000;ATIVO;RAPHAEL BUENO DA SILVA ;;GUSTAVO CARDOSO WEBER;GUSTAVO CARDOSO WEBER;;15999,99;20;12;3;3927,27;0;0;8;10472,72;0;0;;0;0;0;0;;120;;64000,01;80;0;0;0;0;0;0;64000,01;120;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0; R$ 5.527,27 ;6,9%;
+145;COLLINA - DREAMS DIURNO;05/03/2026;COLLINA - 17/01;GABRIEL FRANCESCOLI SILVA CAMPOS;0;80000;ATIVO;PEDRO HENRIQUE GOMES SANTOS;;RENATA DORADO;FABRICIO LELIS BIGNARDI;;16000,16;20;25;0;0;0;0;24;14000,16;0;0;;0;0;0;0;;120;;63999,84;80;0;0;0;0;0;0;63999,84;120;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0; R$ 2.000,00 ;2,5%;
+138;COLLINA - DREAMS DIURNO;05/03/2026;COLLINA - 16/04;MARK DAVID GARCIA SANTOS;0;80000;ATIVO;SERGIO CEZAR DA SILVA ;;BIANCA DUARTE;LUIS ALVES DO AMARAL NETO;;15995,3;19,99;18;1;1598;0;0;16;13550,4;0;0;;0;0;1;846,9;;120;;64004,7;80,01;0;0;0;0;0;0;64004,7;120;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0; R$ 2.444,90 ;3,1%;
+1;COLLINA - DREAMS DIURNO;06/03/2026;COLLINA - 15/39;LEONARDO SIQUEIRA PESSANHA;0;79900;CANCELADO;JOSYENE FREITAS;;GABRIELLA FURTADO;LUIS ALVES DO AMARAL NETO;;1598;2;1;0;0;0;0;0;0;0;0;;0;0;0;0;;0;;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0; R$ 1.598,00 ;2,0%;
+0;COLLINA - DREAMS DIURNO;07/03/2026;COLLINA- 04/48;WILLIAM RODRIGUES DE OLIVEIRA;0;80000;CANCELADO;SUENE CINTIA DA SILVA;;GABRIELLA FURTADO;BIANCA SANTOS ;;0;0;0;0;0;0;0;0;0;0;0;;0;0;0;0;;0;;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0; R$ -   ;0,0%;
+0;COLLINA - DREAMS DIURNO;07/03/2026;COLLINA - 05/27;WILLIAM RODRIGUES DE OLIVEIRA;0;80000;CANCELADO;SUENE CINTIA DA SILVA;;GABRIELLA FURTADO;BIANCA SANTOS ;;0;0;0;0;0;0;0;0;0;0;0;;0;0;0;0;;0;;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0; R$ -   ;0,0%;
+1;COLLINA - DREAMS DIURNO;09/03/2026;COLLINA - 17/42;JAQUELINE SOUZA SANTOS;0;80000;CANCELADO;SERGIO CEZAR DA SILVA ;;GUILHERME SANTOS BATISTA;FABRICIO LELIS BIGNARDI;;6000;7,5;1;0;0;0;0;0;0;0;0;;0;0;0;0;;0;;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0; R$ 6.000,00 ;7,5%;
+1;COLLINA - DREAMS DIURNO;10/03/2026;COLLINA - 29/06;MOZART PEREIRA DE ALMEIDA JUNIOR;0;125000;CANCELADO;FRANCISCO ANTONIO RODRIGUES;;RENATA DORADO;KIMBERLY CRISTINA TAVARES ;;833,33;0,67;1;0;0;0;0;0;0;0;0;;0;0;0;0;;0;;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0; R$ 833,33 ;0,7%;
+123;COLLINA - DREAMS DIURNO;12/03/2026;COLLINA - 16/45;MARIA DE LOURDES GARRIDO DE AGUIAR;0;79990;ATIVO;FRANCISCO ANTONIO RODRIGUES;;GABRIELLA FURTADO;LUIS ALVES DO AMARAL NETO;;15999;20;3;0;0;0;0;2;10666;0;0;;0;0;0;0;;120;;63991;80;0;0;0;0;0;0;63991;120;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0; R$ 5.333,00 ;6,7%;
+123;COLLINA - DREAMS DIURNO;12/03/2026;COLLINA - 16/05;MARIA DE LOURDES GARRIDO DE AGUIAR;0;79990;ATIVO;FRANCISCO ANTONIO RODRIGUES;;GABRIELLA FURTADO;LUIS ALVES DO AMARAL NETO;;15999;20;3;0;0;0;0;2;10666;0;0;;0;0;0;0;;120;;63991;80;0;0;0;0;0;0;63991;120;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0; R$ 5.333,00 ;6,7%;
+126;COLLINA - DREAMS DIURNO;13/03/2026;COLLINA - 16/37;JHENYFFER DAYANE TEIXEIRA DE SOUSA;0;80000;ATIVO;RAPHAEL BUENO DA SILVA ;;AMANDA DORADO;AMANDA DORADO;;15999,96;20;6;0;0;0;0;5;13333,3;0;0;;0;0;0;0;;120;;64000,04;80;0;0;0;0;0;0;64000,04;120;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0; R$ 2.666,66 ;3,3%;
+2;COLLINA - DREAMS DIURNO;13/03/2026;COLLINA - 17/29;BRUNO CESAR GONCALVES TEIXEIRA;0;79500;ATIVO;RICARDO MALTCHIK;;RENATA DORADO;FABRICIO LELIS BIGNARDI;;79500;100;2;2;79500;0;0;0;0;0;0;;0;0;0;0;;0;;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0; R$ 79.500,00 ;100,0%;
+1;COLLINA - DREAMS DIURNO;14/03/2026;COLLINA - 16/48;SABRINA SOARES DOS SANTOS;0;80000;CANCELADO;LARISSA VITORIA;;AMANDA DORADO;AMANDA DORADO;;1600;2;1;0;0;0;0;0;0;0;0;;0;0;0;0;;0;;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0; R$ 1.600,00 ;2,0%;
+1;COLLINA - DREAMS DIURNO;14/03/2026;COLLINA - 16/38;SAMUEL GOMES DA SILVA;0;80000;CANCELADO;RAPHAEL BUENO DA SILVA ;;RENATA DORADO;LUIS ALVES DO AMARAL NETO;;533,34;0,67;1;0;0;0;0;0;0;0;0;;0;0;0;0;;0;;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0; R$ 533,34 ;0,7%;
+1;COLLINA - DREAMS DIURNO;14/03/2026;COLLINA - 17/14;SAMIR BOCATER;0;79992;CANCELADO;RICARDO MALTCHIK;;GABRIELLA FURTADO;BIANCA SANTOS ;;2222;2,78;1;0;0;0;0;0;0;0;0;;0;0;0;0;;0;;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0; R$ 2.222,00 ;2,8%;
+1;COLLINA - DREAMS DIURNO;14/03/2026;COLLINA - 12/04;TSS SOCIEDADE UNIPESSOAL LTDA;0;80000;CANCELADO;JOSYENE FREITAS;;THAMIRES FERNANDES MOREIRA;MARCIO DENNEY;;2666,66;3,33;1;0;0;0;0;0;0;0;0;;0;0;0;0;;0;;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0; R$ 2.666,66 ;3,3%;
+1;COLLINA - DREAMS DIURNO;14/03/2026;COLLINA - 15/11;TSS SOCIEDADE UNIPESSOAL LTDA;0;80000;CANCELADO;JOSYENE FREITAS;;THAMIRES FERNANDES MOREIRA;MARCIO DENNEY;;2666,66;3,33;1;0;0;0;0;0;0;0;0;;0;0;0;0;;0;;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0; R$ 2.666,66 ;3,3%;
+1;COLLINA - DREAMS DIURNO;14/03/2026;COLLINA - 12/06;DANIELLY CRISTINA DE SOUZA SODRE;0;80000;CANCELADO;RAPHAEL BUENO DA SILVA ;;THAMIRES FERNANDES MOREIRA;MARCIO DENNEY;;2500;3,12;1;0;0;0;0;0;0;0;0;;0;0;0;0;;0;;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0; R$ 2.500,00 ;3,1%;
+1;COLLINA - DREAMS DIURNO;14/03/2026;COLLINA - 15/19;DANIELLY CRISTINA DE SOUZA SODRE;0;80000;CANCELADO;RAPHAEL BUENO DA SILVA ;;THAMIRES FERNANDES MOREIRA;MARCIO DENNEY;;2500;3,12;1;0;0;0;0;0;0;0;0;;0;0;0;0;;0;;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0; R$ 2.500,00 ;3,1%;
+1;COLLINA - DREAMS DIURNO;15/03/2026;COLLINA - 05/06;SILVIO CEZAR DOS SANTOS;0;80000;CANCELADO;LUAN DOS SANTOS S. FIRMINO;;BIANCA DUARTE;MARCIO DENNEY;;533,34;0,67;1;0;0;0;0;0;0;0;0;;0;0;0;0;;0;;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0; R$ 533,34 ;0,7%;
+126;COLLINA - DREAMS DIURNO;19/03/2026;COLLINA- 04/24;CLECIO RODRIGO PEREIRA DE ALMEIDA;0;80000;ATIVO;ADRIANO MOREIRA ;;BIANCA DUARTE;MARCIO DENNEY;;15999,96;20;6;0;0;0;0;5;13333,3;0;0;;0;0;0;0;;120;;64000,04;80;0;0;0;0;0;0;64000,04;120;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0; R$ 2.666,66 ;3,3%;
+126;COLLINA - DREAMS DIURNO;19/03/2026;COLLINA - 15/08;CLECIO RODRIGO PEREIRA DE ALMEIDA;0;80000;ATIVO;ADRIANO MOREIRA ;;BIANCA DUARTE;MARCIO DENNEY;;15999,96;20;6;0;0;0;0;5;13333,3;0;0;;0;0;0;0;;120;;64000,04;80;0;0;0;0;0;0;64000,04;120;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0; R$ 2.666,66 ;3,3%;
+1;COLLINA - DREAMS DIURNO;19/03/2026;COLLINA - 17/17;FLAVIA CUNHA DA SILVA PEIXOTO;0;72000;ATIVO;FRANCISCO ANTONIO RODRIGUES;;GABRIELLA FURTADO;FABRICIO LELIS BIGNARDI;;72000;100;1;0;0;0;0;0;0;0;0;;0;0;0;0;;0;;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0; R$ 72.000,00 ;100,0%;
+48;COLLINA - DREAMS DIURNO;19/03/2026;COLLINA - 17/41;FLAVIA CUNHA DA SILVA PEIXOTO;0;80000;ATIVO;FRANCISCO ANTONIO RODRIGUES;;GABRIELLA FURTADO;FABRICIO LELIS BIGNARDI;;16000;20;1;0;0;0;0;0;0;0;0;;0;0;0;0;;47;;64000;80;0;0;0;0;0;0;62666,67;47;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0; R$ 16.000,00 ;20,0%;
+150;COLLINA - DREAMS DIURNO;21/03/2026;COLLINA - 16/44;ADRIANO STRANGHETTI;0;85000;ATIVO;SERGIO CEZAR DA SILVA ;;THAMIRES FERNANDES MOREIRA;BIANCA SANTOS ;;16999,8;20;30;0;0;0;0;28;15866,48;0;0;;0;0;1;566,66;;120;;68000,2;80;0;0;0;0;0;0;68000,2;120;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0; R$ 1.133,32 ;1,3%;
+123;COLLINA - DREAMS DIURNO;21/03/2026;COLLINA - 16/13;MARIA BEATRIZ DE FIGUEIREDO SILVA;0;80000;ATIVO;JONATAS FRANÇA DA SILVA;;GABRIELLA FURTADO;LUIS ALVES DO AMARAL NETO;;15999,99;20;3;0;0;0;0;2;10666,66;0;0;;0;0;0;0;;120;;64000,01;80;0;0;0;0;0;0;64000,01;120;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0; R$ 5.333,33 ;6,7%;
+140;COLLINA - DREAMS DIURNO;22/03/2026;COLLINA - 17/09;PHILIP DOS SANTOS CARVALHO;0;80000;ATIVO;FRANCISCO ANTONIO RODRIGUES;;GABRIELLA FURTADO;FABRICIO LELIS BIGNARDI;;16000;20;20;0;0;0;0;19;15450;0;0;;0;0;0;0;;120;;64000;80;0;0;0;0;0;0;64000;120;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0; R$ 550,00 ;0,7%;
+140;COLLINA - DREAMS DIURNO;22/03/2026;COLLINA - 17/21;PHILIP DOS SANTOS CARVALHO;0;80000;ATIVO;FRANCISCO ANTONIO RODRIGUES;;GABRIELLA FURTADO;FABRICIO LELIS BIGNARDI;;16000;20;20;0;0;0;0;18;14400;0;0;;0;0;1;1050;;120;;64000;80;0;0;0;0;0;0;64000;120;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0; R$ 1.600,00 ;2,0%;
+138;COLLINA - DREAMS DIURNO;22/03/2026;COLLINA - 17/48;ALINE REIS DUTRA;0;80000;ATIVO;SERGIO CEZAR DA SILVA ;;AMANDA DORADO;AMANDA DORADO;;15999,84;20;18;0;0;0;0;17;15110,96;0;0;;0;0;0;0;;120;;64000,16;80;0;0;0;0;0;0;64000,16;120;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0; R$ 888,89 ;1,1%;
+1;COLLINA - DREAMS DIURNO;22/03/2026;COLLINA - 16/08;JOYCE SALES BARROSO;0;80000;CANCELADO;AMANDA CONCEICAO DA COSTA;;GUILHERME SANTOS BATISTA;MARCIO DENNEY;;533,33;0,67;1;0;0;0;0;0;0;0;0;;0;0;0;0;;0;;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0; R$ 533,33 ;0,7%;
+1;COLLINA - DREAMS DIURNO;22/03/2026;COLLINA - 12/01;WELINGTON RICARDO RAMOS DA ROCHA;0;80000;CANCELADO;RICARDO MALTCHIK;;THAMIRES FERNANDES MOREIRA;BIANCA SANTOS ;;533,33;0,67;1;0;0;0;0;0;0;0;0;;0;0;0;0;;0;;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0; R$ 533,33 ;0,7%;
+1;COLLINA - DREAMS DIURNO;23/03/2026;COLLINA - 16/30;ITALO RUAN DE SOUZA SILVA TORRES;0;80000;CANCELADO;PEDRO HENRIQUE GOMES SANTOS;;THAMIRES FERNANDES MOREIRA;FABRICIO LELIS BIGNARDI;;1600;2;1;1;1600;0;0;0;0;0;0;;0;0;0;0;;0;;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0; R$ 1.600,00 ;2,0%;
+38;COLLINA - DREAMS DIURNO;23/03/2026;COLLINA - 17/43;LEONARDO BARBOSA DE LIMA NINO;0;80000;ATIVO;SERGIO CEZAR DA SILVA ;;BIANCA DUARTE;FABRICIO LELIS BIGNARDI;;15999,98;20;5;0;0;0;0;3;11733,32;0;0;;0;0;1;2666,66;;33;;64000,02;80;0;0;0;0;0;0;64000,02;33;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0; R$ 4.266,66 ;5,3%;
+38;COLLINA - DREAMS DIURNO;23/03/2026;COLLINA - 17/27;LEONARDO BARBOSA DE LIMA NINO;0;80000;ATIVO;SERGIO CEZAR DA SILVA ;;BIANCA DUARTE;FABRICIO LELIS BIGNARDI;;15999,98;20;5;0;0;0;0;3;11733,32;0;0;;0;0;1;2666,66;;33;;64000,02;80;0;0;0;0;0;0;64000,02;33;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0; R$ 4.266,66 ;5,3%;
+1;COLLINA - DREAMS DIURNO;23/03/2026;COLLINA - 16/01;DENISE DOS SANTOS;0;80000;CANCELADO;LARISSA RIBEIRO;;SILVIA REGINA;JOSE NETO;;1250;1,56;1;0;0;0;0;0;0;0;0;;0;0;0;0;;0;;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0; R$ 1.250,00 ;1,6%;
+1;COLLINA - DREAMS DIURNO;23/03/2026;COLLINA - 16/31;DENISE DOS SANTOS;0;80000;CANCELADO;LARISSA RIBEIRO;;SILVIA REGINA;JOSE NETO;;1250;1,56;1;0;0;0;0;0;0;0;0;;0;0;0;0;;0;;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0; R$ 1.250,00 ;1,6%;
+150;COLLINA - DREAMS DIURNO;23/03/2026;COLLINA - 16/19;ELAINE CRISTINA DA SILVA;0;80000;ATIVO;AGNALDO FIRMINO JUNIOR;;THAMIRES FERNANDES MOREIRA;FABRICIO LELIS BIGNARDI;;16000,2;20;30;0;0;0;0;26;13866,84;0;0;;0;0;3;1600,02;;120;;63999,8;80;0;0;0;0;0;0;63999,8;120;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0; R$ 2.133,36 ;2,7%;
+1;COLLINA - DREAMS DIURNO;24/03/2026;COLLINA - 17/19;ANDERSON CESAR SANTOS;0;80000;CANCELADO;FRANCISCO ANTONIO RODRIGUES;;SILVIA REGINA;MARCIO DENNEY;;533,33;0,67;1;0;0;0;0;0;0;0;0;;0;0;0;0;;0;;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0; R$ 533,33 ;0,7%;
+133;COLLINA - DREAMS DIURNO;25/03/2026;COLLINA - 17/36;FABIO ALEXANDRE DO PRADO;0;80000;ATIVO;RICARDO MALTCHIK;;RENATA DORADO;FABRICIO LELIS BIGNARDI;;15999,92;20;13;1;3200;0;0;12;12799,92;0;0;;0;0;0;0;;120;;64000,08;80;0;0;0;0;0;0;64000,08;120;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0; R$ 3.200,00 ;4,0%;
+142;COLLINA - DREAMS DIURNO;25/03/2026;COLLINA - 16/02;BRENDA LARISSA MOZZER GALLINA;0;80080;ATIVO;LARISSA VITORIA;;MEG LOIOLA;JOSE NETO;;16000;19,98;22;0;0;0;0;21;14400;0;0;;0;0;0;0;;120;;64080;80,02;0;0;0;0;0;0;64080;120;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0; R$ 1.600,00 ;2,0%;
+1;COLLINA - DREAMS DIURNO;26/03/2026;COLLINA - 12/35;JOAO CARNICELLI JUNIOR;0;80080;CANCELADO;RAPHAEL BUENO DA SILVA ;;MEG LOIOLA;JOSE NETO;;1600;2;1;0;0;0;0;0;0;0;0;;0;0;0;0;;0;;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0; R$ 1.600,00 ;2,0%;
+150;COLLINA - DREAMS DIURNO;26/03/2026;COLLINA - 06/38;JOBERSON SILVESTRE DA SILVA;0;80000;ATIVO;LARISSA VITORIA;;GUILHERME SANTOS BATISTA;FABRICIO LELIS BIGNARDI;;16000,2;20;30;1;533,34;0;0;29;15466,86;0;0;;0;0;0;0;;120;;63999,8;80;0;0;0;0;0;0;63999,8;120;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0; R$ 533,34 ;0,7%;
+150;COLLINA - DREAMS DIURNO;26/03/2026;COLLINA - 16/32;MANOEL ANTONIO SOBRINHO JUNIOR;0;80000;ATIVO;LARISSA RIBEIRO;;SILVIA REGINA;LUIS ALVES DO AMARAL NETO;;16000,2;20;30;0;0;0;0;29;15466,86;0;0;;0;0;0;0;;120;;63999,8;80;0;0;0;0;0;0;63999,8;120;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0; R$ 533,34 ;0,7%;
+1;COLLINA - DREAMS DIURNO;27/03/2026;COLLINA- 04/46;DANIELA RIBEIRO;0;80000;CANCELADO;LUAN DOS SANTOS S. FIRMINO;;BIANCA DUARTE;MARCIO DENNEY;;533,33;0,67;1;0;0;0;0;0;0;0;0;;0;0;0;0;;0;;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0; R$ 533,33 ;0,7%;
+1;COLLINA - DREAMS DIURNO;27/03/2026;COLLINA - 05/09;DANIELA RIBEIRO;0;80000;CANCELADO;LUAN DOS SANTOS S. FIRMINO;;BIANCA DUARTE;MARCIO DENNEY;;533,33;0,67;1;0;0;0;0;0;0;0;0;;0;0;0;0;;0;;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0; R$ 533,33 ;0,7%;
+150;COLLINA - DREAMS DIURNO;28/03/2026;COLLINA- 04/21;CLAUBERTO DE LIMA NASCIMENTO PEREIRA;0;76766,08;ATIVO;LARISSA RIBEIRO;;MEG LOIOLA;JOSE NETO;;15354,18;20;30;0;0;0;0;29;14841,04;0;0;;0;0;0;0;;120;;61411,9;80;0;0;0;0;0;0;61411,9;120;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0; R$ 513,14 ;0,7%;0`;
 
-        // ═══════════════════════════════════════════════════════
-        // PARSE DO CSV — NÃO MEXER DAQUI PRA BAIXO
-        // ═══════════════════════════════════════════════════════
-        function parseCSV(csv) {
-            const lines = csv.trim().split('\n');
-            const headers = lines[0].split(';').map(h => h.trim());
-            const data = [];
-            for (let i = 1; i < lines.length; i++) {
-                const vals = lines[i].split(';');
-                if (vals.length < 5) continue;
-                const obj = {};
-                headers.forEach((h, idx) => {
-                    obj[h] = (vals[idx] || '').trim();
-                });
+        // ============================================================
+        // PARSE CSV
+        // ============================================================
+        function parseCurrency(str) {
+            if (!str || str.trim() === '' || str.trim() === '-' || str.includes('-')) return 0;
+            let cleaned = str.replace(/R\$\s*/i, '').replace(/\./g, '').replace(',', '.').trim();
+            let val = parseFloat(cleaned);
+            return isNaN(val) ? 0 : val;
+        }
 
-                const numParse = (v) => {
-                    if (!v || v === '') return 0;
-                    return parseFloat(v.replace(/\./g, '').replace(',', '.')) || 0;
-                };
+        function parsePercent(str) {
+            if (!str || str.trim() === '') return 0;
+            let cleaned = str.replace('%', '').replace(',', '.').trim();
+            let val = parseFloat(cleaned);
+            return isNaN(val) ? 0 : val;
+        }
 
-                obj._valorNegociado = numParse(obj['Valor negociado']);
-                obj._totalEntrada = numParse(obj['Total da entrada']);
-                obj._percEntrada = numParse(obj['Percentual de entrada (%)']);
-                obj._totalSaldo = numParse(obj['Total do saldo']);
-                obj._entradaEfetiva = numParse(obj['ENTRADA EFETIVA']);
-                obj._data = obj['Data'];
-                obj._status = (obj['Status'] || 'ATIVO').toUpperCase();
-                obj._closer = obj['Closer'] || 'N/I';
-                obj._promotor = obj['Promotor de marketing'] || 'N/I';
-                obj._liner = obj['Liner'] || 'N/I';
-                obj._cessionario = obj['Cessionário'] || 'N/I';
-                obj._numero = obj['Número'] || 'N/I';
-                obj._qtdParcelas = parseInt(obj['Qtd Total Parcelas']) || 0;
-
-                // ★ Percentual de entrada efetiva = Entrada Efetiva / Valor Negociado * 100
-                obj._percEntradaEfetiva = obj._valorNegociado > 0 ?
-                    (obj._entradaEfetiva / obj._valorNegociado) * 100 :
-                    0;
-
-                const dateParts = obj._data.split('/');
-                if (dateParts.length === 3) {
-                    obj._dateObj = new Date(
-                        parseInt(dateParts[2]),
-                        parseInt(dateParts[1]) - 1,
-                        parseInt(dateParts[0])
-                    );
-                    obj._dateObj.setHours(0, 0, 0, 0);
-                } else {
-                    obj._dateObj = null;
-                }
-
-                data.push(obj);
+        function parseDateBR(str) {
+            let parts = str.trim().split('/');
+            if (parts.length === 3) {
+                return new Date(parseInt(parts[2]), parseInt(parts[1]) - 1, parseInt(parts[0]));
             }
-            return data;
+            return null;
         }
 
-        const allData = parseCSV(csvRaw);
+        const vendas = [];
+        const lines = rawCSV.trim().split('\n');
 
-        function fmtBRL(v) {
-            if (Math.abs(v) >= 1e6) return 'R$ ' + (v / 1e6).toFixed(2) + 'M';
-            return 'R$ ' + v.toLocaleString('pt-BR', { minimumFractionDigits: 2, maximumFractionDigits: 2 });
+        for (let i = 0; i < lines.length; i++) {
+            const line = lines[i].trim();
+            if (!line) continue;
+            const cols = line.split(';');
+
+            const entradaEfetivaRaw = cols[cols.length - 3] || '';
+            const percentEfetivaRaw = cols[cols.length - 2] || '';
+
+            const data = (cols[2] || '').trim();
+            const numero = (cols[3] || '').trim();
+            const cessionario = (cols[4] || '').trim();
+            const valorNegociado = parseFloat((cols[6] || '0').replace(/\./g, '').replace(',', '.'));
+            const status = (cols[7] || '').trim().toUpperCase();
+            const totalEntrada = parseFloat((cols[13] || '0').replace(/\./g, '').replace(',', '.'));
+            const percentualEntrada = parseFloat((cols[14] || '0').replace(',', '.'));
+            const closer = (cols[11] || '').trim();
+            const entradaEfetiva = parseCurrency(entradaEfetivaRaw);
+            const percentEntradaEfetiva = parsePercent(percentEfetivaRaw);
+
+            if (!data || isNaN(valorNegociado)) continue;
+
+            vendas.push({
+                data: data,
+                dataObj: parseDateBR(data),
+                numero: numero,
+                cessionario: cessionario,
+                valorNegociado: valorNegociado,
+                status: status === 'ATIVO' ? 'ATIVO' : 'CANCELADO',
+                totalEntrada: totalEntrada,
+                percentualEntrada: percentualEntrada,
+                entradaEfetiva: entradaEfetiva,
+                percentEntradaEfetiva: percentEntradaEfetiva,
+                closer: closer
+            });
         }
 
-        function fmtPct(v) {
-            return v.toFixed(2).replace('.', ',') + '%';
+        // Sort by date
+        vendas.sort((a, b) => (a.dataObj || new Date(0)) - (b.dataObj || new Date(0)));
+
+        // Set default date range
+        if (vendas.length > 0) {
+            const firstDate = vendas[0].dataObj;
+            const lastDate = vendas[vendas.length - 1].dataObj;
+            document.getElementById('dateStart').value = firstDate ? firstDate.toISOString().split('T')[0] : '';
+            document.getElementById('dateEnd').value = lastDate ? lastDate.toISOString().split('T')[0] : '';
         }
 
-        function getFaixaPercEntradaEfetiva(perc) {
-            if (perc <= 0) return '0% (sem entrada)';
-            if (perc >= 0.1 && perc <= 0.5) return '0,1% – 0,5%';
-            if (perc >= 0.6 && perc <= 1.0) return '0,6% – 1%';
-            if (perc >= 1.1 && perc <= 1.5) return '1,1% – 1,5%';
-            if (perc >= 1.6 && perc <= 2.0) return '1,6% – 2%';
-            if (perc >= 2.1 && perc <= 5.0) return '2,1% – 5%';
-            if (perc > 5.0) return 'Acima de 5,1%';
-            return '0% (sem entrada)';
+        // ============================================================
+        // FUNCTIONS
+        // ============================================================
+        function getFilteredVendas() {
+            const startStr = document.getElementById('dateStart').value;
+            const endStr = document.getElementById('dateEnd').value;
+
+            let filtered = [...vendas];
+
+            if (startStr) {
+                const start = new Date(startStr + 'T00:00:00');
+                filtered = filtered.filter(v => v.dataObj && v.dataObj >= start);
+            }
+            if (endStr) {
+                const end = new Date(endStr + 'T23:59:59');
+                filtered = filtered.filter(v => v.dataObj && v.dataObj <= end);
+            }
+
+            return filtered;
         }
 
-        const FAIXA_ORDER = [
-            '0% (sem entrada)',
-            '0,1% – 0,5%',
-            '0,6% – 1%',
-            '1,1% – 1,5%',
-            '1,6% – 2%',
-            '2,1% – 5%',
+        function getFaixa(percent) {
+            if (percent >= 0.1 && percent <= 0.5) return '0,1% a 0,5%';
+            if (percent >= 0.6 && percent <= 1.0) return '0,6% a 1,0%';
+            if (percent >= 1.1 && percent <= 1.5) return '1,1% a 1,5%';
+            if (percent >= 1.6 && percent <= 2.0) return '1,6% a 2,0%';
+            if (percent >= 2.1 && percent <= 5.0) return '2,1% a 5,0%';
+            if (percent > 5.0) return 'Acima de 5,1%';
+            return '0,0% (sem entrada)';
+        }
+
+        const faixaOrder = [
+            '0,0% (sem entrada)',
+            '0,1% a 0,5%',
+            '0,6% a 1,0%',
+            '1,1% a 1,5%',
+            '1,6% a 2,0%',
+            '2,1% a 5,0%',
             'Acima de 5,1%'
         ];
 
-        let filtroInicio = null;
-        let filtroFim = null;
+        function getFaixaData(filtered) {
+            const map = {};
+            faixaOrder.forEach(f => { map[f] = { total: 0, cancelados: 0 }; });
 
-        function filtrarPorPeriodo(dataArr) {
-            if (!filtroInicio && !filtroFim) return dataArr;
-            return dataArr.filter(d => {
-                if (!d._dateObj) return true;
-                if (filtroInicio && d._dateObj < filtroInicio) return false;
-                if (filtroFim && d._dateObj > filtroFim) return false;
-                return true;
-            });
-        }
-
-        function getFilteredData() {
-            return filtrarPorPeriodo(allData);
-        }
-
-        const fpStart = flatpickr("#date-start", {
-            dateFormat: "d/m/Y",
-            locale: "pt",
-            onChange: function(selectedDates) {
-                if (selectedDates.length > 0) {
-                    filtroInicio = new Date(selectedDates[0]);
-                    filtroInicio.setHours(0, 0, 0, 0);
-                } else {
-                    filtroInicio = null;
-                }
-                atualizarTudo();
-            },
-        });
-
-        const fpEnd = flatpickr("#date-end", {
-            dateFormat: "d/m/Y",
-            locale: "pt",
-            onChange: function(selectedDates) {
-                if (selectedDates.length > 0) {
-                    filtroFim = new Date(selectedDates[0]);
-                    filtroFim.setHours(23, 59, 59, 999);
-                } else {
-                    filtroFim = null;
-                }
-                atualizarTudo();
-            },
-        });
-
-        function resetFilters() {
-            fpStart.clear();
-            fpEnd.clear();
-            filtroInicio = null;
-            filtroFim = null;
-            atualizarTudo();
-        }
-
-        let chartCancelFaixa, chartVgvMes, chartStatus, chartClosers, chartPromotores, chartPercEntrada,
-            chartCancelDia;
-
-        function destroyCharts() {
-            [chartCancelFaixa, chartVgvMes, chartStatus, chartClosers, chartPromotores, chartPercEntrada,
-                chartCancelDia
-            ].forEach(c => { if (c) c.destroy(); });
-        }
-
-        function atualizarGraficos() {
-            destroyCharts();
-            const data = getFilteredData();
-
-            // 1. Cancelamentos por Faixa de % Entrada Efetiva
-            const faixaCancelMap = {};
-            const faixaTotalMap = {};
-            FAIXA_ORDER.forEach(f => { faixaCancelMap[f] = 0;
-                faixaTotalMap[f] = 0; });
-
-            data.forEach(d => {
-                const faixa = getFaixaPercEntradaEfetiva(d._percEntradaEfetiva);
-                if (faixaTotalMap[faixa] !== undefined) faixaTotalMap[faixa]++;
-                if (d._status === 'CANCELADO' && faixaCancelMap[faixa] !== undefined) faixaCancelMap[
-                    faixa]++;
+            filtered.forEach(v => {
+                const faixa = getFaixa(v.percentEntradaEfetiva);
+                if (!map[faixa]) map[faixa] = { total: 0, cancelados: 0 };
+                map[faixa].total++;
+                if (v.status === 'CANCELADO') map[faixa].cancelados++;
             });
 
-            const faixasLabels = FAIXA_ORDER.filter(f => faixaTotalMap[f] > 0 || faixaCancelMap[f] > 0);
-            const cancelCounts = faixasLabels.map(f => faixaCancelMap[f]);
-            const totalCounts = faixasLabels.map(f => faixaTotalMap[f]);
-            const cancelPercents = faixasLabels.map((f, i) =>
-                totalCounts[i] > 0 ? parseFloat((cancelCounts[i] / totalCounts[i] * 100).toFixed(1)) : 0
-            );
+            return map;
+        }
 
-            const ctx1 = document.getElementById('chartCancelFaixa').getContext('2d');
-            chartCancelFaixa = new Chart(ctx1, {
-                type: 'bar',
+        function getCancelRateClass(rate) {
+            if (rate === 0) return 'low';
+            if (rate <= 30) return 'mid';
+            return 'high';
+        }
+
+        function getBarWidth(total, maxTotal) {
+            if (maxTotal === 0) return 0;
+            return Math.max((total / maxTotal) * 150, 10);
+        }
+
+        // ============================================================
+        // CHARTS
+        // ============================================================
+        let chartFaixasInst = null;
+        let chartStatusInst = null;
+        let chartVgvMesInst = null;
+
+        function renderCharts(filtered) {
+            // ---- Chart Faixas (Doughnut) ----
+            const faixaData = getFaixaData(filtered);
+            const faixasAtivas = faixaOrder.filter(f => faixaData[f].total > 0);
+
+            const ctxFaixas = document.getElementById('chartFaixas').getContext('2d');
+            if (chartFaixasInst) chartFaixasInst.destroy();
+
+            const gradientColors = [
+                'rgba(10,108,255,0.9)',
+                'rgba(30,130,255,0.85)',
+                'rgba(59,150,255,0.8)',
+                'rgba(90,170,255,0.75)',
+                'rgba(120,190,255,0.7)',
+                'rgba(150,210,255,0.65)',
+                'rgba(180,225,255,0.6)'
+            ];
+
+            chartFaixasInst = new Chart(ctxFaixas, {
+                type: 'doughnut',
                 data: {
-                    labels: faixasLabels,
+                    labels: faixasAtivas,
                     datasets: [{
-                        label: 'Qtd. Cancelamentos',
-                        data: cancelCounts,
-                        backgroundColor: 'rgba(248,113,113,0.68)',
-                        borderColor: 'rgba(248,113,113,0.95)',
-                        borderWidth: 1.5,
-                        borderRadius: 9,
-                        borderSkipped: false,
-                        order: 0,
-                        yAxisID: 'y',
-                    }, {
-                        label: '% Cancelamento na Faixa',
-                        data: cancelPercents,
-                        type: 'line',
-                        borderColor: '#fbbf24',
-                        backgroundColor: 'rgba(251,191,36,0.12)',
+                        data: faixasAtivas.map(f => faixaData[f].total),
+                        backgroundColor: gradientColors.slice(0, faixasAtivas.length),
+                        borderColor: '#041830',
                         borderWidth: 3,
-                        pointBackgroundColor: '#fbbf24',
-                        pointBorderColor: '#0b1229',
-                        pointBorderWidth: 2,
-                        pointRadius: 7,
-                        pointHoverRadius: 10,
-                        tension: 0.35,
-                        fill: true,
-                        order: 1,
-                        yAxisID: 'y1',
-                    }],
+                        hoverBorderColor: '#0a6cff',
+                        hoverBorderWidth: 3
+                    }]
                 },
                 options: {
                     responsive: true,
                     maintainAspectRatio: false,
-                    interaction: { mode: 'index', intersect: false },
                     plugins: {
                         legend: {
-                            labels: { color: '#8899b4', usePointStyle: true, pointStyleWidth: 9,
-                                padding: 22, font: { size: 12 } },
+                            position: 'right',
+                            labels: {
+                                color: '#a0bde0',
+                                padding: 12,
+                                font: { size: 11 },
+                                usePointStyle: true,
+                                pointStyleWidth: 10
+                            }
                         },
                         tooltip: {
+                            backgroundColor: '#041830',
+                            borderColor: 'rgba(10,108,255,0.5)',
+                            borderWidth: 1,
+                            titleColor: '#e8f0ff',
+                            bodyColor: '#a0bde0',
                             callbacks: {
                                 label: function(ctx) {
-                                    if (ctx.datasetIndex === 0) {
-                                        const total = totalCounts[ctx.dataIndex];
-                                        return [
-                                            'Cancelamentos: ' + ctx.raw,
-                                            'Total na faixa: ' + total,
-                                            'Taxa: ' + cancelPercents[ctx.dataIndex] + '%',
-                                        ];
-                                    }
-                                    return ctx.dataset.label + ': ' + ctx.raw + '%';
+                                    return ` ${ctx.label}: ${ctx.raw} venda(s)`;
+                                }
+                            }
+                        }
+                    }
+                }
+            });
+
+            // ---- Chart Status (Pie) ----
+            const ativos = filtered.filter(v => v.status === 'ATIVO').length;
+            const cancelados = filtered.filter(v => v.status === 'CANCELADO').length;
+
+            const ctxStatus = document.getElementById('chartStatus').getContext('2d');
+            if (chartStatusInst) chartStatusInst.destroy();
+
+            chartStatusInst = new Chart(ctxStatus, {
+                type: 'pie',
+                data: {
+                    labels: ['ATIVO', 'CANCELADO'],
+                    datasets: [{
+                        data: [ativos, cancelados],
+                        backgroundColor: ['rgba(0,214,143,0.8)', 'rgba(255,68,112,0.8)'],
+                        borderColor: '#041830',
+                        borderWidth: 4,
+                        hoverBorderColor: ['#00d68f', '#ff4470'],
+                        hoverBorderWidth: 4
+                    }]
+                },
+                options: {
+                    responsive: true,
+                    maintainAspectRatio: false,
+                    plugins: {
+                        legend: {
+                            position: 'bottom',
+                            labels: {
+                                color: '#a0bde0',
+                                padding: 16,
+                                font: { size: 12 },
+                                usePointStyle: true,
+                                pointStyleWidth: 12
+                            }
+                        },
+                        tooltip: {
+                            backgroundColor: '#041830',
+                            borderColor: 'rgba(10,108,255,0.5)',
+                            borderWidth: 1,
+                            titleColor: '#e8f0ff',
+                            bodyColor: '#a0bde0',
+                            callbacks: {
+                                label: function(ctx) {
+                                    const total = ctx.dataset.data.reduce((a, b) => a + b, 0);
+                                    const pct = total > 0 ? ((ctx.raw / total) * 100).toFixed(1) : 0;
+                                    return ` ${ctx.label}: ${ctx.raw} (${pct}%)`;
+                                }
+                            }
+                        }
+                    }
+                }
+            });
+
+            // ---- Chart VGV por Mês ----
+            const vgvPorMes = {};
+            filtered.forEach(v => {
+                if (!v.dataObj) return;
+                const key = `${v.dataObj.getFullYear()}-${String(v.dataObj.getMonth() + 1).padStart(2, '0')}`;
+                if (!vgvPorMes[key]) vgvPorMes[key] = 0;
+                vgvPorMes[key] += v.valorNegociado;
+            });
+
+            const mesesSorted = Object.keys(vgvPorMes).sort();
+            const monthNames = ['Jan', 'Fev', 'Mar', 'Abr', 'Mai', 'Jun', 'Jul', 'Ago', 'Set', 'Out', 'Nov', 'Dez'];
+            const monthLabels = mesesSorted.map(k => {
+                const [y, m] = k.split('-');
+                return monthNames[parseInt(m) - 1] + '/' + y;
+            });
+
+            const ctxVgv = document.getElementById('chartVgvMes').getContext('2d');
+            if (chartVgvMesInst) chartVgvMesInst.destroy();
+
+            const gradientVgv = ctxVgv.createLinearGradient(0, 0, 0, 350);
+            gradientVgv.addColorStop(0, 'rgba(10,108,255,0.8)');
+            gradientVgv.addColorStop(1, 'rgba(59,139,255,0.1)');
+
+            chartVgvMesInst = new Chart(ctxVgv, {
+                type: 'bar',
+                data: {
+                    labels: monthLabels,
+                    datasets: [{
+                        label: 'VGV (R$)',
+                        data: mesesSorted.map(k => vgvPorMes[k]),
+                        backgroundColor: gradientVgv,
+                        borderColor: 'rgba(10,108,255,0.8)',
+                        borderWidth: 1,
+                        borderRadius: 8,
+                        borderSkipped: false,
+                    }]
+                },
+                options: {
+                    responsive: true,
+                    maintainAspectRatio: false,
+                    plugins: {
+                        legend: { display: false },
+                        tooltip: {
+                            backgroundColor: '#041830',
+                            borderColor: 'rgba(10,108,255,0.5)',
+                            borderWidth: 1,
+                            titleColor: '#e8f0ff',
+                            bodyColor: '#a0bde0',
+                            callbacks: {
+                                label: function(ctx) {
+                                    return ' VGV: R$ ' + ctx.raw.toLocaleString('pt-BR', { minimumFractionDigits: 2,
+                                        maximumFractionDigits: 2 });
                                 }
                             }
                         }
                     },
                     scales: {
-                        x: { ticks: { color: '#8899b4', font: { size: 10.5 } },
-                            grid: { color: 'rgba(59,130,246,0.06)' } },
-                        y: {
-                            type: 'linear',
-                            position: 'left',
-                            title: { display: true, text: 'Quantidade', color: '#8899b4' },
-                            ticks: { color: '#8899b4', stepSize: 1 },
-                            grid: { color: 'rgba(59,130,246,0.06)' },
-                            beginAtZero: true,
-                        },
-                        y1: {
-                            type: 'linear',
-                            position: 'right',
-                            title: { display: true, text: '% Cancelamento', color: '#fbbf24' },
-                            ticks: { color: '#fbbf24', callback: v => v + '%' },
-                            grid: { drawOnChartArea: false },
-                            beginAtZero: true,
-                            max: 100,
-                        },
-                    },
-                },
-            });
-
-            // 2. VGV por Mês
-            const vgvMesMap = {};
-            data.forEach(d => {
-                const parts = d._data.split('/');
-                const mesKey = parts.length === 3 ? parts[1] + '/' + parts[2] : d._data;
-                if (!vgvMesMap[mesKey]) vgvMesMap[mesKey] = { vgv: 0, entrada: 0, count: 0, percSum: 0 };
-                vgvMesMap[mesKey].vgv += d._valorNegociado;
-                vgvMesMap[mesKey].entrada += d._entradaEfetiva;
-                vgvMesMap[mesKey].count++;
-                vgvMesMap[mesKey].percSum += d._percEntradaEfetiva;
-            });
-            const mesesSorted = Object.keys(vgvMesMap).sort((a, b) => {
-                const pa = a.split('/');
-                const pb = b.split('/');
-                return new Date(pa[1], pa[0] - 1) - new Date(pb[1], pb[0] - 1);
-            });
-
-            const ctx2 = document.getElementById('chartVgvMes').getContext('2d');
-            const gradientVgv = ctx2.createLinearGradient(0, 0, 0, 350);
-            gradientVgv.addColorStop(0, 'rgba(56,189,248,0.65)');
-            gradientVgv.addColorStop(1, 'rgba(14,165,233,0.04)');
-            chartVgvMes = new Chart(ctx2, {
-                type: 'bar',
-                data: {
-                    labels: mesesSorted,
-                    datasets: [{
-                        label: 'VGV (R$)',
-                        data: mesesSorted.map(m => vgvMesMap[m].vgv),
-                        backgroundColor: gradientVgv,
-                        borderColor: 'rgba(56,189,248,0.85)',
-                        borderWidth: 1.5,
-                        borderRadius: 9,
-                        borderSkipped: false,
-                    }, ],
-                },
-                options: {
-                    responsive: true,
-                    maintainAspectRatio: false,
-                    plugins: { legend: { labels: { color: '#8899b4', usePointStyle: true,
-                                padding: 16 } } },
-                    scales: {
-                        x: { ticks: { color: '#8899b4' }, grid: { color: 'rgba(59,130,246,0.06)' } },
-                        y: { ticks: { color: '#8899b4', callback: v => fmtBRL(v) },
-                            grid: { color: 'rgba(59,130,246,0.06)' } },
-                    },
-                },
-            });
-
-            // 3. Status Pizza
-            const ativoCount = data.filter(d => d._status === 'ATIVO').length;
-            const cancelCount = data.filter(d => d._status === 'CANCELADO').length;
-            const ctx3 = document.getElementById('chartStatus').getContext('2d');
-            chartStatus = new Chart(ctx3, {
-                type: 'doughnut',
-                data: {
-                    labels: ['Ativo', 'Cancelado'],
-                    datasets: [{
-                        data: [ativoCount, cancelCount],
-                        backgroundColor: ['rgba(74,222,128,0.72)', 'rgba(248,113,113,0.72)'],
-                        borderColor: ['rgba(74,222,128,0.95)', 'rgba(248,113,113,0.95)'],
-                        borderWidth: 2.5,
-                        hoverBorderWidth: 4,
-                        hoverBorderColor: ['#4ade80', '#f87171'],
-                    }],
-                },
-                options: {
-                    responsive: true,
-                    maintainAspectRatio: false,
-                    cutout: '62%',
-                    plugins: {
-                        legend: {
-                            position: 'bottom',
-                            labels: { color: '#8899b4', usePointStyle: true, padding: 22,
-                                font: { size: 13 } },
-                        },
-                    },
-                },
-            });
-
-            // 4. Top Closers
-            const closerMap = {};
-            data.forEach(d => {
-                const c = d._closer || 'N/I';
-                if (!closerMap[c]) closerMap[c] = { vgv: 0, count: 0 };
-                closerMap[c].vgv += d._valorNegociado;
-                closerMap[c].count++;
-            });
-            const closerSorted = Object.entries(closerMap).sort((a, b) => b[1].vgv - a[1].vgv).slice(0, 8);
-            const ctx4 = document.getElementById('chartClosers').getContext('2d');
-            const gradCloser = ctx4.createLinearGradient(0, 0, 400, 0);
-            gradCloser.addColorStop(0, 'rgba(99,102,241,0.75)');
-            gradCloser.addColorStop(1, 'rgba(56,189,248,0.45)');
-            chartClosers = new Chart(ctx4, {
-                type: 'bar',
-                data: {
-                    labels: closerSorted.map(e => e[0]),
-                    datasets: [{
-                        label: 'VGV (R$)',
-                        data: closerSorted.map(e => e[1].vgv),
-                        backgroundColor: gradCloser,
-                        borderColor: 'rgba(99,102,241,0.85)',
-                        borderWidth: 1.5,
-                        borderRadius: 8,
-                        borderSkipped: false,
-                    }, ],
-                },
-                options: {
-                    indexAxis: 'y',
-                    responsive: true,
-                    maintainAspectRatio: false,
-                    plugins: { legend: { display: false } },
-                    scales: {
-                        x: { ticks: { color: '#8899b4', callback: v => fmtBRL(v) },
-                            grid: { color: 'rgba(59,130,246,0.06)' } },
-                        y: { ticks: { color: '#e2e8f0', font: { size: 10.5 } },
-                            grid: { display: false } },
-                    },
-                },
-            });
-
-            // 5. Top Promotores
-            const promMap = {};
-            data.forEach(d => {
-                const p = d._promotor || 'N/I';
-                if (!promMap[p]) promMap[p] = { vgv: 0, count: 0 };
-                promMap[p].vgv += d._valorNegociado;
-                promMap[p].count++;
-            });
-            const promSorted = Object.entries(promMap).sort((a, b) => b[1].vgv - a[1].vgv).slice(0, 8);
-            const ctx5 = document.getElementById('chartPromotores').getContext('2d');
-            const gradProm = ctx5.createLinearGradient(0, 0, 400, 0);
-            gradProm.addColorStop(0, 'rgba(56,189,248,0.70)');
-            gradProm.addColorStop(1, 'rgba(14,165,233,0.35)');
-            chartPromotores = new Chart(ctx5, {
-                type: 'bar',
-                data: {
-                    labels: promSorted.map(e => e[0]),
-                    datasets: [{
-                        label: 'VGV (R$)',
-                        data: promSorted.map(e => e[1].vgv),
-                        backgroundColor: gradProm,
-                        borderColor: 'rgba(56,189,248,0.80)',
-                        borderWidth: 1.5,
-                        borderRadius: 8,
-                        borderSkipped: false,
-                    }, ],
-                },
-                options: {
-                    indexAxis: 'y',
-                    responsive: true,
-                    maintainAspectRatio: false,
-                    plugins: { legend: { display: false } },
-                    scales: {
-                        x: { ticks: { color: '#8899b4', callback: v => fmtBRL(v) },
-                            grid: { color: 'rgba(59,130,246,0.06)' } },
-                        y: { ticks: { color: '#e2e8f0', font: { size: 10.5 } },
-                            grid: { display: false } },
-                    },
-                },
-            });
-
-            // 6. % Médio de Entrada Efetiva por Mês
-            const ctx6 = document.getElementById('chartPercEntrada').getContext('2d');
-            chartPercEntrada = new Chart(ctx6, {
-                type: 'line',
-                data: {
-                    labels: mesesSorted,
-                    datasets: [{
-                        label: '% Médio Entrada Efetiva',
-                        data: mesesSorted.map(m =>
-                            vgvMesMap[m].count > 0 ?
-                            parseFloat((vgvMesMap[m].percSum / vgvMesMap[m].count).toFixed(
-                                2)) : 0
-                        ),
-                        borderColor: '#38bdf8',
-                        backgroundColor: 'rgba(56,189,248,0.10)',
-                        fill: true,
-                        tension: 0.42,
-                        pointBackgroundColor: '#38bdf8',
-                        pointBorderColor: '#0b1229',
-                        pointBorderWidth: 2.5,
-                        pointRadius: 7,
-                        pointHoverRadius: 10,
-                        borderWidth: 2.8,
-                    }, ],
-                },
-                options: {
-                    responsive: true,
-                    maintainAspectRatio: false,
-                    plugins: { legend: { labels: { color: '#8899b4', usePointStyle: true,
-                                padding: 16 } } },
-                    scales: {
-                        x: { ticks: { color: '#8899b4' }, grid: { color: 'rgba(59,130,246,0.06)' } },
-                        y: {
-                            ticks: { color: '#8899b4', callback: v => v.toFixed(1) + '%' },
-                            grid: { color: 'rgba(59,130,246,0.06)' },
-                            beginAtZero: true,
-                        },
-                    },
-                },
-            });
-
-            // 7. Cancelamentos por Dia
-            const cancelDiaMap = {};
-            data.filter(d => d._status === 'CANCELADO').forEach(d => {
-                const dia = d._data;
-                if (!cancelDiaMap[dia]) cancelDiaMap[dia] = 0;
-                cancelDiaMap[dia]++;
-            });
-            const diasSorted = Object.keys(cancelDiaMap).sort((a, b) => {
-                const pa = a.split('/');
-                const pb = b.split('/');
-                return new Date(pa[2], pa[1] - 1, pa[0]) - new Date(pb[2], pb[1] - 1, pb[0]);
-            });
-            const ctx7 = document.getElementById('chartCancelDia').getContext('2d');
-            chartCancelDia = new Chart(ctx7, {
-                type: 'bar',
-                data: {
-                    labels: diasSorted,
-                    datasets: [{
-                        label: 'Qtd. Cancelamentos',
-                        data: diasSorted.map(d => cancelDiaMap[d]),
-                        backgroundColor: 'rgba(248,113,113,0.62)',
-                        borderColor: 'rgba(248,113,113,0.88)',
-                        borderWidth: 1,
-                        borderRadius: 7,
-                        borderSkipped: false,
-                    }, ],
-                },
-                options: {
-                    responsive: true,
-                    maintainAspectRatio: false,
-                    plugins: { legend: { display: false } },
-                    scales: {
                         x: {
-                            ticks: { color: '#8899b4', font: { size: 9.5 }, maxRotation: 50,
-                                minRotation: 50 },
-                            grid: { color: 'rgba(59,130,246,0.04)' },
+                            ticks: { color: '#6080a8', font: { size: 11 } },
+                            grid: { color: 'rgba(10,108,255,0.06)' }
                         },
                         y: {
-                            ticks: { color: '#8899b4', stepSize: 1 },
-                            grid: { color: 'rgba(59,130,246,0.06)' },
-                            beginAtZero: true,
-                        },
-                    },
-                },
+                            ticks: {
+                                color: '#6080a8',
+                                font: { size: 11 },
+                                callback: function(v) { return 'R$ ' + (v / 1000).toFixed(1) + 'k'; }
+                            },
+                            grid: { color: 'rgba(10,108,255,0.08)' }
+                        }
+                    }
+                }
             });
         }
 
-        function atualizarKPIs() {
-            const data = getFilteredData();
-            const vgvTotal = data.reduce((s, d) => s + d._valorNegociado, 0);
-            const entradaTotal = data.reduce((s, d) => s + d._entradaEfetiva, 0);
-            const qtdVendas = data.length;
-            const ticketMedio = qtdVendas > 0 ? vgvTotal / qtdVendas : 0;
-            const cancelados = data.filter(d => d._status === 'CANCELADO').length;
-            const ativos = data.filter(d => d._status === 'ATIVO').length;
-            const taxaConv = qtdVendas > 0 ? (ativos / qtdVendas * 100) : 0;
-            const taxaCancel = qtdVendas > 0 ? (cancelados / qtdVendas * 100) : 0;
+        // ============================================================
+        // RENDER ALL
+        // ============================================================
+        function renderAll() {
+            const filtered = getFilteredVendas();
 
-            document.getElementById('kpi-vgv').textContent = fmtBRL(vgvTotal);
-            document.getElementById('kpi-vgv-sub').textContent = qtdVendas + ' vendas';
-            document.getElementById('kpi-entrada').textContent = fmtBRL(entradaTotal);
-            document.getElementById('kpi-entrada-sub').textContent = 'Soma das entradas efetivas';
-            document.getElementById('kpi-vendas').textContent = qtdVendas;
-            document.getElementById('kpi-vendas-sub').textContent = ativos + ' ativas · ' + cancelados +
-                ' canceladas';
-            document.getElementById('kpi-ticket').textContent = fmtBRL(ticketMedio);
-            document.getElementById('kpi-ticket-sub').textContent = 'VGV médio por venda';
-            document.getElementById('kpi-cancel').textContent = cancelados;
-            document.getElementById('kpi-cancel-sub').textContent = 'Taxa: ' + fmtPct(taxaCancel);
-            document.getElementById('kpi-conv').textContent = fmtPct(taxaConv);
-            document.getElementById('kpi-conv-sub').textContent = 'Vendas ativas';
+            const totalVgv = filtered.reduce((s, v) => s + v.valorNegociado, 0);
+            const totalEntradaEfetiva = filtered.reduce((s, v) => s + v.entradaEfetiva, 0);
+            const qtdVendas = filtered.length;
+            const qtdCancelados = filtered.filter(v => v.status === 'CANCELADO').length;
+            const taxaCancel = qtdVendas > 0 ? ((qtdCancelados / qtdVendas) * 100).toFixed(1) : '0.0';
 
-            const fi = filtroInicio ? filtroInicio.toLocaleDateString('pt-BR') : 'início';
-            const ff = filtroFim ? filtroFim.toLocaleDateString('pt-BR') : 'fim';
-            document.getElementById('filter-info').textContent = (filtroInicio || filtroFim) ?
-                `Filtro: ${fi} – ${ff} · ${qtdVendas} registros` :
-                'Todos os registros · ' + qtdVendas + ' vendas';
-        }
-
-        function atualizarTabela() {
-            const data = getFilteredData();
-            const sorted = [...data].sort((a, b) => {
-                if (!a._dateObj || !b._dateObj) return 0;
-                return b._dateObj - a._dateObj;
+            document.getElementById('kpiVgv').textContent = 'R$ ' + totalVgv.toLocaleString('pt-BR', {
+                minimumFractionDigits: 2,
+                maximumFractionDigits: 2
             });
-            document.getElementById('table-count').textContent = sorted.length + ' registros';
-            const tbody = document.getElementById('table-body');
-            tbody.innerHTML = sorted.map(d => `
-            <tr>
-              <td>${d._data}</td>
-              <td>${d._numero}</td>
-              <td>${d._cessionario}</td>
-              <td>${fmtBRL(d._valorNegociado)}</td>
-              <td>${fmtBRL(d._entradaEfetiva)}</td>
-              <td>${fmtPct(d._percEntradaEfetiva)}</td>
-              <td><span class="status-badge ${d._status === 'ATIVO' ? 'status-ativo' : 'status-cancelado'}">${d._status}</span></td>
-              <td>${d._closer}</td>
-              <td>${d._promotor}</td>
-              <td>${d._liner}</td>
-              <td>${fmtBRL(d._totalSaldo)}</td>
-            </tr>
-          `).join('');
+            document.getElementById('kpiEntradaEfetiva').textContent = 'R$ ' + totalEntradaEfetiva.toLocaleString(
+                'pt-BR', { minimumFractionDigits: 2, maximumFractionDigits: 2 });
+            document.getElementById('kpiQtdVendas').textContent = qtdVendas;
+            document.getElementById('kpiCancelamentos').textContent = qtdCancelados;
+            document.getElementById('kpiTaxaCancel').textContent = taxaCancel + '%';
+
+            // Period label
+            const startStr = document.getElementById('dateStart').value;
+            const endStr = document.getElementById('dateEnd').value;
+            if (startStr && endStr) {
+                const s = startStr.split('-').reverse().join('/');
+                const e = endStr.split('-').reverse().join('/');
+                document.getElementById('periodLabel').textContent = '📋 Período: ' + s + ' a ' + e;
+            } else if (startStr) {
+                document.getElementById('periodLabel').textContent = '📋 A partir de: ' + startStr.split('-').reverse().join(
+                    '/');
+            } else if (endStr) {
+                document.getElementById('periodLabel').textContent = '📋 Até: ' + endStr.split('-').reverse().join('/');
+            } else {
+                document.getElementById('periodLabel').textContent = '📋 Período: Todos os dados';
+            }
+
+            // Faixa table
+            const faixaData = getFaixaData(filtered);
+            const maxTotal = Math.max(...faixaOrder.map(f => faixaData[f].total), 1);
+            let faixaHTML = '';
+
+            faixaOrder.forEach(f => {
+                const d = faixaData[f];
+                if (d.total === 0) return;
+                const cancelRate = d.total > 0 ? ((d.cancelados / d.total) * 100).toFixed(1) : '0.0';
+                const rateClass = getCancelRateClass(parseFloat(cancelRate));
+                const barW = getBarWidth(d.total, maxTotal);
+
+                faixaHTML += `
+                    <tr>
+                        <td style="font-weight:600;color:#e8f0ff;">${f}</td>
+                        <td><strong>${d.total}</strong></td>
+                        <td>${d.cancelados}</td>
+                        <td><span class="cancel-rate ${rateClass}">${cancelRate}%</span></td>
+                        <td><span class="faixa-bar" style="width:${barW}px;"></span>${d.total}</td>
+                    </tr>`;
+            });
+
+            if (!faixaHTML) {
+                faixaHTML =
+                    '<tr><td colspan="5" style="text-align:center;padding:30px;color:#6080a8;">Nenhum dado no período selecionado</td></tr>';
+            }
+
+            document.getElementById('faixaTableBody').innerHTML = faixaHTML;
+            document.getElementById('badgeTotalFaixa').textContent = 'Total: ' + qtdVendas + ' vendas';
+
+            // Data table
+            let tableHTML = '';
+            filtered.forEach(v => {
+                const statusClass = v.status === 'ATIVO' ? 'ativo' : 'cancelado';
+                tableHTML += `
+                    <tr>
+                        <td>${v.data}</td>
+                        <td>${v.numero}</td>
+                        <td>${v.cessionario}</td>
+                        <td>R$ ${v.valorNegociado.toLocaleString('pt-BR', {minimumFractionDigits:2, maximumFractionDigits:2})}</td>
+                        <td>R$ ${v.totalEntrada.toLocaleString('pt-BR', {minimumFractionDigits:2, maximumFractionDigits:2})}</td>
+                        <td>${v.percentualEntrada.toFixed(1)}%</td>
+                        <td>R$ ${v.entradaEfetiva.toLocaleString('pt-BR', {minimumFractionDigits:2, maximumFractionDigits:2})}</td>
+                        <td>${v.percentEntradaEfetiva.toFixed(1)}%</td>
+                        <td><span class="status-badge ${statusClass}">${v.status}</span></td>
+                        <td>${v.closer}</td>
+                    </tr>`;
+            });
+
+            if (!tableHTML) {
+                tableHTML =
+                    '<tr><td colspan="10" style="text-align:center;padding:40px;color:#6080a8;">Nenhum registro no período selecionado</td></tr>';
+            }
+
+            document.getElementById('dataTableBody').innerHTML = tableHTML;
+            document.getElementById('badgeTableCount').textContent = qtdVendas + ' registros';
+
+            // Charts
+            renderCharts(filtered);
         }
 
-        function atualizarTudo() {
-            atualizarKPIs();
-            atualizarTabela();
-            atualizarGraficos();
+        function applyFilter() {
+            renderAll();
         }
 
+        function resetFilter() {
+            if (vendas.length > 0) {
+                document.getElementById('dateStart').value = vendas[0].dataObj.toISOString().split('T')[0];
+                document.getElementById('dateEnd').value = vendas[vendas.length - 1].dataObj.toISOString().split('T')[
+                0];
+            }
+            renderAll();
+        }
+
+        // ============================================================
         // INIT
-        atualizarTudo();
+        // ============================================================
+        document.addEventListener('DOMContentLoaded', function() {
+            renderAll();
+
+            // Auto-filter on date change
+            document.getElementById('dateStart').addEventListener('change', renderAll);
+            document.getElementById('dateEnd').addEventListener('change', renderAll);
+        });
+
+        console.log('🚀 Collina Dreams Dashboard carregado com ' + vendas.length + ' vendas.');
     </script>
 </body>
 </html>
