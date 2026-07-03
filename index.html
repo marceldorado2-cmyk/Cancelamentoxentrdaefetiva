@@ -45,7 +45,6 @@ body {
 
 .container { max-width: 1440px; margin: auto; }
 
-/* Header */
 .header {
   display:flex; align-items:center; justify-content:space-between; padding:24px 32px; margin-bottom:28px;
   background: var(--bg-card); border:1px solid var(--border); border-radius:var(--radius);
@@ -73,7 +72,6 @@ h1 {
 }
 @keyframes pulse-dot { 0%,100%{opacity:1;} 50%{opacity:0.4;} }
 
-/* Loading */
 .loading-area {
   background: var(--bg-card); border:1px solid var(--border); border-radius:var(--radius);
   padding:60px 40px; text-align:center;
@@ -93,7 +91,6 @@ h1 {
 }
 .error-area h2 { margin-bottom:10px; }
 
-/* Tabs */
 .tabs {
   display:flex; gap:4px; margin-bottom:24px; background:var(--bg-card); border:1px solid var(--border);
   border-radius:var(--radius); padding:6px;
@@ -112,7 +109,6 @@ h1 {
 .tab-content { display:none; }
 .tab-content.active { display:block; }
 
-/* Filter bar */
 .filter-bar {
   display:flex; flex-wrap:wrap; gap:16px; align-items:center; padding:20px 24px; margin-bottom:24px;
   background: var(--bg-card); border:1px solid var(--border); border-radius:var(--radius);
@@ -123,7 +119,6 @@ h1 {
   cursor:pointer; user-select:none;
 }
 
-/* Calendário estilizado */
 input[type="date"] {
   background: var(--bg-deep);
   border:1px solid var(--border);
@@ -178,7 +173,6 @@ button {
   padding:8px 12px; background:rgba(10,108,255,0.1); border-radius:50px;
 }
 
-/* KPIs */
 .kpi-grid { display:grid; grid-template-columns:repeat(5,1fr); gap:18px; margin-bottom:24px; }
 .kpi-card {
   background:var(--bg-card); border:1px solid var(--border); border-radius:var(--radius);
@@ -195,7 +189,6 @@ button {
 }
 .kpi-sub { font-size:0.75rem; color:var(--text-muted); margin-top:2px; }
 
-/* Panels */
 .content-grid { display:grid; grid-template-columns:1fr 1fr; gap:20px; margin-bottom:24px; }
 .content-grid.full { grid-template-columns:1fr; }
 .panel {
@@ -232,7 +225,6 @@ button {
 .cancel-rate.mid { color:var(--warning); }
 .cancel-rate.high { color:var(--danger); }
 
-/* Profissional cards */
 .prof-summary {
   display:grid; grid-template-columns:repeat(auto-fit, minmax(200px,1fr)); gap:16px; margin-bottom:24px;
 }
@@ -244,6 +236,21 @@ button {
 .prof-card .prof-icon { font-size:2rem; margin-bottom:8px; }
 .prof-card .prof-value { font-size:1.6rem; font-weight:700; background: linear-gradient(135deg, #e8f0ff, #b0d4ff); -webkit-background-clip:text; -webkit-text-fill-color:transparent; }
 .prof-card .prof-label { font-size:0.72rem; text-transform:uppercase; color:var(--text-muted); font-weight:600; }
+
+/* Destaque quando filtro de profissional está ativo */
+.filter-active-badge {
+  display:none;
+  background: linear-gradient(135deg, var(--blue-primary), var(--blue-glow));
+  color:#fff;
+  padding:4px 12px;
+  border-radius:50px;
+  font-size:0.75rem;
+  font-weight:600;
+  margin-left:8px;
+  align-items:center;
+  gap:6px;
+}
+.filter-active-badge.show { display:inline-flex; }
 
 @media(max-width:768px){
   .kpi-grid { grid-template-columns:repeat(3,1fr); }
@@ -295,6 +302,13 @@ button {
   <!-- ==================== TAB: VISÃO GERAL ==================== -->
   <div class="tab-content active" id="tab-geral">
     <div class="filter-bar">
+      <div class="filter-group">
+        <label for="geralProfissional">👤 Profissional</label>
+        <select id="geralProfissional">
+          <option value="all">Todos</option>
+        </select>
+        <span class="filter-active-badge" id="geralProfBadge">🎯 Filtrado</span>
+      </div>
       <div class="filter-group">
         <label for="dateStart">📅 De</label>
         <input type="date" id="dateStart" />
@@ -563,15 +577,14 @@ button {
 
 <script>
 // ==================== CONFIGURAÇÃO ====================
-// ALTERE AQUI se o nome do arquivo for diferente
 const CSV_FILE = 'dados.csv';
 
 // ==================== VARIÁVEIS GLOBAIS ====================
 let todasVendas = [];
 let chartFaixas, chartStatus, chartVgvMes, chartProfFaixas;
-let profLiners = [], profClosers = [], profPromotores = [];
+let profLiners = [], profClosers = [], profPromotores = [], profTodos = [];
 
-// ==================== NOVAS FAIXAS (conforme solicitado) ====================
+// ==================== FAIXAS ====================
 const FAIXAS = [
   { label: '0,0% (sem entrada)',   min: 0,    max: 0    },
   { label: '0,1% a 0,5%',          min: 0.1,  max: 0.5  },
@@ -582,7 +595,6 @@ const FAIXAS = [
   { label: 'Acima de 5%',          min: 5.01, max: 9999 }
 ];
 
-// Cores para cada faixa
 const FAIXAS_COLORS = {
   '0,0% (sem entrada)': '#e74c3c',
   '0,1% a 0,5%':        '#ff6b6b',
@@ -611,13 +623,11 @@ function parsePercent(str) {
 function parseDateBR(str) {
   if (!str) return null;
   str = str.toString().trim();
-  // Tenta DD/MM/YYYY
   const p = str.split('/');
   if (p.length === 3) {
     const d = parseInt(p[0]), m = parseInt(p[1]), y = parseInt(p[2]);
     if (!isNaN(d) && !isNaN(m) && !isNaN(y)) return new Date(y, m - 1, d);
   }
-  // Tenta ISO YYYY-MM-DD
   const iso = new Date(str);
   if (!isNaN(iso.getTime())) return iso;
   return null;
@@ -634,13 +644,13 @@ function formatCurrency(v) {
   return 'R$ ' + (v || 0).toLocaleString('pt-BR', { minimumFractionDigits: 2, maximumFractionDigits: 2 });
 }
 
-// ==================== CARREGAR CSV DO GITHUB ====================
+// ==================== CARREGAR CSV ====================
 function loadCSVFromRepo() {
   document.getElementById('loadingMsg').innerText = 'Buscando ' + CSV_FILE + ' do repositório...';
 
   fetch(CSV_FILE, { cache: 'no-store' })
     .then(res => {
-      if (!res.ok) throw new Error('HTTP ' + res.status + ' — Arquivo "' + CSV_FILE + '" não encontrado no repositório.');
+      if (!res.ok) throw new Error('HTTP ' + res.status + ' — Arquivo "' + CSV_FILE + '" não encontrado.');
       return res.text();
     })
     .then(csvText => {
@@ -663,15 +673,13 @@ function loadCSVFromRepo() {
       showError('Falha ao carregar "' + CSV_FILE + '". Verifique:\n\n' +
         '• O arquivo está na raiz do repositório\n' +
         '• O nome está correto (maiúsculas/minúsculas)\n' +
-        '• GitHub Pages está ativo e atualizado\n\n' +
+        '• GitHub Pages está ativo\n\n' +
         'Erro técnico: ' + err.message);
     });
 }
 
 function processRows(rows) {
   todasVendas = [];
-
-  // Detecta cabeçalho e pula
   let startIdx = 0;
   if (rows[0] && rows[0][0]) {
     const firstCell = rows[0][0].toString().toUpperCase();
@@ -692,27 +700,19 @@ function processRows(rows) {
     const statusRaw   = (cols[7] || '').toString().toUpperCase().trim();
     const colsLen     = cols.length;
 
-    // Tenta extrair entrada efetiva e % das últimas colunas
     let entradaEfetiva = 0, percentEntradaEfetiva = 0;
     if (colsLen >= 3) {
-      // Últimas posições possíveis
       const last1 = cols[colsLen - 1];
       const last2 = cols[colsLen - 2];
       const last3 = cols[colsLen - 3];
 
-      // Tenta identificar qual é valor e qual é percentual
-      const cand1 = parseCurrency(last1);
       const cand1Pct = parsePercent(last1);
-      const cand2 = parseCurrency(last2);
       const cand2Pct = parsePercent(last2);
-      const cand3 = parseCurrency(last3);
-      const cand3Pct = parsePercent(last3);
 
-      // Se last1 tem %, é o percentual
-      if (String(last1).includes('%') || (cand1Pct > 0 && cand1Pct <= 100 && cand1 < 10)) {
+      if (String(last1).includes('%') || (cand1Pct > 0 && cand1Pct <= 100 && parseCurrency(last1) < 10)) {
         percentEntradaEfetiva = cand1Pct;
         entradaEfetiva = parseCurrency(last2);
-      } else if (String(last2).includes('%') || (cand2Pct > 0 && cand2Pct <= 100 && cand2 < 10)) {
+      } else if (String(last2).includes('%') || (cand2Pct > 0 && cand2Pct <= 100 && parseCurrency(last2) < 10)) {
         percentEntradaEfetiva = cand2Pct;
         entradaEfetiva = parseCurrency(last1);
       } else {
@@ -722,7 +722,6 @@ function processRows(rows) {
       }
     }
 
-    // Recalcula se necessário
     if (entradaEfetiva === 0 && percentEntradaEfetiva > 0 && valorNeg > 0) {
       entradaEfetiva = valorNeg * (percentEntradaEfetiva / 100);
     }
@@ -730,56 +729,37 @@ function processRows(rows) {
       percentEntradaEfetiva = (entradaEfetiva / valorNeg) * 100;
     }
 
-    // Extrai profissionais
     let closer = '', liner = '', promotor = '';
-    // Tenta achar em posições comuns (9=liner, 10=closer, 11=promotor, ou variações)
-    if (colsLen > 8)  closer  = (cols[8]  || '').toString().trim();
-    if (colsLen > 9)  liner   = (cols[9]  || '').toString().trim();
+    if (colsLen > 8)  closer   = (cols[8]  || '').toString().trim();
+    if (colsLen > 9)  liner    = (cols[9]  || '').toString().trim();
     if (colsLen > 10) promotor = (cols[10] || '').toString().trim();
-    if (colsLen > 11) closer  = (cols[11] || '').toString().trim();
-    if (colsLen > 12) liner   = (cols[12] || '').toString().trim();
+    if (colsLen > 11) closer   = (cols[11] || '').toString().trim();
+    if (colsLen > 12) liner    = (cols[12] || '').toString().trim();
     if (colsLen > 13) promotor = (cols[13] || '').toString().trim();
 
-    // Normaliza status
     let status = 'ATIVO';
     if (statusRaw.includes('CANCEL') || statusRaw.includes('CANC')) status = 'CANCELADO';
 
-    const faixa = classifyFaixa(percentEntradaEfetiva);
-
     todasVendas.push({
-      dataStr,
-      dataObj,
-      unidade,
-      cliente,
-      valorNeg,
-      status,
-      totalEntrada: 0,
-      percentEntrada: 0,
-      entradaEfetiva,
-      percentEntradaEfetiva,
-      liner,
-      closer,
-      promotor,
-      faixa
+      dataStr, dataObj, unidade, cliente, valorNeg, status,
+      totalEntrada: 0, percentEntrada: 0,
+      entradaEfetiva, percentEntradaEfetiva,
+      liner, closer, promotor,
+      faixa: classifyFaixa(percentEntradaEfetiva)
     });
   }
 
   if (todasVendas.length === 0) {
-    showError('Nenhuma venda encontrada no CSV. Verifique a estrutura das colunas.');
+    showError('Nenhuma venda encontrada no CSV.');
     return;
   }
 
-  // Sucesso
   document.getElementById('loadingArea').style.display = 'none';
   document.getElementById('dashboardContent').style.display = 'block';
   document.getElementById('statusBadge').innerHTML = todasVendas.length + ' vendas carregadas ✅';
 
-  // Popula listas de profissionais
   populateProfissionais();
-
-  // Renderiza visão geral inicial
   updateGeral();
-
   console.log('✅ Dashboard carregado:', todasVendas.length, 'vendas.');
 }
 
@@ -801,7 +781,25 @@ function populateProfissionais() {
   profLiners = Array.from(linersSet).sort();
   profClosers = Array.from(closersSet).sort();
   profPromotores = Array.from(promotoresSet).sort();
+  profTodos = Array.from(new Set([...profLiners, ...profClosers, ...profPromotores])).sort();
+
+  // Popula o select da aba Visão Geral
+  populateGeralProfissional();
+  // Popula o select da aba Por Profissional
   updateProfList();
+}
+
+function populateGeralProfissional() {
+  const select = document.getElementById('geralProfissional');
+  select.innerHTML = '<option value="all">Todos os Profissionais</option>';
+  profTodos.forEach(n => {
+    if (n && n !== '') {
+      const opt = document.createElement('option');
+      opt.value = n;
+      opt.textContent = n;
+      select.appendChild(opt);
+    }
+  });
 }
 
 function updateProfList() {
@@ -810,7 +808,7 @@ function updateProfList() {
   select.innerHTML = '<option value="all">Todos</option>';
 
   let list = [];
-  if (tipo === 'all')       list = [...new Set([...profLiners, ...profClosers, ...profPromotores])].sort();
+  if (tipo === 'all')        list = profTodos;
   else if (tipo === 'liner')   list = profLiners;
   else if (tipo === 'closer')  list = profClosers;
   else if (tipo === 'promotor') list = profPromotores;
@@ -842,6 +840,17 @@ function filterByDate(array, startId, endId) {
   return res;
 }
 
+// Filtro de profissional para a aba Visão Geral
+function filterByProfGeral(array) {
+  const nome = document.getElementById('geralProfissional').value;
+  if (nome === 'all') return array;
+
+  // Busca o profissional em qualquer papel (liner, closer ou promotor)
+  return array.filter(v =>
+    v.liner === nome || v.closer === nome || v.promotor === nome
+  );
+}
+
 function filterByProf(array) {
   const tipo = document.getElementById('profTipo').value;
   const nome = document.getElementById('profNome').value;
@@ -870,8 +879,20 @@ function getPeriodLabel(startId, endId) {
 
 // ==================== VISÃO GERAL ====================
 function updateGeral() {
-  const lista = filterByDate(todasVendas, 'dateStart', 'dateEnd');
+  let lista = filterByDate(todasVendas, 'dateStart', 'dateEnd');
+  lista = filterByProfGeral(lista);
+
   document.getElementById('periodLabelGeral').innerText = getPeriodLabel('dateStart', 'dateEnd');
+
+  // Badge indicando filtro ativo
+  const profNome = document.getElementById('geralProfissional').value;
+  const badge = document.getElementById('geralProfBadge');
+  if (profNome !== 'all') {
+    badge.classList.add('show');
+    badge.innerHTML = '🎯 ' + profNome;
+  } else {
+    badge.classList.remove('show');
+  }
 
   renderKPIsGeral(lista);
   renderFaixasTabela(lista, 'faixaTable', 'faixaCount');
@@ -957,7 +978,6 @@ function renderTabelaDetalhes(lista, tableId, countId) {
 
 // ==================== GRÁFICOS ====================
 function renderGraficosGeral(lista) {
-  // --- Doughnut: Faixas ---
   const countFaixas = {};
   FAIXAS.forEach(f => { countFaixas[f.label] = 0; });
   lista.forEach(v => {
@@ -992,7 +1012,6 @@ function renderGraficosGeral(lista) {
     }
   });
 
-  // --- Pie: Status ---
   const ativos    = lista.filter(v => v.status === 'ATIVO').length;
   const cancelados = lista.filter(v => v.status === 'CANCELADO').length;
 
@@ -1020,7 +1039,6 @@ function renderGraficosGeral(lista) {
     }
   });
 
-  // --- Bar: VGV por Mês ---
   const vgvMes = {};
   lista.forEach(v => {
     if (v.dataObj) {
@@ -1157,6 +1175,7 @@ function applyFilterGeral() { updateGeral(); }
 function resetFilterGeral() {
   document.getElementById('dateStart').value = '';
   document.getElementById('dateEnd').value   = '';
+  document.getElementById('geralProfissional').value = 'all';
   updateGeral();
 }
 function resetFilterProf() {
@@ -1169,29 +1188,25 @@ function resetFilterProf() {
 
 // ==================== TABS ====================
 function switchTab(tabName) {
-  // Remove active de todos os botões
   document.querySelectorAll('.tab-btn').forEach(btn => btn.classList.remove('active'));
-  // Remove active de todos os conteúdos
   document.querySelectorAll('.tab-content').forEach(c => c.classList.remove('active'));
 
-  // Ativa o botão e conteúdo corretos
   const btn = document.querySelector('.tab-btn[data-tab="' + tabName + '"]');
   const content = document.getElementById('tab-' + tabName);
 
   if (btn) btn.classList.add('active');
   if (content) content.classList.add('active');
 
-  // Se for a aba Profissional, renderiza
   if (tabName === 'profissional') {
     updateProf();
   }
 }
 
-// Event listeners para as tabs
+// ==================== INICIALIZAÇÃO ====================
 document.addEventListener('DOMContentLoaded', function () {
   loadCSVFromRepo();
 
-  // Delegação de evento para tabs (mais robusto)
+  // Tabs
   document.querySelector('.tabs').addEventListener('click', function (e) {
     const btn = e.target.closest('.tab-btn');
     if (btn) {
