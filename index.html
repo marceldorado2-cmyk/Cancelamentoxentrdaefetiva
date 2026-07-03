@@ -73,20 +73,25 @@ h1 {
 }
 @keyframes pulse-dot { 0%,100%{opacity:1;} 50%{opacity:0.4;} }
 
-/* Upload area */
-.upload-area {
+/* Loading */
+.loading-area {
   background: var(--bg-card); border:1px solid var(--border); border-radius:var(--radius);
-  padding:40px; text-align:center; margin-bottom:28px;
+  padding:60px 40px; text-align:center;
 }
-.upload-area h2 { font-size:1.2rem; margin-bottom:12px; color:var(--text-primary); }
-.upload-area p { color:var(--text-muted); font-size:0.88rem; margin-bottom:20px; }
-.upload-area input[type="file"] { display:none; }
-.upload-btn {
-  display:inline-block; padding:12px 28px; background:linear-gradient(135deg, var(--blue-primary), var(--blue-glow));
-  color:#fff; border-radius:50px; font-weight:600; cursor:pointer; transition:all 0.3s;
-  box-shadow:0 4px 20px rgba(10,108,255,0.3);
+.loading-area h2 { font-size:1.2rem; margin-bottom:12px; color:var(--text-primary); }
+.loading-area p { color:var(--text-muted); font-size:0.88rem; margin-bottom:20px; }
+.spinner {
+  width:40px; height:40px; border:3px solid var(--border);
+  border-top-color: var(--blue-glow); border-radius:50%;
+  animation: spin 1s linear infinite; margin: 0 auto 16px;
 }
-.upload-btn:hover { box-shadow:0 6px 28px rgba(10,108,255,0.5); transform:translateY(-1px); }
+@keyframes spin { to { transform: rotate(360deg); } }
+
+.error-area {
+  background: rgba(255,68,112,0.08); border:1px solid rgba(255,68,112,0.3);
+  border-radius:var(--radius); padding:30px; text-align:center; color:#ff6b8a;
+}
+.error-area h2 { margin-bottom:10px; }
 
 /* Tabs */
 .tabs {
@@ -173,9 +178,8 @@ button {
   font-size:0.7rem; background:rgba(10,108,255,0.15); color:var(--blue-light);
   padding:4px 12px; border-radius:50px; font-weight:600;
 }
-.panel-body { padding:20px 22px; overflow-x:auto; }
+.panel-body { padding:20px 22px; overflow:auto; max-height:500px; }
 
-/* Tables */
 .data-table { width:100%; border-collapse:collapse; font-size:0.8rem; }
 .data-table thead th {
   background:var(--bg-card); padding:12px 10px; font-weight:700; font-size:0.68rem;
@@ -195,9 +199,9 @@ button {
 .cancel-rate.mid { color:var(--warning); }
 .cancel-rate.high { color:var(--danger); }
 
-/* Professional cards */
+/* Profissional cards */
 .prof-summary {
-  display:grid; grid-template-columns:repeat(auto-fit, minmax(200px, 1fr)); gap:16px; margin-bottom:24px;
+  display:grid; grid-template-columns:repeat(auto-fit, minmax(200px,1fr)); gap:16px; margin-bottom:24px;
 }
 .prof-card {
   background:var(--bg-card); border:1px solid var(--border); border-radius:var(--radius);
@@ -205,18 +209,12 @@ button {
 }
 .prof-card:hover { border-color:var(--border-glow); box-shadow:0 8px 30px rgba(10,108,255,0.12); }
 .prof-card .prof-icon { font-size:2rem; margin-bottom:8px; }
-.prof-card .prof-value {
-  font-size:1.6rem; font-weight:700;
-  background: linear-gradient(135deg, #e8f0ff, #b0d4ff);
-  -webkit-background-clip:text; -webkit-text-fill-color:transparent;
-}
+.prof-card .prof-value { font-size:1.6rem; font-weight:700; background: linear-gradient(135deg, #e8f0ff, #b0d4ff); -webkit-background-clip:text; -webkit-text-fill-color:transparent; }
 .prof-card .prof-label { font-size:0.72rem; text-transform:uppercase; color:var(--text-muted); font-weight:600; }
 
-/* Responsive */
 @media(max-width:768px){
   .kpi-grid { grid-template-columns:repeat(3,1fr); }
   .content-grid { grid-template-columns:1fr; }
-  .tabs { flex-direction:column; }
 }
 @media(max-width:480px){
   .kpi-grid { grid-template-columns:repeat(2,1fr); }
@@ -232,19 +230,24 @@ button {
   <div class="title">
     <span style="font-size:28px;">🏔️</span>
     <div>
-      <h1>Collina Dreams · Dashboard Vendas</h1>
+      <h1>Collina Dreams · Dashboard de Vendas</h1>
       <div class="header-subtitle">Análise Completa de Performance</div>
-      <div class="header-badge"><span class="dot"></span> <span id="statusBadge">Aguardando dados...</span></div>
+      <div class="header-badge"><span class="dot"></span> <span id="statusBadge">Carregando dados...</span></div>
     </div>
   </div>
 </div>
 
-<!-- UPLOAD -->
-<div class="upload-area" id="uploadArea">
-  <h2>📂 Carregar Arquivo CSV</h2>
-  <p>Selecione o arquivo CSV exportado da planilha de vendas para gerar o dashboard.</p>
-  <label class="upload-btn" for="csvFile">📁 Selecionar CSV</label>
-  <input type="file" id="csvFile" accept=".csv" />
+<!-- LOADING -->
+<div class="loading-area" id="loadingArea">
+  <div class="spinner"></div>
+  <h2>📂 Carregando arquivo CSV...</h2>
+  <p id="loadingMsg">Buscando dados do repositório...</p>
+</div>
+
+<!-- ERROR -->
+<div class="error-area" id="errorArea" style="display:none;">
+  <h2>️ Erro ao carregar os dados</h2>
+  <p id="errorMsg"></p>
 </div>
 
 <!-- DASHBOARD (oculto até carregar dados) -->
@@ -252,13 +255,12 @@ button {
 
   <!-- TABS -->
   <div class="tabs">
-    <button class="tab-btn active" onclick="switchTab('geral')">📊 Visão Geral</button>
-    <button class="tab-btn" onclick="switchTab('profissional')">👤 Por Profissional</button>
+    <button class="tab-btn active" data-tab="geral">📊 Visão Geral</button>
+    <button class="tab-btn" data-tab="profissional">👤 Por Profissional</button>
   </div>
 
   <!-- TAB: VISÃO GERAL -->
   <div class="tab-content active" id="tab-geral">
-    <!-- Filtros -->
     <div class="filter-bar">
       <div class="filter-group">
         <label>📅 De</label>
@@ -273,7 +275,6 @@ button {
       <div class="period-indicator" id="periodLabelGeral">Período: Todos</div>
     </div>
 
-    <!-- KPIs -->
     <div class="kpi-grid" id="kpiGrid">
       <div class="kpi-card">
         <div class="kpi-icon">📊</div>
@@ -303,11 +304,10 @@ button {
       </div>
     </div>
 
-    <!-- Gráficos -->
     <div class="content-grid">
       <div class="panel">
         <div class="panel-header">
-          <h3>📐 Faixas de Entrada Efetiva</h3>
+          <h3> Faixas de Entrada Efetiva</h3>
           <span class="badge" id="faixaCount">Total: 0</span>
         </div>
         <div class="panel-body">
@@ -341,14 +341,13 @@ button {
         </div>
       </div>
       <div class="panel">
-        <div class="panel-header"><h3>📈 VGV por Mês</h3></div>
+        <div class="panel-header"><h3> VGV por Mês</h3></div>
         <div class="panel-body" style="height:320px; padding:10px;">
           <canvas id="chartVgvMes"></canvas>
         </div>
       </div>
     </div>
 
-    <!-- Tabela detalhada -->
     <div class="content-grid full" style="margin-top:20px;">
       <div class="panel">
         <div class="panel-header">
@@ -382,7 +381,6 @@ button {
 
   <!-- TAB: POR PROFISSIONAL -->
   <div class="tab-content" id="tab-profissional">
-    <!-- Filtros profissional -->
     <div class="filter-bar">
       <div class="filter-group">
         <label>👤 Tipo</label>
@@ -407,15 +405,14 @@ button {
         <label>Até</label>
         <input type="date" id="profDateEnd" />
       </div>
-      <button class="btn-filter" onclick="applyFilterProf()">🔍 Filtrar</button>
+      <button class="btn-filter" onclick="updateProf()"> Filtrar</button>
       <button class="btn-reset" onclick="resetFilterProf()">↺ Limpar</button>
       <div class="period-indicator" id="periodLabelProf">Período: Todos</div>
     </div>
 
-    <!-- KPIs Profissional -->
     <div class="kpi-grid" id="kpiGridProf">
       <div class="kpi-card">
-        <div class="kpi-icon">📊</div>
+        <div class="kpi-icon"></div>
         <div class="kpi-label">Total Vendas</div>
         <div class="kpi-value" id="profKpiTotal">0</div>
       </div>
@@ -430,28 +427,27 @@ button {
         <div class="kpi-value" id="profKpiEfetiva">R$ 0,00</div>
       </div>
       <div class="kpi-card">
-        <div class="kpi-icon">❌</div>
+        <div class="kpi-icon"></div>
         <div class="kpi-label">Cancelados</div>
         <div class="kpi-value" id="profKpiCancel">0</div>
       </div>
       <div class="kpi-card">
         <div class="kpi-icon">📉</div>
-        <div class="kpi-label">Taxa Cancelamento</div>
+        <div class="kpi-label">Taxa Cancel.</div>
         <div class="kpi-value" id="profKpiTaxaCancel">0%</div>
       </div>
     </div>
 
-    <!-- Resumo adicional -->
     <div class="prof-summary" id="profSummary">
       <div class="prof-card">
         <div class="prof-icon">📈</div>
         <div class="prof-value" id="profPercEfetiva">0%</div>
-        <div class="prof-label">% Média Entrada Efetiva</div>
+        <div class="prof-label">% Entrada Efetiva Média</div>
       </div>
       <div class="prof-card">
         <div class="prof-icon">🏆</div>
         <div class="prof-value" id="profTicketMedio">R$ 0</div>
-        <div class="prof-label">Ticket Médio VGV</div>
+        <div class="prof-label">Ticket Médio</div>
       </div>
       <div class="prof-card">
         <div class="prof-icon">📋</div>
@@ -460,11 +456,10 @@ button {
       </div>
     </div>
 
-    <!-- Cancelamentos por faixa -->
     <div class="content-grid">
       <div class="panel">
         <div class="panel-header">
-          <h3>❌ Cancelamentos por Faixa de Entrada Efetiva</h3>
+          <h3>❌ Cancelamentos por Faixa</h3>
           <span class="badge" id="profFaixaCount">0 cancelamentos</span>
         </div>
         <div class="panel-body">
@@ -472,9 +467,9 @@ button {
             <thead>
               <tr>
                 <th>Faixa</th>
-                <th>Total Vendas</th>
+                <th>Total</th>
                 <th>Cancelados</th>
-                <th>% Cancelamento</th>
+                <th>% Cancel</th>
                 <th>Barra</th>
               </tr>
             </thead>
@@ -490,11 +485,10 @@ button {
       </div>
     </div>
 
-    <!-- Tabela detalhada profissional -->
     <div class="content-grid full" style="margin-top:20px;">
       <div class="panel">
         <div class="panel-header">
-          <h3>📋 Vendas do Profissional</h3>
+          <h3>📋 Vendas Profissional</h3>
           <span class="badge" id="profTotalRegistros">0 registros</span>
         </div>
         <div class="panel-body" style="overflow:auto; max-height:500px;">
@@ -526,613 +520,441 @@ button {
 </div>
 
 <script>
-// ============================================
-// VARIÁVEIS GLOBAIS
-// ============================================
-let allSales = [];
-let chartFaixas = null;
-let chartStatus = null;
-let chartVgvMes = null;
-let chartProfFaixas = null;
+// ==================== CONFIG: NOME DO ARQUIVO CSV ====================
+// ALTERE AQUI o nome do seu arquivo CSV no repositório GitHub
+const CSV_FILE = 'dados.csv';
+// ================================================================
 
-// ============================================
-// FAIXAS DE ENTRADA EFETIVA
-// ============================================
-const FAIXAS_ORDER = [
-  '0,0% (sem entrada)',
-  '0,1% a 5,0%',
-  '5,1% a 10,0%',
-  '10,1% a 15,0%',
-  '15,1% a 20,0%',
-  '20,1% a 30,0%',
-  'Acima de 30,0%'
+// ==================== VARS GLOBAIS ====================
+let todasVendas = [];
+let chartFaixas, chartStatus, chartVgvMes, chartProfFaixas;
+
+const FAIXAS = [
+  { label:'0,0% (sem entrada)', min:0, max:0 },
+  { label:'0,1% a 5,0%', min:0.1, max:5.0 },
+  { label:'5,1% a 10,0%', min:5.1, max:10 },
+  { label:'10,1% a 15,0%', min:10.1, max:15 },
+  { label:'15,1% a 20,0%', min:15.1, max:20 },
+  { label:'20,1% a 30,0%', min:20.1, max:30 },
+  { label:'Acima de 30,0%', min:30.01, max:9999 }
 ];
 
 const FAIXAS_COLORS = {
-  '0,0% (sem entrada)': 'rgba(100,130,180,0.7)',
-  '0,1% a 5,0%': 'rgba(10,108,255,0.7)',
-  '5,1% a 10,0%': 'rgba(30,140,255,0.75)',
-  '10,1% a 15,0%': 'rgba(59,150,255,0.8)',
-  '15,1% a 20,0%': 'rgba(90,170,255,0.85)',
-  '20,1% a 30,0%': 'rgba(120,200,255,0.9)',
-  'Acima de 30,0%': 'rgba(0,214,143,0.8)'
+  '0,0% (sem entrada)': '#ff4470',
+  '0,1% a 5,0%': '#ff6b8a',
+  '5,1% a 10,0%': '#ffb800',
+  '10,1% a 15,0%': '#ffd000',
+  '15,1% a 20,0%': '#6db3ff',
+  '20,1% a 30,0%': '#3b8bff',
+  'Acima de 30,0%': '#0a6cff'
 };
 
-function classifyFaixa(percent) {
-  if (percent <= 0) return '0,0% (sem entrada)';
-  if (percent <= 5) return '0,1% a 5,0%';
-  if (percent <= 10) return '5,1% a 10,0%';
-  if (percent <= 15) return '10,1% a 15,0%';
-  if (percent <= 20) return '15,1% a 20,0%';
-  if (percent <= 30) return '20,1% a 30,0%';
-  return 'Acima de 30,0%';
-}
-
-// ============================================
-// PARSING DO CSV
-// ============================================
+// ==================== FUNÇÕES DE PARSE ====================
 function parseCurrency(str) {
-  if (!str) return 0;
-  str = str.toString().trim();
-  if (str === '' || str === '-' || str === '0') return 0;
-  // Remove pontos de milhar, substitui vírgula por ponto
-  str = str.replace(/\./g, '').replace(',', '.');
-  const val = parseFloat(str);
-  return isNaN(val) ? 0 : val;
+  if (!str || str==='' || str==='-' || str===null) return 0;
+  str = str.toString().replace(/\./g,'').replace(',','.').replace(/\s/g,'');
+  const num = parseFloat(str);
+  return isNaN(num) ? 0 : num;
 }
-
 function parsePercent(str) {
   if (!str) return 0;
-  str = str.toString().trim().replace('%', '');
-  str = str.replace(',', '.');
-  const val = parseFloat(str);
-  return isNaN(val) ? 0 : val;
+  str = str.toString().replace('%','').replace(',','.').trim();
+  const num = parseFloat(str);
+  return isNaN(num) ? 0 : num;
 }
-
 function parseDateBR(str) {
   if (!str) return null;
-  str = str.trim();
-  // Formato DD/MM/YYYY
-  const parts = str.split('/');
-  if (parts.length === 3) {
-    const day = parseInt(parts[0]);
-    const month = parseInt(parts[1]) - 1;
-    const year = parseInt(parts[2]);
-    if (year > 2000 && year < 2100) {
-      return new Date(year, month, day);
-    }
+  const p = str.trim().split('/');
+  if (p.length===3) {
+    const d = parseInt(p[0]), m = parseInt(p[1]), y = parseInt(p[2]);
+    return new Date(y,m-1,d);
   }
   return null;
 }
-
-function loadCSV(file) {
-  Papa.parse(file, {
-    header: false,
-    skipEmptyLines: true,
-    encoding: 'UTF-8',
-    complete: function(results) {
-      const rows = results.data;
-      if (rows.length === 0) {
-        alert('Arquivo CSV vazio!');
-        return;
-      }
-
-      allSales = [];
-      // Pula header se existir (verifica se primeira linha tem texto "CÓD" ou similar)
-      let startIdx = 0;
-      if (rows[0][0] && (rows[0][0].toString().includes('CÓD') || rows[0][0].toString().includes('COD') || isNaN(parseInt(rows[0][0])))) {
-        startIdx = 1;
-      }
-
-      for (let i = startIdx; i < rows.length; i++) {
-        const cols = rows[i];
-        if (!cols || cols.length < 5) continue;
-
-        // Mapeamento baseado na estrutura do CSV:
-        // 0: Código, 1: Empreendimento, 2: Data venda, 3: Unidade, 4: Cliente (cessionário)
-        // 5: ?, 6: VGV (valor negociado), 7: Status, 8: ?, ...
-        // Últimas colunas: Entrada Efetiva, % Entrada Efetiva, ...
-        // Precisamos identificar as colunas corretas
-
-        const dataStr = (cols[2] || '').trim();
-        const dataObj = parseDateBR(dataStr);
-        const unidade = (cols[3] || '').trim();
-        const cliente = (cols[4] || '').trim();
-        const valorNegociado = parseCurrency(cols[6]);
-        const status = (cols[7] || '').trim().toUpperCase();
-
-        // Buscar colunas de entrada efetiva - geralmente nas últimas posições
-        // Ajuste conforme seu CSV real
-        let totalEntrada = 0;
-        let percentEntrada = 0;
-        let entradaEfetiva = 0;
-        let percentEntradaEfetiva = 0;
-        let liner = '';
-        let closer = '';
-        let promotor = '';
-
-        // Tentar identificar as colhas corretas
-        // Baseado no CSV típico do Collina Dreams:
-        // Col 8-10: dados adicionais
-        // Col 11: Closer
-        // Col 12: ?
-        // Col 13: Total Entrada
-        // Col 14: % Entrada
-        // Col 15+: outros dados
-        // Últimas 3 colunas: Entrada Efetiva, % Entrada Efetiva, e algo mais
-
-        if (cols.length > 14) {
-          totalEntrada = parseCurrency(cols[13]);
-          percentEntrada = parsePercent(cols[14]);
-        }
-
-        // Closer
-        if (cols.length > 11) {
-          closer = (cols[11] || '').trim();
-        }
-
-        // Entrada efetiva e % entrada efetiva - últimas colunas relevantes
-        // Ajuste esses índices conforme seu CSV
-        if (cols.length >= 3) {
-          const lastIdx = cols.length - 1;
-          // Procurar pelas colunas de entrada efetiva
-          // Geralmente são as colunas finais
-          entradaEfetiva = parseCurrency(cols[lastIdx - 2] || '0');
-          percentEntradaEfetiva = parsePercent(cols[lastIdx - 1] || '0');
-        }
-
-        // Se não encontrou entrada efetiva, calcular baseado no percentual
-        if (entradaEfetiva === 0 && percentEntradaEfetiva > 0 && valorNegociado > 0) {
-          entradaEfetiva = valorNegociado * (percentEntradaEfetiva / 100);
-        }
-
-        // Se percentEntradaEfetiva é 0 mas temos entradaEfetiva, calcular
-        if (percentEntradaEfetiva === 0 && entradaEfetiva > 0 && valorNegociado > 0) {
-          percentEntradaEfetiva = (entradaEfetiva / valorNegociado) * 100;
-        }
-
-        // Liner e Promotor - procurar em outras colunas
-        // Ajuste conforme necessário
-        if (cols.length > 9) liner = (cols[9] || '').trim();
-        if (cols.length > 10) promotor = (cols[10] || '').trim();
-
-        // Normalizar status
-        let statusNorm = 'ATIVO';
-        if (status.includes('CANCEL') || status.includes('CANC')) {
-          statusNorm = 'CANCELADO';
-        }
-
-        allSales.push({
-          dataStr: dataStr,
-          dataObj: dataObj,
-          unidade: unidade,
-          cliente: cliente,
-          valorNegociado: valorNegociado,
-          status: statusNorm,
-          totalEntrada: totalEntrada,
-          percentEntrada: percentEntrada,
-          entradaEfetiva: entradaEfetiva,
-          percentEntradaEfetiva: percentEntradaEfetiva,
-          liner: liner,
-          closer: closer,
-          promotor: promotor,
-          faixa: classifyFaixa(percentEntradaEfetiva)
-        });
-      }
-
-      // Atualizar interface
-      document.getElementById('uploadArea').style.display = 'none';
-      document.getElementById('dashboardContent').style.display = 'block';
-      document.getElementById('statusBadge').innerText = allSales.length + ' vendas carregadas';
-
-      // Popular selects de profissionais
-      populateProfSelects();
-
-      // Renderizar dashboard
-      updateGeral();
-    },
-    error: function(err) {
-      alert('Erro ao ler CSV: ' + err.message);
-    }
-  });
+function classifyFaixa(pct) {
+  for (let i=0; i<FAIXAS.length; i++) {
+    if (pct >= FAIXAS[i].min && pct <= FAIXAS[i].max) return FAIXAS[i].label;
+  }
+  return FAIXAS[FAIXAS.length-1].label;
 }
 
-// ============================================
-// POPULAR SELECTS DE PROFISSIONAIS
-// ============================================
-function populateProfSelects() {
-  const liners = new Set();
-  const closers = new Set();
-  const promotores = new Set();
+// ==================== LOAD CSV (via fetch) ====================
+function loadCSVFromRepo() {
+  fetch(CSV_FILE)
+    .then(res => {
+      if (!res.ok) throw new Error('HTTP ' + res.status + ' - Arquivo não encontrado: ' + CSV_FILE);
+      return res.text();
+    })
+    .then(csvText => {
+      Papa.parse(csvText, {
+        header:false,
+        skipEmptyLines:true,
+        complete: res => processRows(res.data),
+        error: err => showError('Erro ao processar CSV: ' + err.message)
+      });
+    })
+    .catch(err => {
+      showError('Não foi possível carregar "' + CSV_FILE + '". Verifique se o arquivo existe no repositório. Erro: ' + err.message);
+    });
+}
 
-  allSales.forEach(v => {
+function processRows(rows) {
+  todasVendas = [];
+  let startIdx = 0;
+  if (rows[0] && rows[0][0] && (rows[0][0].toString().includes('CÓD') || rows[0][0].toString().includes('COD') || isNaN(parseInt(rows[0][0])))) {
+    startIdx = 1;
+  }
+
+  for (let i = startIdx; i < rows.length; i++) {
+    const cols = rows[i];
+    if (!cols || cols.length < 5) continue;
+
+    const dataStr = (cols[2] || '').trim();
+    const dataObj = parseDateBR(dataStr);
+    const unidade = (cols[3] || '').trim();
+    const cliente = (cols[4] || '').trim();
+    const valorNeg = parseCurrency(cols[6]);
+    const statusStr = (cols[7] || '').trim().toUpperCase();
+
+    let totalEntrada = 0, percentEntrada = 0, entradaEfetiva = 0, percentEntradaEfetiva = 0;
+    let liner = '', closer = '', promotor = '';
+    const colsLen = cols.length;
+
+    // Tenta pegar entrada efetiva e % nas últimas colunas
+    if (colsLen >= 3) {
+      entradaEfetiva = parseCurrency(cols[colsLen - 3]);
+      percentEntradaEfetiva = parsePercent(cols[colsLen - 2]);
+    }
+    if (entradaEfetiva === 0 && percentEntradaEfetiva > 0 && valorNeg > 0) {
+      entradaEfetiva = valorNeg * (percentEntradaEfetiva / 100);
+    }
+    if (percentEntradaEfetiva === 0 && entradaEfetiva > 0 && valorNeg > 0) {
+      percentEntradaEfetiva = (entradaEfetiva / valorNeg) * 100;
+    }
+
+    if (colsLen >= 12) closer = (cols[11] || '').trim();
+    if (colsLen >= 13) liner = (cols[12] || '').trim();
+    if (colsLen >= 14) promotor = (cols[13] || '').trim();
+
+    let status = 'ATIVO';
+    if (statusStr.includes('CANCEL') || statusStr.includes('CANC')) status = 'CANCELADO';
+
+    todasVendas.push({
+      dataStr, dataObj, unidade, cliente,
+      valorNeg, status,
+      totalEntrada, percentEntrada,
+      entradaEfetiva, percentEntradaEfetiva,
+      liner, closer, promotor,
+      faixa: classifyFaixa(percentEntradaEfetiva)
+    });
+  }
+
+  if (todasVendas.length === 0) {
+    showError('Nenhuma venda encontrada no CSV. Verifique a estrutura do arquivo.');
+    return;
+  }
+
+  document.getElementById('loadingArea').style.display = 'none';
+  document.getElementById('dashboardContent').style.display = 'block';
+  document.getElementById('statusBadge').innerText = todasVendas.length + ' vendas carregadas.';
+  populateProfissionais();
+  updateGeral();
+}
+
+function showError(msg) {
+  document.getElementById('loadingArea').style.display = 'none';
+  document.getElementById('errorArea').style.display = 'block';
+  document.getElementById('errorMsg').innerText = msg;
+  document.getElementById('statusBadge').innerText = 'Erro ao carregar';
+}
+
+// ==================== Profissionais ====================
+function populateProfissionais() {
+  const liners = new Set(), closers = new Set(), promotores = new Set();
+  todasVendas.forEach(v => {
     if (v.liner) liners.add(v.liner);
     if (v.closer) closers.add(v.closer);
     if (v.promotor) promotores.add(v.promotor);
   });
-
-  // Guardar para uso posterior
-  window.profLists = {
-    liner: Array.from(liners).sort(),
-    closer: Array.from(closers).sort(),
-    promotor: Array.from(promotores).sort()
-  };
-
+  window.profLiners = Array.from(liners).sort();
+  window.profClosers = Array.from(closers).sort();
+  window.profPromotores = Array.from(promotores).sort();
   updateProfList();
 }
-
 function updateProfList() {
   const tipo = document.getElementById('profTipo').value;
   const select = document.getElementById('profNome');
   select.innerHTML = '<option value="all">Todos</option>';
-
-  let names = [];
-  if (tipo === 'all') {
-    // Mostrar todos os profissionais de todos os tipos
-    names = [
-      ...new Set([
-        ...window.profLists.liner,
-        ...window.profLists.closer,
-        ...window.profLists.promotor
-      ])
-    ].sort();
-  } else if (tipo === 'liner') {
-    names = window.profLists.liner;
-  } else if (tipo === 'closer') {
-    names = window.profLists.closer;
-  } else if (tipo === 'promotor') {
-    names = window.profLists.promotor;
-  }
-
-  names.forEach(n => {
+  let list = [];
+  if (tipo === 'all') list = [...window.profLiners, ...window.profClosers, ...window.profPromotores];
+  else if (tipo === 'liner') list = window.profLiners;
+  else if (tipo === 'closer') list = window.profClosers;
+  else if (tipo === 'promotor') list = window.profPromotores;
+  list.forEach(n => {
     if (n) {
       const opt = document.createElement('option');
-      opt.value = n;
-      opt.textContent = n;
-      select.appendChild(opt);
+      opt.value = n; opt.textContent = n; select.appendChild(opt);
     }
   });
 }
 
-// ============================================
-// FILTRAGEM
-// ============================================
-function filterByDate(list, startId, endId) {
-  const start = document.getElementById(startId).value;
-  const end = document.getElementById(endId).value;
-  let filtered = [...list];
-
-  if (start) {
-    const dtStart = new Date(start + 'T00:00:00');
-    filtered = filtered.filter(v => v.dataObj && v.dataObj >= dtStart);
+// ==================== Filtros ====================
+function filterByDate(array, startId, endId) {
+  const startVal = document.getElementById(startId).value;
+  const endVal = document.getElementById(endId).value;
+  let res = [...array];
+  if (startVal) {
+    const s = new Date(startVal + 'T00:00:00');
+    res = res.filter(v => v.dataObj && v.dataObj >= s);
   }
-  if (end) {
-    const dtEnd = new Date(end + 'T23:59:59');
-    filtered = filtered.filter(v => v.dataObj && v.dataObj <= dtEnd);
+  if (endVal) {
+    const e = new Date(endVal + 'T23:59:59');
+    res = res.filter(v => v.dataObj && v.dataObj <= e);
   }
-  return filtered;
+  return res;
 }
-
-function filterByProf(list) {
-  const tipo = document.getElementById('profTipo').value;
-  const nome = document.getElementById('profNome').value;
-
-  if (nome === 'all' && tipo === 'all') return list;
-
-  return list.filter(v => {
-    if (tipo === 'liner') return v.liner === nome;
-    if (tipo === 'closer') return v.closer === nome;
-    if (tipo === 'promotor') return v.promotor === nome;
-    if (tipo === 'all') return v.liner === nome || v.closer === nome || v.promotor === nome;
+function filterByProf(array) {
+  const t = document.getElementById('profTipo').value;
+  const n = document.getElementById('profNome').value;
+  if (n === 'all' && t === 'all') return array;
+  return array.filter(v => {
+    if (t === 'liner') return v.liner === n;
+    if (t === 'closer') return v.closer === n;
+    if (t === 'promotor') return v.promotor === n;
+    if (t === 'all') return (v.liner === n || v.closer === n || v.promotor === n);
     return true;
   });
 }
 
-// ============================================
-// TAB: VISÃO GERAL
-// ============================================
+// ==================== Visão Geral ====================
 function updateGeral() {
-  const lista = filterByDate(allSales, 'dateStart', 'dateEnd');
+  let lista = filterByDate(todasVendas, 'dateStart', 'dateEnd');
   renderKPIsGeral(lista);
-  renderFaixasTable(lista, 'faixaTable', 'faixaCount');
-  renderDetailTable(lista, 'tabelaDetalhes', 'totalRegistros');
-  renderChartsGeral(lista);
-
-  const start = document.getElementById('dateStart').value;
-  const end = document.getElementById('dateEnd').value;
-  document.getElementById('periodLabelGeral').innerText =
-    'Período: ' + (start ? formatDateBR(start) : 'Início') + ' a ' + (end ? formatDateBR(end) : 'Atual');
+  renderFaixasTabela(lista, 'faixaTable', 'faixaCount');
+  renderTabelaDetalhes(lista, 'tabelaDetalhes', 'totalRegistros');
+  renderGraficosGeral(lista);
 }
-
 function renderKPIsGeral(lista) {
-  const totalVendas = lista.length;
+  const ativos = lista.filter(v => v.status === 'ATIVO').length;
   const cancelados = lista.filter(v => v.status === 'CANCELADO').length;
-  const ativos = totalVendas - cancelados;
-  const somaVgv = lista.reduce((s, v) => s + v.valorNegociado, 0);
-  const somaEfetiva = lista.reduce((s, v) => s + v.entradaEfetiva, 0);
-  const taxaCancel = totalVendas > 0 ? ((cancelados / totalVendas) * 100).toFixed(1) : '0.0';
+  const total = ativos + cancelados;
+  const somaVgv = lista.reduce((s, v) => s + v.valorNeg, 0);
+  const somaEf = lista.reduce((s, v) => s + v.entradaEfetiva, 0);
+  const taxaCancel = total > 0 ? (cancelados / total * 100).toFixed(1) : '0.0';
 
-  document.getElementById('kpiTotalVendas').innerText = totalVendas;
+  document.getElementById('kpiTotalVendas').innerText = total;
   document.getElementById('kpiVgv').innerText = formatCurrency(somaVgv);
-  document.getElementById('kpiEfetiva').innerText = formatCurrency(somaEfetiva);
+  document.getElementById('kpiEfetiva').innerText = formatCurrency(somaEf);
   document.getElementById('kpiCancelados').innerText = cancelados;
   document.getElementById('kpiTaxaCancel').innerText = taxaCancel + '%';
 }
 
-// ============================================
-// TAB: PROFISSIONAL
-// ============================================
-function updateProf() {
-  let lista = filterByDate(allSales, 'profDateStart', 'profDateEnd');
-  lista = filterByProf(lista);
-
-  renderKPIsProf(lista);
-  renderFaixasTable(lista, 'profFaixaTable', 'profFaixaCount');
-  renderDetailTable(lista, 'profTabelaDetalhes', 'profTotalRegistros');
-  renderChartProfFaixas(lista);
-
-  const start = document.getElementById('profDateStart').value;
-  const end = document.getElementById('profDateEnd').value;
-  document.getElementById('periodLabelProf').innerText =
-    'Período: ' + (start ? formatDateBR(start) : 'Início') + ' a ' + (end ? formatDateBR(end) : 'Atual');
-}
-
-function renderKPIsProf(lista) {
-  const totalVendas = lista.length;
-  const cancelados = lista.filter(v => v.status === 'CANCELADO').length;
-  const ativos = totalVendas - cancelados;
-  const somaVgv = lista.reduce((s, v) => s + v.valorNegociado, 0);
-  const somaEfetiva = lista.reduce((s, v) => s + v.entradaEfetiva, 0);
-  const taxaCancel = totalVendas > 0 ? ((cancelados / totalVendas) * 100).toFixed(1) : '0.0';
-  const percMedioEfetiva = totalVendas > 0
-    ? (lista.reduce((s, v) => s + v.percentEntradaEfetiva, 0) / totalVendas).toFixed(1)
-    : '0.0';
-  const ticketMedio = totalVendas > 0 ? somaVgv / totalVendas : 0;
-
-  document.getElementById('profKpiTotal').innerText = totalVendas;
-  document.getElementById('profKpiVgv').innerText = formatCurrency(somaVgv);
-  document.getElementById('profKpiEfetiva').innerText = formatCurrency(somaEfetiva);
-  document.getElementById('profKpiCancel').innerText = cancelados;
-  document.getElementById('profKpiTaxaCancel').innerText = taxaCancel + '%';
-  document.getElementById('profPercEfetiva').innerText = percMedioEfetiva + '%';
-  document.getElementById('profTicketMedio').innerText = formatCurrency(ticketMedio);
-  document.getElementById('profCotasAtivas').innerText = ativos;
-}
-
-// ============================================
-// TABELA DE FAIXAS
-// ============================================
-function renderFaixasTable(lista, tableId, countId) {
-  const faixas = {};
-  FAIXAS_ORDER.forEach(f => faixas[f] = { total: 0, cancel: 0 });
-
+// ==================== Faixas tabela ====================
+function renderFaixasTabela(lista, tableId, countId) {
+  const countObj = {};
+  FAIXAS.forEach(f => { countObj[f.label] = { total: 0, cancel: 0 }; });
   lista.forEach(v => {
-    const f = v.faixa;
-    if (!faixas[f]) faixas[f] = { total: 0, cancel: 0 };
-    faixas[f].total++;
-    if (v.status === 'CANCELADO') faixas[f].cancel++;
+    if (countObj[v.faixa]) {
+      countObj[v.faixa].total++;
+      if (v.status === 'CANCELADO') countObj[v.faixa].cancel++;
+    }
   });
-
-  const maxTotal = Math.max(...Object.values(faixas).map(d => d.total), 1);
-  const tbody = document.querySelector('#' + tableId + ' tbody');
-  tbody.innerHTML = '';
+  const maxTotal = Math.max(...Object.values(countObj).map(o => o.total), 1);
+  const tBody = document.querySelector('#' + tableId + ' tbody');
+  tBody.innerHTML = '';
   let totalGeral = 0;
+  Object.entries(countObj).forEach(([faixa, d]) => {
+    totalGeral += d.total;
+    const percCancel = d.total > 0 ? (d.cancel / d.total * 100).toFixed(1) : '0.0';
+    const barW = Math.max((d.total / maxTotal) * 150, 4);
+    let cancelClass = 'low';
+    if (parseFloat(percCancel) > 40) cancelClass = 'high';
+    else if (parseFloat(percCancel) > 15) cancelClass = 'mid';
 
-  Object.entries(faixas).forEach(([faixa, data]) => {
-    totalGeral += data.total;
-    const pctCancel = data.total > 0 ? ((data.cancel / data.total) * 100).toFixed(1) : '0.0';
-    const barW = Math.max((data.total / maxTotal) * 150, 4);
-    const cancelClass = parseFloat(pctCancel) <= 15 ? 'low' : parseFloat(pctCancel) <= 40 ? 'mid' : 'high';
-    const color = FAIXAS_COLORS[faixa] || 'rgba(10,108,255,0.6)';
-
-    tbody.innerHTML += `
-      <tr>
-        <td style="font-weight:600; color:#e8f0ff;">${faixa}</td>
-        <td><strong>${data.total}</strong></td>
-        <td>${data.cancel}</td>
-        <td><span class="cancel-rate ${cancelClass}">${pctCancel}%</span></td>
-        <td><div style="width:${barW}px; height:8px; background:${color}; border-radius:4px;"></div></td>
-      </tr>`;
+    tBody.innerHTML += `<tr>
+      <td style="font-weight:600; color:#e8f0ff;">${faixa}</td>
+      <td><strong>${d.total}</strong></td>
+      <td>${d.cancel}</td>
+      <td><span class="cancel-rate ${cancelClass}">${percCancel}%</span></td>
+      <td><div style="width:${barW}px; height:8px; background:${FAIXAS_COLORS[faixa] || 'rgba(10,108,255,0.6)'}; border-radius:4px;"></div></td>
+    </tr>`;
   });
-
   document.getElementById(countId).innerText = 'Total: ' + totalGeral;
 }
 
-// ============================================
-// TABELA DETALHADA
-// ============================================
-function renderDetailTable(lista, tableId, countId) {
+// ==================== Detalhes tabela ====================
+function renderTabelaDetalhes(lista, tableId, countId) {
   const tbody = document.querySelector('#' + tableId + ' tbody');
   tbody.innerHTML = '';
-
   lista.forEach(v => {
-    tbody.innerHTML += `
-      <tr>
-        <td>${v.dataStr || '-'}</td>
-        <td>${v.unidade || '-'}</td>
-        <td>${v.cliente || '-'}</td>
-        <td>${formatCurrency(v.valorNegociado)}</td>
-        <td>${formatCurrency(v.totalEntrada)}</td>
-        <td>${v.percentEntrada.toFixed(1)}%</td>
-        <td>${formatCurrency(v.entradaEfetiva)}</td>
-        <td>${v.percentEntradaEfetiva.toFixed(1)}%</td>
-        <td><span class="status-badge ${v.status === 'ATIVO' ? 'ativo' : 'cancelado'}">${v.status}</span></td>
-        <td>${v.liner || '-'}</td>
-        <td>${v.closer || '-'}</td>
-        <td>${v.promotor || '-'}</td>
-      </tr>`;
+    tbody.innerHTML += `<tr>
+      <td>${v.dataStr || '-'}</td>
+      <td>${v.unidade || '-'}</td>
+      <td>${v.cliente || '-'}</td>
+      <td>${formatCurrency(v.valorNeg)}</td>
+      <td>${formatCurrency(v.totalEntrada)}</td>
+      <td>${v.percentEntrada.toFixed(1)}%</td>
+      <td>${formatCurrency(v.entradaEfetiva)}</td>
+      <td>${v.percentEntradaEfetiva.toFixed(1)}%</td>
+      <td><span class="status-badge ${v.status === 'ATIVO' ? 'ativo' : 'cancelado'}">${v.status}</span></td>
+      <td>${v.liner || '-'}</td>
+      <td>${v.closer || '-'}</td>
+      <td>${v.promotor || '-'}</td>
+    </tr>`;
   });
-
   document.getElementById(countId).innerText = lista.length + ' registros';
 }
 
-// ============================================
-// GRÁFICOS - VISÃO GERAL
-// ============================================
-function renderChartsGeral(lista) {
-  // Doughnut - Faixas
+// ==================== Gráficos ====================
+function renderGraficosGeral(lista) {
   const countFaixas = {};
-  FAIXAS_ORDER.forEach(f => countFaixas[f] = 0);
-  lista.forEach(v => {
-    if (countFaixas[v.faixa] !== undefined) countFaixas[v.faixa]++;
-  });
-
-  const labelsF = FAIXAS_ORDER.filter(f => countFaixas[f] > 0);
-  const dataF = labelsF.map(f => countFaixas[f]);
-  const colorsF = labelsF.map(f => FAIXAS_COLORS[f]);
+  FAIXAS.forEach(f => { countFaixas[f.label] = 0; });
+  lista.forEach(v => { if (countFaixas[v.faixa] !== undefined) countFaixas[v.faixa]++; });
+  const labelsFaixas = FAIXAS.filter(f => countFaixas[f.label] > 0).map(f => f.label);
+  const dataFaixas = labelsFaixas.map(f => countFaixas[f]);
+  const coresFaixas = labelsFaixas.map(f => FAIXAS_COLORS[f]);
 
   if (chartFaixas) chartFaixas.destroy();
   chartFaixas = new Chart(document.getElementById('chartFaixas').getContext('2d'), {
     type: 'doughnut',
-    data: {
-      labels: labelsF,
-      datasets: [{ data: dataF, backgroundColor: colorsF, borderColor: '#041830', borderWidth: 2 }]
-    },
-    options: {
-      responsive: true, maintainAspectRatio: false,
-      plugins: {
-        legend: { position: 'right', labels: { color: '#a0bde0', font: { size: 10 }, padding: 8 } }
-      }
+    data: { labels: labelsFaixas, datasets: [{ data: dataFaixas, backgroundColor: coresFaixas, borderColor: '#041830', borderWidth: 2 }] },
+    options: { responsive: true, maintainAspectRatio: false,
+      plugins: { legend: { position: 'right', labels: { color: '#a0bde0', font: { size: 10 }, padding: 8 } } }
     }
   });
 
-  // Pie - Status
   const ativos = lista.filter(v => v.status === 'ATIVO').length;
   const canc = lista.filter(v => v.status === 'CANCELADO').length;
-
   if (chartStatus) chartStatus.destroy();
   chartStatus = new Chart(document.getElementById('chartStatus').getContext('2d'), {
     type: 'pie',
-    data: {
-      labels: ['ATIVO', 'CANCELADO'],
-      datasets: [{ data: [ativos, canc], backgroundColor: ['rgba(0,214,143,0.8)', 'rgba(255,68,112,0.8)'], borderColor: '#041830', borderWidth: 2 }]
-    },
-    options: {
-      responsive: true, maintainAspectRatio: false,
+    data: { labels: ['ATIVO', 'CANCELADO'], datasets: [{ data: [ativos, canc], backgroundColor: ['rgba(0,214,143,0.8)', 'rgba(255,68,112,0.8)'], borderWidth: 2, borderColor: '#041830' }] },
+    options: { responsive: true, maintainAspectRatio: false,
       plugins: { legend: { position: 'bottom', labels: { color: '#a0bde0', font: { size: 12 } } } }
     }
   });
 
-  // Bar - VGV por mês
-  const vgvByMonth = {};
+  const vgvMes = {};
   lista.forEach(v => {
     if (v.dataObj) {
       const key = v.dataObj.getFullYear() + '-' + (v.dataObj.getMonth() + 1).toString().padStart(2, '0');
-      vgvByMonth[key] = (vgvByMonth[key] || 0) + v.valorNegociado;
+      vgvMes[key] = (vgvMes[key] || 0) + v.valorNeg;
     }
   });
-  const monthsSort = Object.keys(vgvByMonth).sort();
-  const monthNames = ['Jan','Fev','Mar','Abr','Mai','Jun','Jul','Ago','Set','Out','Nov','Dez'];
-  const labelsV = monthsSort.map(k => { const p = k.split('-'); return monthNames[parseInt(p[1])-1] + '/' + p[0].slice(2); });
-  const dataV = monthsSort.map(k => vgvByMonth[k]);
-
+  const mesesOrdenados = Object.keys(vgvMes).sort();
+  const nomesMes = ['Jan', 'Fev', 'Mar', 'Abr', 'Mai', 'Jun', 'Jul', 'Ago', 'Set', 'Out', 'Nov', 'Dez'];
+  const labelsV = mesesOrdenados.map(k => {
+    const p = k.split('-');
+    return nomesMes[parseInt(p[1]) - 1] + '/' + p[0].slice(2);
+  });
+  const dadosV = mesesOrdenados.map(k => vgvMes[k]);
   if (chartVgvMes) chartVgvMes.destroy();
   chartVgvMes = new Chart(document.getElementById('chartVgvMes').getContext('2d'), {
     type: 'bar',
-    data: {
-      labels: labelsV,
-      datasets: [{
-        label: 'VGV (R$)', data: dataV,
-        backgroundColor: 'rgba(10,108,255,0.6)', borderColor: 'rgba(10,108,255,0.9)',
-        borderWidth: 1, borderRadius: 8
-      }]
-    },
+    data: { labels: labelsV, datasets: [{ label: 'VGV (R$)', data: dadosV, backgroundColor: 'rgba(10,108,255,0.6)', borderColor: 'rgba(10,108,255,0.9)', borderWidth: 1, borderRadius: 8 }] },
     options: {
       responsive: true, maintainAspectRatio: false,
       plugins: {
         legend: { display: false },
-        tooltip: { callbacks: { label: (ctx) => 'R$ ' + ctx.raw.toLocaleString('pt-BR', { minimumFractionDigits: 2 }) } }
+        tooltip: { callbacks: { label: v => 'R$ ' + v.raw.toLocaleString('pt-BR', { minimumFractionDigits: 2 }) } }
       },
       scales: {
         x: { ticks: { color: '#6080a8', font: { size: 10 } }, grid: { display: false } },
-        y: { ticks: { color: '#6080a8', font: { size: 10 }, callback: (v) => 'R$ ' + (v/1000).toFixed(0) + 'k' }, grid: { color: 'rgba(10,108,255,0.08)' } }
+        y: { ticks: { color: '#6080a8', font: { size: 10 }, callback: v => 'R$ ' + (v / 1000).toFixed(0) + 'k' }, grid: { color: 'rgba(10,108,255,0.08)' } }
       }
     }
   });
 }
 
-// ============================================
-// GRÁFICO - PROFISSIONAL FAIXAS
-// ============================================
+// ==================== KPIs Profissional ====================
+function renderKPIsProf(lista) {
+  const ativos = lista.filter(v => v.status === 'ATIVO').length;
+  const cancelados = lista.filter(v => v.status === 'CANCELADO').length;
+  const total = ativos + cancelados;
+  const somaVgv = lista.reduce((s, v) => s + v.valorNeg, 0);
+  const somaEf = lista.reduce((s, v) => s + v.entradaEfetiva, 0);
+  const taxaCancel = total > 0 ? (cancelados / total * 100).toFixed(1) : '0.0';
+  const percEfetivaMed = lista.length > 0 ? (lista.reduce((s, v) => s + v.percentEntradaEfetiva, 0) / lista.length).toFixed(1) : '0.0';
+  const ticketMedio = ativos > 0 ? somaVgv / ativos : 0;
+
+  document.getElementById('profKpiTotal').innerText = total;
+  document.getElementById('profKpiVgv').innerText = formatCurrency(somaVgv);
+  document.getElementById('profKpiEfetiva').innerText = formatCurrency(somaEf);
+  document.getElementById('profKpiCancel').innerText = cancelados;
+  document.getElementById('profKpiTaxaCancel').innerText = taxaCancel + '%';
+  document.getElementById('profPercEfetiva').innerText = percEfetivaMed + '%';
+  document.getElementById('profTicketMedio').innerText = formatCurrency(ticketMedio);
+  document.getElementById('profCotasAtivas').innerText = ativos;
+}
+
+// ==================== Chart Prof Faixas ====================
 function renderChartProfFaixas(lista) {
-  const cancByFaixa = {};
-  FAIXAS_ORDER.forEach(f => cancByFaixa[f] = 0);
+  const cancFaixas = {};
+  FAIXAS.forEach(f => { cancFaixas[f.label] = 0; });
   lista.filter(v => v.status === 'CANCELADO').forEach(v => {
-    if (cancByFaixa[v.faixa] !== undefined) cancByFaixa[v.faixa]++;
+    if (cancFaixas[v.faixa] !== undefined) cancFaixas[v.faixa]++;
   });
-
-  const labels = FAIXAS_ORDER.filter(f => cancByFaixa[f] > 0);
-  const data = labels.map(f => cancByFaixa[f]);
-  const colors = labels.map(f => FAIXAS_COLORS[f]);
-
+  const lbl = FAIXAS.filter(f => cancFaixas[f.label] > 0).map(f => f.label);
+  const data = lbl.map(f => cancFaixas[f]);
+  const cores = lbl.map(f => FAIXAS_COLORS[f]);
   if (chartProfFaixas) chartProfFaixas.destroy();
   chartProfFaixas = new Chart(document.getElementById('chartProfFaixas').getContext('2d'), {
     type: 'doughnut',
-    data: {
-      labels: labels,
-      datasets: [{ data: data, backgroundColor: colors, borderColor: '#041830', borderWidth: 2 }]
-    },
-    options: {
-      responsive: true, maintainAspectRatio: false,
-      plugins: {
-        legend: { position: 'right', labels: { color: '#a0bde0', font: { size: 10 }, padding: 8 } }
-      }
+    data: { labels: lbl, datasets: [{ data: data, backgroundColor: cores, borderColor: '#041830', borderWidth: 2 }] },
+    options: { responsive: true, maintainAspectRatio: false,
+      plugins: { legend: { position: 'right', labels: { color: '#a0bde0', font: { size: 10 }, padding: 8 } } }
     }
   });
 }
 
-// ============================================
-// UTILITÁRIOS
-// ============================================
-function formatCurrency(val) {
-  return 'R$ ' + (val || 0).toLocaleString('pt-BR', { minimumFractionDigits: 2, maximumFractionDigits: 2 });
+// ==================== UTILITIES ====================
+function formatCurrency(v) {
+  return 'R$ ' + (v || 0).toLocaleString('pt-BR', { minimumFractionDigits: 2 });
 }
 
-function formatDateBR(dateStr) {
-  if (!dateStr) return '-';
-  const parts = dateStr.split('-');
-  if (parts.length === 3) return parts[2] + '/' + parts[1] + '/' + parts[0];
-  return dateStr;
-}
-
-// ============================================
-// EVENT HANDLERS
-// ============================================
-function switchTab(tab) {
-  document.querySelectorAll('.tab-btn').forEach(b => b.classList.remove('active'));
-  document.querySelectorAll('.tab-content').forEach(c => c.classList.remove('active'));
-
-  if (tab === 'geral') {
-    document.querySelectorAll('.tab-btn')[0].classList.add('active');
-    document.getElementById('tab-geral').classList.add('active');
-  } else {
-    document.querySelectorAll('.tab-btn')[1].classList.add('active');
-    document.getElementById('tab-profissional').classList.add('active');
-    updateProf();
-  }
-}
-
+// ==================== Aplicar filtros ====================
 function applyFilterGeral() { updateGeral(); }
 function resetFilterGeral() {
   document.getElementById('dateStart').value = '';
   document.getElementById('dateEnd').value = '';
   updateGeral();
 }
-
-function applyFilterProf() { updateProf(); }
+function updateProf() {
+  let lista = filterByDate(todasVendas, 'profDateStart', 'profDateEnd');
+  lista = filterByProf(lista);
+  renderKPIsProf(lista);
+  renderFaixasTabela(lista, 'profFaixaTable', 'profFaixaCount');
+  renderTabelaDetalhes(lista, 'profTabelaDetalhes', 'profTotalRegistros');
+  renderChartProfFaixas(lista);
+}
 function resetFilterProf() {
   document.getElementById('profDateStart').value = '';
   document.getElementById('profDateEnd').value = '';
   document.getElementById('profTipo').value = 'all';
-  document.getElementById('profNome').value = 'all';
-  updateProfList();
+  document.getElementById('profNome').innerHTML = '<option value="all">Todos</option>';
   updateProf();
 }
 
-// Upload handler
-document.getElementById('csvFile').addEventListener('change', function(e) {
-  const file = e.target.files[0];
-  if (file) loadCSV(file);
+// ==================== Tabs ====================
+function switchTab(t) {
+  document.querySelectorAll('.tab-btn').forEach(b => b.classList.remove('active'));
+  document.querySelectorAll('.tab-content').forEach(c => c.classList.remove('active'));
+  if (t === 'geral') {
+    document.querySelectorAll('.tab-btn')[0].classList.add('active');
+    document.querySelector('#tab-geral').classList.add('active');
+  } else {
+    document.querySelectorAll('.tab-btn')[1].classList.add('active');
+    document.querySelector('#tab-profissional').classList.add('active');
+    updateProf();
+  }
+}
+document.querySelectorAll('.tab-btn').forEach(btn => {
+  btn.addEventListener('click', () => switchTab(btn.getAttribute('data-tab')));
+});
+
+// ==================== Auto-load on page ready ====================
+document.addEventListener('DOMContentLoaded', () => {
+  loadCSVFromRepo();
 });
 </script>
 </body>
