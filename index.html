@@ -1,26 +1,33 @@
 <!DOCTYPE html>
 <html lang="pt-BR">
 <head>
-    <meta charset="UTF-8" />
-    <meta name="viewport" content="width=device-width, initial-scale=1" />
-    <title>Borderô de Vendas | Collina Dreams</title>
-
-    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/flatpickr/dist/themes/dark.css" />
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Bordero de Vendas — Collina Dreams</title>
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/flatpickr/dist/themes/dark.css">
+    <script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.7/dist/chart.umd.min.js">
+    </script>
     <script src="https://cdn.jsdelivr.net/npm/flatpickr"></script>
-    <script src="https://cdn.jsdelivr.net/npm/chart.js@4"></script>
-
+    <script src="https://cdn.jsdelivr.net/npm/flatpickr/dist/l10n/pt.js"></script>
     <style>
         :root {
-            --bg-deep: #070b17;
-            --bg-card: #0f1630;
-            --accent: #448aff;
-            --accent-light: #64b5f6;
-            --border: #1a2650;
-            --text: #e0e4f0;
-            --text2: #8a90b0;
-            --danger: #ff5252;
-            --success: #4caf84;
-            --warning: #ffb74d;
+            --bg-deep: #0a0f1e;
+            --bg-card: #0d1530;
+            --bg-card-hover: #111d40;
+            --blue-1: #0ea5e9;
+            --blue-2: #3b82f6;
+            --blue-3: #6366f1;
+            --blue-4: #1e3a5f;
+            --blue-glow: rgba(14, 165, 233, 0.25);
+            --text: #e2e8f0;
+            --text-dim: #94a3b8;
+            --text-bright: #f1f5f9;
+            --border: rgba(59, 130, 246, 0.2);
+            --red: #ef4444;
+            --green: #22c55e;
+            --radius: 16px;
+            --radius-sm: 10px;
+            --transition: 0.25s cubic-bezier(0.4, 0, 0.2, 1);
         }
 
         * {
@@ -34,1181 +41,1152 @@
             background: var(--bg-deep);
             color: var(--text);
             min-height: 100vh;
-            line-height: 1.5;
+            background-image:
+                radial-gradient(ellipse at 20% 0%, rgba(14, 165, 233, 0.08) 0%, transparent 60%),
+                radial-gradient(ellipse at 80% 100%, rgba(99, 102, 241, 0.06) 0%, transparent 60%),
+                radial-gradient(ellipse at 50% 50%, rgba(59, 130, 246, 0.03) 0%, transparent 80%);
+            background-attachment: fixed;
         }
 
-        /* ── TELA DE IMPORTACAO ── */
-        #importScreen {
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            min-height: 100vh;
-            padding: 20px;
-            background: var(--bg-deep);
-        }
-        .import-card {
-            background: var(--bg-card);
-            border: 2px solid var(--border);
-            border-radius: 20px;
-            padding: 40px 36px;
-            max-width: 800px;
-            width: 100%;
-            box-shadow: 0 20px 60px rgba(0, 0, 0, 0.5);
-            text-align: center;
-        }
-        .import-card h2 {
-            font-size: 1.6rem;
-            margin-bottom: 6px;
-            background: linear-gradient(135deg, var(--accent-light), var(--accent));
-            -webkit-background-clip: text;
-            -webkit-text-fill-color: transparent;
-        }
-        .import-card p {
-            color: var(--text2);
-            margin-bottom: 20px;
-            font-size: 0.9rem;
-        }
-        .import-card textarea {
-            width: 100%;
-            height: 260px;
-            background: #0b0f22;
-            border: 1px solid var(--border);
-            border-radius: 12px;
-            padding: 14px;
-            color: #ccd;
-            font-family: 'Consolas', 'Courier New', monospace;
-            font-size: 0.78rem;
-            resize: vertical;
-            outline: none;
-            transition: border 0.3s;
-        }
-        .import-card textarea:focus {
-            border-color: var(--accent);
-        }
-        .btn-load {
-            display: inline-block;
-            margin-top: 18px;
-            padding: 13px 36px;
-            background: linear-gradient(135deg, var(--accent), #1565c0);
-            color: #fff;
-            border: none;
-            border-radius: 12px;
-            font-size: 1rem;
-            font-weight: 700;
-            cursor: pointer;
-            letter-spacing: 0.5px;
-            transition: all 0.3s;
-        }
-        .btn-load:hover {
-            transform: translateY(-2px);
-            box-shadow: 0 8px 28px rgba(68, 138, 255, 0.35);
-        }
-        .import-status {
-            margin-top: 12px;
-            font-size: 0.85rem;
-            min-height: 24px;
-        }
-        .import-status.success {
-            color: var(--success);
-        }
-        .import-status.error {
-            color: var(--danger);
-        }
-        .import-hint {
-            margin-top: 16px;
-            font-size: 0.72rem;
-            color: #555;
-            text-align: left;
-            background: #0b0f22;
-            padding: 12px 16px;
-            border-radius: 10px;
-            line-height: 1.7;
-        }
-        .import-hint code {
-            background: #1a1f35;
-            padding: 2px 6px;
-            border-radius: 4px;
-            font-size: 0.7rem;
-            color: var(--accent-light);
-        }
-
-        /* ═══════════ DASHBOARD ═══════════ */
-        #dashboardScreen {
-            display: none;
-        }
-        .container {
-            max-width: 1540px;
+        .dashboard {
+            max-width: 1480px;
             margin: 0 auto;
-            padding: 20px 24px 40px;
+            padding: 24px 20px 40px;
         }
 
-        /* HEADER */
-        header {
+        /* ── Header ───────────────────── */
+        .header {
             display: flex;
-            flex-wrap: wrap;
             align-items: center;
             justify-content: space-between;
+            flex-wrap: wrap;
             gap: 16px;
+            margin-bottom: 28px;
+            padding: 24px 28px;
             background: var(--bg-card);
-            padding: 18px 24px;
-            border-radius: 18px;
+            border-radius: var(--radius);
             border: 1px solid var(--border);
-            margin-bottom: 22px;
-            box-shadow: 0 8px 28px rgba(0, 0, 0, 0.3);
+            position: relative;
+            overflow: hidden;
         }
-        header h1 {
-            font-size: 1.4rem;
+        .header::before {
+            content: '';
+            position: absolute;
+            inset: 0;
+            background: linear-gradient(135deg, rgba(14, 165, 233, 0.12) 0%, rgba(99, 102, 241, 0.06) 100%);
+            pointer-events: none;
+        }
+        .header-title {
+            position: relative;
+            z-index: 1;
+        }
+        .header-title h1 {
+            font-size: 1.7rem;
             font-weight: 700;
-            background: linear-gradient(135deg, var(--accent-light), #fff);
+            letter-spacing: -0.02em;
+            background: linear-gradient(135deg, #38bdf8, #818cf8);
             -webkit-background-clip: text;
             -webkit-text-fill-color: transparent;
-            display: flex;
-            align-items: center;
-            gap: 10px;
+            background-clip: text;
         }
-        .header-actions {
-            display: flex;
-            flex-wrap: wrap;
-            gap: 10px;
-            align-items: center;
-        }
-        .header-actions input {
-            padding: 10px 14px;
-            border: 1px solid var(--border);
-            border-radius: 10px;
-            background: #131a33;
-            color: #ddd;
-            font-size: 0.88rem;
-            width: 148px;
-            cursor: pointer;
-            outline: none;
-        }
-        .header-actions input::placeholder {
-            color: #555;
-        }
-        .btn {
-            padding: 10px 18px;
-            border: none;
-            border-radius: 10px;
-            font-weight: 600;
+        .header-title span {
             font-size: 0.85rem;
-            cursor: pointer;
-            letter-spacing: 0.3px;
-            transition: all 0.25s;
+            color: var(--text-dim);
+            letter-spacing: 0.03em;
+            text-transform: uppercase;
+            font-weight: 500;
         }
-        .btn:hover {
-            transform: translateY(-1px);
-            opacity: 0.9;
+        .header-badge {
+            position: relative;
+            z-index: 1;
+            padding: 8px 18px;
+            border-radius: 999px;
+            background: rgba(14, 165, 233, 0.15);
+            border: 1px solid rgba(14, 165, 233, 0.3);
+            font-size: 0.8rem;
+            font-weight: 600;
+            color: #38bdf8;
+            letter-spacing: 0.04em;
+            text-transform: uppercase;
+            animation: pulse-glow 2.5s ease-in-out infinite;
         }
-        .btn-primary {
-            background: linear-gradient(135deg, var(--accent), #1565c0);
-            color: #fff;
-        }
-        .btn-outline {
-            background: transparent;
-            border: 1px solid var(--border);
-            color: #999;
-        }
-        .btn-outline:hover {
-            border-color: var(--accent-light);
-            color: #ddd;
-        }
-        .btn-danger {
-            background: transparent;
-            border: 1px solid rgba(255, 82, 82, 0.4);
-            color: var(--danger);
-            font-size: 0.78rem;
-            padding: 8px 14px;
+        @keyframes pulse-glow {
+            0%,
+            100% {
+                box-shadow: 0 0 0 0 rgba(14, 165, 233, 0.3);
+            }
+            50% {
+                box-shadow: 0 0 20px 4px rgba(14, 165, 233, 0.15);
+            }
         }
 
-        /* KPIs */
-        .kpi-row {
-            display: grid;
-            grid-template-columns: repeat(auto-fit, minmax(180px, 1fr));
+        /* ── Filter Bar ──────────────── */
+        .filter-bar {
+            display: flex;
+            align-items: center;
             gap: 14px;
-            margin-bottom: 22px;
+            flex-wrap: wrap;
+            margin-bottom: 24px;
+            padding: 16px 20px;
+            background: var(--bg-card);
+            border-radius: var(--radius);
+            border: 1px solid var(--border);
+        }
+        .filter-bar label {
+            font-size: 0.82rem;
+            font-weight: 600;
+            color: var(--text-dim);
+            text-transform: uppercase;
+            letter-spacing: 0.04em;
+            white-space: nowrap;
+        }
+        .filter-input {
+            background: rgba(15, 23, 50, 0.8);
+            border: 1px solid var(--border);
+            color: var(--text-bright);
+            padding: 9px 14px;
+            border-radius: var(--radius-sm);
+            font-size: 0.9rem;
+            font-family: inherit;
+            outline: none;
+            transition: var(--transition);
+            min-width: 150px;
+            cursor: pointer;
+        }
+        .filter-input:focus,
+        .filter-input:hover {
+            border-color: var(--blue-1);
+            box-shadow: 0 0 0 3px rgba(14, 165, 233, 0.1);
+        }
+        .btn-reset {
+            padding: 9px 20px;
+            border-radius: var(--radius-sm);
+            background: rgba(14, 165, 233, 0.12);
+            border: 1px solid rgba(14, 165, 233, 0.3);
+            color: #38bdf8;
+            cursor: pointer;
+            font-weight: 600;
+            font-size: 0.85rem;
+            transition: var(--transition);
+            letter-spacing: 0.02em;
+        }
+        .btn-reset:hover {
+            background: rgba(14, 165, 233, 0.22);
+            box-shadow: 0 0 14px rgba(14, 165, 233, 0.2);
+        }
+
+        /* ── KPI Cards ───────────────── */
+        .kpi-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(210px, 1fr));
+            gap: 16px;
+            margin-bottom: 24px;
         }
         .kpi-card {
             background: var(--bg-card);
-            border-radius: 16px;
-            padding: 18px 20px;
             border: 1px solid var(--border);
-            transition: transform 0.2s, box-shadow 0.2s;
-            box-shadow: 0 4px 16px rgba(0, 0, 0, 0.2);
+            border-radius: var(--radius);
+            padding: 20px 22px;
+            position: relative;
+            overflow: hidden;
+            transition: var(--transition);
         }
         .kpi-card:hover {
+            border-color: rgba(14, 165, 233, 0.4);
             transform: translateY(-2px);
-            box-shadow: 0 10px 28px rgba(0, 0, 0, 0.35);
+            box-shadow: 0 8px 30px rgba(14, 165, 233, 0.08);
+        }
+        .kpi-card::after {
+            content: '';
+            position: absolute;
+            top: -30%;
+            right: -20%;
+            width: 100px;
+            height: 100px;
+            border-radius: 50%;
+            background: rgba(14, 165, 233, 0.05);
+            pointer-events: none;
         }
         .kpi-label {
-            font-size: 0.7rem;
+            font-size: 0.75rem;
             text-transform: uppercase;
-            letter-spacing: 1px;
-            color: var(--text2);
+            letter-spacing: 0.06em;
+            color: var(--text-dim);
             font-weight: 600;
-            margin-bottom: 4px;
+            margin-bottom: 6px;
+            position: relative;
+            z-index: 1;
         }
         .kpi-value {
-            font-size: 1.5rem;
-            font-weight: 700;
-            letter-spacing: -0.5px;
+            font-size: 1.8rem;
+            font-weight: 800;
+            letter-spacing: -0.03em;
+            position: relative;
+            z-index: 1;
+            background: linear-gradient(180deg, #f1f5f9 0%, #bae6fd 100%);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
         }
         .kpi-sub {
-            font-size: 0.68rem;
-            color: #666;
-            margin-top: 2px;
+            font-size: 0.78rem;
+            color: var(--text-dim);
+            margin-top: 4px;
+            position: relative;
+            z-index: 1;
+            font-weight: 500;
+        }
+        .kpi-accent-red {
+            color: var(--red);
+            -webkit-text-fill-color: var(--red);
+        }
+        .kpi-accent-green {
+            color: var(--green);
+            -webkit-text-fill-color: var(--green);
         }
 
-        /* CHARTS */
-        .charts-row {
+        /* ── Chart Grid ──────────────── */
+        .chart-grid {
             display: grid;
             grid-template-columns: repeat(auto-fit, minmax(440px, 1fr));
-            gap: 18px;
-            margin-bottom: 22px;
+            gap: 16px;
+            margin-bottom: 24px;
         }
-        .chart-box {
+        .chart-card {
             background: var(--bg-card);
-            border-radius: 16px;
-            padding: 20px 22px;
             border: 1px solid var(--border);
-            box-shadow: 0 4px 18px rgba(0, 0, 0, 0.2);
+            border-radius: var(--radius);
+            padding: 20px;
+            transition: var(--transition);
         }
-        .chart-box.full {
-            grid-column: 1 / -1;
+        .chart-card:hover {
+            border-color: rgba(14, 165, 233, 0.3);
         }
-        .chart-box h3 {
-            font-size: 0.78rem;
-            font-weight: 600;
-            color: var(--text2);
+        .chart-card.full {
+            grid-column: 1/-1;
+        }
+        .chart-card.half {
+            min-width: 0;
+        }
+        .chart-title {
+            font-size: 0.85rem;
+            font-weight: 700;
+            letter-spacing: 0.03em;
             text-transform: uppercase;
-            letter-spacing: 0.8px;
+            color: var(--text-dim);
             margin-bottom: 14px;
         }
         .chart-wrap {
             position: relative;
             width: 100%;
+            height: 320px;
         }
-        .chart-wrap canvas {
-            width: 100% !important;
+        .chart-wrap.tall {
+            height: 400px;
+        }
+        .chart-wrap.short {
+            height: 280px;
         }
 
-        /* RANKINGS */
-        .ranking-grid {
-            display: grid;
-            grid-template-columns: repeat(auto-fit, minmax(340px, 1fr));
-            gap: 18px;
-            margin-bottom: 22px;
-        }
-        .table-box {
+        /* ── Data Table ──────────────── */
+        .table-card {
             background: var(--bg-card);
-            border-radius: 16px;
-            padding: 18px 20px;
             border: 1px solid var(--border);
-            overflow-x: auto;
-            box-shadow: 0 4px 16px rgba(0, 0, 0, 0.2);
+            border-radius: var(--radius);
+            overflow: hidden;
+            margin-bottom: 24px;
         }
-        .table-box h4 {
-            color: var(--text2);
-            font-size: 0.74rem;
-            font-weight: 600;
+        .table-header-bar {
+            padding: 16px 20px;
+            border-bottom: 1px solid var(--border);
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            flex-wrap: wrap;
+            gap: 10px;
+        }
+        .table-header-bar h3 {
+            font-size: 0.85rem;
             text-transform: uppercase;
-            letter-spacing: 0.6px;
-            margin-bottom: 12px;
+            letter-spacing: 0.04em;
+            color: var(--text-dim);
+            font-weight: 700;
+        }
+        .table-scroll {
+            overflow-x: auto;
+            max-height: 420px;
+            overflow-y: auto;
         }
         table {
             width: 100%;
             border-collapse: collapse;
-            font-size: 0.74rem;
-            min-width: 320px;
+            font-size: 0.78rem;
+            min-width: 1100px;
         }
-        th {
-            background: #131a33;
-            color: var(--accent-light);
-            padding: 9px 10px;
+        table thead {
+            position: sticky;
+            top: 0;
+            z-index: 2;
+        }
+        table thead th {
+            background: rgba(14, 165, 233, 0.12);
+            color: #bae6fd;
+            padding: 11px 12px;
             text-align: left;
-            font-weight: 600;
-            font-size: 0.68rem;
+            font-weight: 700;
+            letter-spacing: 0.03em;
             text-transform: uppercase;
-            letter-spacing: 0.5px;
-            border-bottom: 2px solid var(--border);
+            font-size: 0.7rem;
+            border-bottom: 2px solid rgba(14, 165, 233, 0.25);
             white-space: nowrap;
         }
-        td {
-            padding: 8px 10px;
-            border-bottom: 1px solid rgba(255, 255, 255, 0.05);
+        table tbody td {
+            padding: 10px 12px;
+            border-bottom: 1px solid rgba(59, 130, 246, 0.08);
             white-space: nowrap;
         }
-        tbody tr:hover {
-            background: rgba(68, 138, 255, 0.05);
+        table tbody tr {
+            transition: var(--transition);
         }
-
-        /* BADGES */
-        .badge {
+        table tbody tr:hover {
+            background: rgba(14, 165, 233, 0.05);
+        }
+        .status-badge {
             display: inline-block;
             padding: 3px 10px;
-            border-radius: 20px;
-            font-size: 0.68rem;
+            border-radius: 999px;
+            font-size: 0.7rem;
             font-weight: 700;
-            letter-spacing: 0.4px;
+            letter-spacing: 0.03em;
+            text-transform: uppercase;
         }
-        .badge-ativo {
-            background: rgba(76, 175, 132, 0.18);
-            color: var(--success);
+        .status-ativo {
+            background: rgba(34, 197, 94, 0.15);
+            color: #4ade80;
+            border: 1px solid rgba(34, 197, 94, 0.3);
         }
-        .badge-cancelado {
-            background: rgba(255, 82, 82, 0.18);
-            color: var(--danger);
+        .status-cancelado {
+            background: rgba(239, 68, 68, 0.15);
+            color: #f87171;
+            border: 1px solid rgba(239, 68, 68, 0.3);
         }
 
-        /* RANKING POSITION */
-        .rank-dot {
-            display: inline-flex;
-            align-items: center;
-            justify-content: center;
-            width: 26px;
-            height: 26px;
-            border-radius: 50%;
-            font-weight: 700;
+        /* ── Footer ──────────────────── */
+        .footer {
+            text-align: center;
+            padding: 16px;
             font-size: 0.72rem;
-            flex-shrink: 0;
-        }
-        .rd-1 {
-            background: linear-gradient(135deg, #ffd700, #ffb300);
-            color: #000;
-        }
-        .rd-2 {
-            background: linear-gradient(135deg, #c0c0c0, #9e9e9e);
-            color: #000;
-        }
-        .rd-3 {
-            background: linear-gradient(135deg, #cd7f32, #a0522d);
-            color: #fff;
-        }
-        .rd-n {
-            background: #1a2650;
-            color: #8a90b0;
+            color: var(--text-dim);
+            letter-spacing: 0.04em;
         }
 
-        /* SCROLLBAR */
+        /* ── Scrollbar ───────────────── */
         ::-webkit-scrollbar {
-            height: 5px;
-            width: 5px;
+            width: 6px;
+            height: 6px;
         }
         ::-webkit-scrollbar-track {
             background: transparent;
         }
         ::-webkit-scrollbar-thumb {
-            background: #1a2650;
+            background: rgba(14, 165, 233, 0.25);
             border-radius: 3px;
         }
+        ::-webkit-scrollbar-thumb:hover {
+            background: rgba(14, 165, 233, 0.45);
+        }
 
-        /* RESPONSIVE */
+        /* ── Flatpickr Overrides ────── */
+        .flatpickr-calendar {
+            background: #0d1530 !important;
+            border: 1px solid rgba(59, 130, 246, 0.3) !important;
+            box-shadow: 0 20px 50px rgba(0, 0, 0, 0.6) !important;
+            border-radius: 12px !important;
+        }
+        .flatpickr-day {
+            color: #e2e8f0 !important;
+        }
+        .flatpickr-day:hover {
+            background: rgba(14, 165, 233, 0.3) !important;
+        }
+        .flatpickr-day.selected,
+        .flatpickr-day.startRange,
+        .flatpickr-day.endRange {
+            background: var(--blue-1) !important;
+            border-color: var(--blue-1) !important;
+        }
+        .flatpickr-months .flatpickr-month,
+        .flatpickr-current-month .flatpickr-monthDropdown-months {
+            color: #e2e8f0 !important;
+        }
+        .flatpickr-weekday {
+            color: #94a3b8 !important;
+        }
+        .flatpickr-day.flatpickr-disabled {
+            color: #475569 !important;
+        }
+        span.flatpickr-weekday {
+            color: #94a3b8 !important;
+        }
+        .flatpickr-months .flatpickr-prev-month svg,
+        .flatpickr-months .flatpickr-next-month svg {
+            fill: #94a3b8 !important;
+        }
+        .flatpickr-months .flatpickr-prev-month:hover svg,
+        .flatpickr-months .flatpickr-next-month:hover svg {
+            fill: #38bdf8 !important;
+        }
+
+        /* ── Responsive ─────────────── */
         @media (max-width: 768px) {
-            .charts-row {
-                grid-template-columns: 1fr;
+            .dashboard {
+                padding: 12px 8px 24px;
             }
-            .ranking-grid {
-                grid-template-columns: 1fr;
-            }
-            .chart-box {
-                min-width: auto;
-            }
-            header {
+            .header {
+                padding: 16px;
                 flex-direction: column;
                 align-items: flex-start;
             }
-            .header-actions {
-                width: 100%;
+            .header-title h1 {
+                font-size: 1.3rem;
             }
-            .header-actions input {
-                flex: 1;
-                min-width: 0;
+            .kpi-grid {
+                grid-template-columns: repeat(auto-fit, minmax(150px, 1fr));
+                gap: 10px;
             }
-            .kpi-row {
-                grid-template-columns: repeat(2, 1fr);
+            .kpi-value {
+                font-size: 1.35rem;
+            }
+            .chart-grid {
+                grid-template-columns: 1fr;
+            }
+            .filter-bar {
+                flex-direction: column;
+                align-items: stretch;
             }
         }
     </style>
 </head>
 <body>
+    <div class="dashboard">
+        <!-- ═══════════ HEADER ═══════════ -->
+        <div class="header">
+            <div class="header-title">
+                <span>Collina Dreams · Sala Diurno</span>
+                <h1>Borderô de Vendas</h1>
+            </div>
+            <div class="header-badge">📊 Dashboard Interativo</div>
+        </div>
 
-    <!-- ═══════════════ TELA DE IMPORTAÇÃO ═══════════════ -->
-    <div id="importScreen">
-        <div class="import-card">
-            <h2>📊 Borderô Collina Dreams</h2>
-            <p>Cole abaixo o <strong>CSV completo</strong> da sua planilha (com cabeçalho e todas as linhas)</p>
-            <textarea id="csvInput" placeholder="Cole aqui o CSV completo exportado da planilha...
-            
-Inclua a primeira linha com os nomes das colunas (cabeçalho).
-O separador deve ser ponto-e-vírgula (;).
+        <!-- ═══════════ FILTROS ═══════════ -->
+        <div class="filter-bar">
+            <label>📅 Período</label>
+            <input type="text" id="date-start" class="filter-input" placeholder="Data Inicial" readonly>
+            <span style="color:var(--text-dim)">até</span>
+            <input type="text" id="date-end" class="filter-input" placeholder="Data Final" readonly>
+            <button class="btn-reset" onclick="resetFilters()">⟳ Limpar Filtro</button>
+            <span style="margin-left:auto;font-size:0.78rem;color:var(--text-dim)" id="filter-info"></span>
+        </div>
 
-Exemplo da primeira linha:
-Qtd Total Parcelas;Sala de vendas;Data;Número;Cessionário;...;ENTRADA EFETIVA;..."></textarea>
-            <br />
-            <button class="btn-load" onclick="loadCSV()">🚀 Carregar Dados</button>
-            <div class="import-status" id="importStatus"></div>
-            <div class="import-hint">
-                <strong>📋 Instruções:</strong><br />
-                1. Abra sua planilha no Excel ou Google Sheets<br />
-                2. Selecione todas as linhas (Ctrl+A) e copie (Ctrl+C)<br />
-                3. Cole aqui (Ctrl+V)<br />
-                4. Clique em <strong>Carregar Dados</strong><br />
-                <br />
-                <strong>🔑 Colunas obrigatórias:</strong><br />
-                • <code>Valor negociado</code> (coluna G) → VGV<br />
-                • <code>ENTRADA EFETIVA</code> (coluna BH) → Entrada Efetiva<br />
-                • <code>Data</code> → Data da venda<br />
-                • <code>Status</code> → ATIVO / CANCELADO<br />
-                • <code>Closer</code> → Nome do closer<br />
+        <!-- ═══════════ KPI CARDS ═══════════ -->
+        <div class="kpi-grid">
+            <div class="kpi-card">
+                <div class="kpi-label">💰 VGV Total</div>
+                <div class="kpi-value" id="kpi-vgv">R$ 0</div>
+                <div class="kpi-sub" id="kpi-vgv-sub"></div>
+            </div>
+            <div class="kpi-card">
+                <div class="kpi-label">💳 Entrada Efetiva</div>
+                <div class="kpi-value" id="kpi-entrada">R$ 0</div>
+                <div class="kpi-sub" id="kpi-entrada-sub"></div>
+            </div>
+            <div class="kpi-card">
+                <div class="kpi-label">📋 Total de Vendas</div>
+                <div class="kpi-value" id="kpi-vendas">0</div>
+                <div class="kpi-sub" id="kpi-vendas-sub"></div>
+            </div>
+            <div class="kpi-card">
+                <div class="kpi-label">🎯 Ticket Médio</div>
+                <div class="kpi-value" id="kpi-ticket">R$ 0</div>
+                <div class="kpi-sub" id="kpi-ticket-sub"></div>
+            </div>
+            <div class="kpi-card">
+                <div class="kpi-label">❌ Cancelamentos</div>
+                <div class="kpi-value kpi-accent-red" id="kpi-cancel">0</div>
+                <div class="kpi-sub" id="kpi-cancel-sub"></div>
+            </div>
+            <div class="kpi-card">
+                <div class="kpi-label">✅ Taxa de Conversão</div>
+                <div class="kpi-value kpi-accent-green" id="kpi-conv">0%</div>
+                <div class="kpi-sub" id="kpi-conv-sub"></div>
             </div>
         </div>
-    </div>
 
-    <!-- ═══════════════ DASHBOARD ═══════════════ -->
-    <div id="dashboardScreen">
-        <div class="container">
-
-            <!-- HEADER -->
-            <header>
-                <h1>🏙️ Borderô Vendas — Collina Dreams</h1>
-                <div class="header-actions">
-                    <input type="text" id="dateRange" placeholder="Selecionar período" />
-                    <button class="btn btn-primary" onclick="aplicarFiltro()">🔍 Filtrar</button>
-                    <button class="btn btn-outline" onclick="resetarFiltro()">↺ Limpar</button>
-                    <button class="btn btn-danger" onclick="resetarDados()" title="Recolocar CSV">🔄 Novo CSV</button>
-                </div>
-            </header>
-
-            <!-- KPIs -->
-            <div class="kpi-row" id="kpiGrid"></div>
-
-            <!-- GRÁFICOS LINHA 1 -->
-            <div class="charts-row">
-                <div class="chart-box">
-                    <h3>📈 VGV & Entrada Efetiva por Dia</h3>
-                    <div class="chart-wrap"><canvas id="chartVgvDia"></canvas></div>
-                </div>
-                <div class="chart-box">
-                    <h3>📉 Cancelamento por Faixa de % Entrada Efetiva</h3>
-                    <div class="chart-wrap"><canvas id="chartCancelFaixa"></canvas></div>
+        <!-- ═══════════ GRÁFICOS ═══════════ -->
+        <div class="chart-grid">
+            <!-- Gráfico Principal: Cancelamentos por Faixa de % Entrada -->
+            <div class="chart-card full">
+                <div class="chart-title">❌ Cancelamentos por Faixa de % Entrada Efetiva</div>
+                <div class="chart-wrap tall">
+                    <canvas id="chartCancelFaixa"></canvas>
                 </div>
             </div>
 
-            <!-- GRÁFICOS LINHA 2 -->
-            <div class="charts-row">
-                <div class="chart-box">
-                    <h3>🧭 Status das Vendas</h3>
-                    <div class="chart-wrap"><canvas id="chartStatus"></canvas></div>
-                </div>
-                <div class="chart-box">
-                    <h3>💳 Formas de Pagamento da Entrada</h3>
-                    <div class="chart-wrap"><canvas id="chartPagamento"></canvas></div>
+            <!-- Vendas Mensais -->
+            <div class="chart-card half">
+                <div class="chart-title">📈 VGV por Mês</div>
+                <div class="chart-wrap">
+                    <canvas id="chartVgvMes"></canvas>
                 </div>
             </div>
 
-            <!-- RANKINGS -->
-            <div class="ranking-grid">
-                <div class="table-box">
-                    <h4>🏆 Top 10 — Maior Entrada Efetiva (R$)</h4>
-                    <table><thead><tr><th>#</th><th>Closer</th><th>Entrada Ef.</th><th>Vendas</th></tr></thead><tbody id="rankValor"></tbody></table>
-                </div>
-                <div class="table-box">
-                    <h4>📈 Top 10 — Maior % Entrada Efetiva</h4>
-                    <table><thead><tr><th>#</th><th>Closer</th><th>% Médio</th><th>Vendas</th></tr></thead><tbody id="rankPerc"></tbody></table>
-                </div>
-                <div class="table-box">
-                    <h4>🚫 Top 10 — Mais Cancelamentos</h4>
-                    <table><thead><tr><th>#</th><th>Closer</th><th>Cancel.</th><th>Total</th><th>Taxa</th></tr></thead><tbody id="rankCancel"></tbody></table>
+            <!-- Status (Ativo vs Cancelado) -->
+            <div class="chart-card half">
+                <div class="chart-title">📊 Status das Vendas</div>
+                <div class="chart-wrap">
+                    <canvas id="chartStatus"></canvas>
                 </div>
             </div>
 
-            <!-- CLOSERS BAR -->
-            <div class="chart-box full">
-                <h3>🏆 Top 10 Closers por VGV</h3>
-                <div class="chart-wrap"><canvas id="chartClosers"></canvas></div>
-            </div>
-
-            <!-- TABELA DETALHADA -->
-            <div class="table-box" style="margin-bottom:20px;">
-                <h4>📝 Lista de Vendas <span id="tabelaCount" style="font-weight:400;color:#666;"></span></h4>
-                <div style="overflow-x:auto;">
-                    <table id="tabelaVendas"><thead></thead><tbody></tbody></table>
+            <!-- Top Closers -->
+            <div class="chart-card half">
+                <div class="chart-title">🏆 Top Closers (VGV)</div>
+                <div class="chart-wrap">
+                    <canvas id="chartClosers"></canvas>
                 </div>
             </div>
 
+            <!-- Top Promotores -->
+            <div class="chart-card half">
+                <div class="chart-title">📣 Top Promotores de Marketing</div>
+                <div class="chart-wrap">
+                    <canvas id="chartPromotores"></canvas>
+                </div>
+            </div>
+
+            <!-- % Entrada Efetiva Média por Mês -->
+            <div class="chart-card half">
+                <div class="chart-title">📐 % Médio de Entrada por Mês</div>
+                <div class="chart-wrap short">
+                    <canvas id="chartPercEntrada"></canvas>
+                </div>
+            </div>
+
+            <!-- Cancelamentos por Dia -->
+            <div class="chart-card half">
+                <div class="chart-title">📉 Cancelamentos por Dia</div>
+                <div class="chart-wrap short">
+                    <canvas id="chartCancelDia"></canvas>
+                </div>
+            </div>
+        </div>
+
+        <!-- ═══════════ TABELA ═══════════ -->
+        <div class="table-card">
+            <div class="table-header-bar">
+                <h3>📋 Detalhamento de Vendas</h3>
+                <span style="font-size:0.75rem;color:var(--text-dim)" id="table-count"></span>
+            </div>
+            <div class="table-scroll">
+                <table>
+                    <thead>
+                        <tr>
+                            <th>Data</th>
+                            <th>Número</th>
+                            <th>Cessionário</th>
+                            <th>VGV</th>
+                            <th>Entrada Efetiva</th>
+                            <th>% Entrada</th>
+                            <th>Status</th>
+                            <th>Closer</th>
+                            <th>Promotor</th>
+                            <th>Liner</th>
+                            <th>Saldo</th>
+                        </tr>
+                    </thead>
+                    <tbody id="table-body"></tbody>
+                </table>
+            </div>
+        </div>
+
+        <div class="footer">
+            Collina Dreams · Dashboard Borderô · Dados de Janeiro a Abril 2026
         </div>
     </div>
 
     <script>
-        // ═══════════════════════════════════════════════════════
-        //  ESTADO GLOBAL
-        // ═══════════════════════════════════════════════════════
-        let allVendas = [];
-        let filtered = [];
-        let charts = {};
-        let colIndex = {}; // mapeamento dinâmico de colunas por nome
+        // ═══════════════════════════════════════════
+        // DADOS DO CSV INCORPORADOS
+        // ═══════════════════════════════════════════
+        const csvRaw = `Qtd Total Parcelas;Sala de vendas;Data;Número;Cessionário;Pontos;Valor negociado;Status;Promotor de marketing;Promotor de telemarketing;Liner;Closer;Pep;Total da entrada;Percentual de entrada (%);Parcelas;Quantidade CARTÃO;R$ CARTAO;Quantidade CHEQUE;Valor Parcelas Cheque Entrada;Quantidade BOLETO;R$ BOLETO;Quantidade DINHEIRO;R$ DINHEIRO;;Quantidade de parcelas de crédito recorrente da entrada;Total em crédito recorrente da entrada em valor monetário (R$);Quantidade TRANSFERENCIA;R$ TRANSFERENCIA;;Qtd Parcelas Saldo;;Total do saldo;Percentual de saldo (%);;Qtd Parcelas Cartao Saldo Restante;Valor Parcelas Cartao Saldo Restante;Quantidade de parcelas em crédito recorrente do saldo;Total em crédito recorrente do saldo em valor monetário (R$);Valor Parcelas Dinheiro Saldo Restante;Qtd Parcelas Dinheiro Saldo Restante;Valor Parcelas Boleto Saldo Restante;Qtd Parcelas Boleto Saldo Restante;Valor Parcelas Cheque Saldo Restante;Qtd Parcelas Cheque Saldo Restante;Total Intermediárias;Qtd Parcelas Itermediárias;Percentual Intermediárias;Qtd Parcelas Intermediaria Cartao;Total Intermediaria Cartao;Total Intermediaria Boleto;Qtd Parcelas Intermediaria Boleto;Total Intermediária Dinheiro;Qtd Parcelas Intermediária Dinheiro;Total Intermediaria Cartao Recorrente;Qtd Parcelas Intermediaria Cartao Recorrente;Qtd Parcelas Intermediaria Transferencia;Total Intermediaria Transferencia;Total Intermediaria Cheque;ENTRADA EFETIVA;Qtd Parcelas Intermediaria Cheque
+        132;COLLINA - DREAMS DIURNO;02/01/2026;COLLINA- 04/01;THALES DO CARMO ZULCAO;0;80000;ATIVO;JOSYENE FREITAS;;AMANDA DORADO;LUIS ALVES DO AMARAL NETO;;15999,96;20;12;1;1333,33;0;0;11;14666,63;0;0;;0;0;0;0;;120;;64000,04;80;0;0;0;0;0;0;64000,04;120;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0;1333,33;0
+        135;COLLINA - DREAMS DIURNO;02/01/2026;COLLINA - 12/41;RODRIGO FAUSTINO DA SILVA;0;80000;ATIVO;RAPHAEL BUENO DA SILVA ;;ALEX FONSECA VIVIAN;MARCEL VINICIUS DORADO EUGENI;;18000;22,5;15;1;800;0;0;14;17200;0;0;;0;0;0;0;;120;;62000;77,5;0;0;0;0;0;0;62000;120;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0;800;0
+        135;COLLINA - DREAMS DIURNO;02/01/2026;COLLINA - 15/16;RODRIGO FAUSTINO DA SILVA;0;80000;ATIVO;RAPHAEL BUENO DA SILVA ;;ALEX FONSECA VIVIAN;MARCEL VINICIUS DORADO EUGENI;;18000;22,5;15;1;800;0;0;14;17200;0;0;;0;0;0;0;;120;;62000;77,5;0;0;0;0;0;0;62000;120;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0;800;0
+        138;COLLINA - DREAMS DIURNO;02/01/2026;COLLINA - 35/02;KARINA LEITE DA COSTA;0;120000;ATIVO;PEDRO HENRIQUE GOMES SANTOS;;RENATA DORADO;FABRICIO LELIS BIGNARDI;;23999,86;20;18;0;0;0;0;17;21599,86;0;0;;0;0;1;2400;;120;;96000,14;80;0;0;0;0;0;0;96000,14;120;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0;2400;0
+        138;COLLINA - DREAMS DIURNO;02/01/2026;COLLINA - 35/50;ANTONIO FRANCISCO SILVA JUNIOR;0;120000;ATIVO;PEDRO HENRIQUE GOMES SANTOS;;RENATA DORADO;FABRICIO LELIS BIGNARDI;;23999,86;20;18;0;0;0;0;17;21599,86;0;0;;0;0;1;2400;;120;;96000,14;80;0;0;0;0;0;0;96000,14;120;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0;2400;0
+        132;COLLINA - DREAMS DIURNO;02/01/2026;COLLINA - 17/40;DENISE RICCI GENOVA;0;80000;ATIVO;SUENE CINTIA DA SILVA;;AMANDA DORADO;FABRICIO LELIS BIGNARDI;;15999,99;20;12;0;0;0;0;10;13090,9;0;0;;0;0;2;2909,09;;120;;64000,01;80;0;0;0;0;0;0;64000,01;120;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0;2909,09;0
+        1;COLLINA - DREAMS DIURNO;03/01/2026;COLLINA - 06/04;GABRIELA CRISTINA OTTOBONI ALVES;0;80000;CANCELADO;ADRIANO MOREIRA ;;ALEX FONSECA VIVIAN;AMANDA DORADO;;1600;2;1;1;1600;0;0;0;0;0;0;;0;0;0;0;;0;;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0;1600;0
+        1;COLLINA - DREAMS DIURNO;03/01/2026;COLLINA - 15/32;MARCOS FABIANO FERREIRA;0;80000;CANCELADO;JOSYENE FREITAS;;GABRIELLA FURTADO;LUIS ALVES DO AMARAL NETO;;1600;2;1;1;1600;0;0;0;0;0;0;;0;0;0;0;;0;;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0;1600;0
+        1;COLLINA - DREAMS DIURNO;03/01/2026;COLLINA - 12/09;MARCOS FABIANO FERREIRA;0;80000;CANCELADO;JOSYENE FREITAS;;GABRIELLA FURTADO;LUIS ALVES DO AMARAL NETO;;1600;2;1;1;1600;0;0;0;0;0;0;;0;0;0;0;;0;;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0;1600;0
+        0;COLLINA - DREAMS DIURNO;04/01/2026;COLLINA - 15/37;KARIME MAUES ARAUJO NASCIMENTO;0;77700;CANCELADO;RICARDO MALTCHIK;;RENATA DORADO;FABRICIO LELIS BIGNARDI;;0;0;0;0;0;0;0;0;0;0;0;;0;0;0;0;;0;;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0
+        0;COLLINA - DREAMS DIURNO;04/01/2026;COLLINA - 15/19;KARIME MAUES ARAUJO NASCIMENTO;0;77700;CANCELADO;RICARDO MALTCHIK;;RENATA DORADO;FABRICIO LELIS BIGNARDI;;0;0;0;0;0;0;0;0;0;0;0;;0;0;0;0;;0;;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0
+        1;COLLINA - DREAMS DIURNO;04/01/2026;COLLINA - 17/02;ADALMIR RODRIGUES SANTOS;0;80000;CANCELADO;PEDRO HENRIQUE GOMES SANTOS;;AMANDA DORADO;FABRICIO LELIS BIGNARDI;;1600;2;1;1;1600;0;0;0;0;0;0;;0;0;0;0;;0;;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0;1600;0
+        0;COLLINA - DREAMS DIURNO;04/01/2026;COLLINA - 17/11;ADALMIR RODRIGUES SANTOS;0;80000;CANCELADO;PEDRO HENRIQUE GOMES SANTOS;;AMANDA DORADO;FABRICIO LELIS BIGNARDI;;0;0;0;0;0;0;0;0;0;0;0;;0;0;0;0;;0;;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0`;
 
-        // ═══════════════════════════════════════════════════════
-        //  PARSE DO CSV (ROBUSTO, POR NOME DE COLUNA)
-        // ═══════════════════════════════════════════════════════
-        function parseNumberBR(str) {
-            if (!str || typeof str !== 'string') return 0;
-            str = str.trim();
-            if (str === '' || str === '-') return 0;
-            // Remove pontos de milhar, troca vírgula por ponto
-            let cleaned = str.replace(/\./g, '').replace(',', '.');
-            let val = parseFloat(cleaned);
-            return isNaN(val) ? 0 : val;
-        }
-
-        function parseDateBR(str) {
-            if (!str || typeof str !== 'string') return null;
-            str = str.trim();
-            // Formato DD/MM/YYYY
-            const parts = str.split('/');
-            if (parts.length === 3) {
-                const d = parseInt(parts[0], 10);
-                const m = parseInt(parts[1], 10) - 1;
-                const y = parseInt(parts[2], 10);
-                const date = new Date(y, m, d);
-                if (!isNaN(date.getTime())) return date;
-            }
-            // Tentar outros formatos
-            const fallback = new Date(str);
-            return isNaN(fallback.getTime()) ? null : fallback;
-        }
-
-        function parseCSV(csvText) {
-            // Remove BOM se existir
-            if (csvText.charCodeAt(0) === 0xFEFF) csvText = csvText.slice(1);
-
-            const lines = csvText.trim().split(/\r?\n/);
-            if (lines.length < 2) {
-                throw new Error('CSV precisa ter pelo menos cabeçalho + 1 linha de dados.');
-            }
-
-            // Parse do cabeçalho
-            const headerLine = lines[0];
-            const headers = headerLine.split(';').map(h => h.trim());
-
-            // Mapear nomes de colunas para índices (case-insensitive, trim)
-            const idxMap = {};
-            headers.forEach((h, i) => {
-                const key = h.toUpperCase().replace(/\s+/g, ' ').trim();
-                idxMap[key] = i;
-            });
-
-            console.log('📋 Cabeçalho detectado (' + headers.length + ' colunas):');
-            console.log(headers);
-            console.log('🔍 Mapeamento de colunas:', idxMap);
-
-            // Verificar colunas essenciais
-            const requiredCols = ['VALOR NEGOCIADO', 'ENTRADA EFETIVA', 'DATA', 'STATUS'];
-            const missing = requiredCols.filter(c => !(c in idxMap));
-            if (missing.length > 0) {
-                console.warn('⚠️ Colunas não encontradas:', missing);
-                // Não lançar erro, tentar com o que temos
-            }
-
-            // Guardar mapeamento global
-            colIndex = idxMap;
-
-            // Parse das linhas de dados
-            const vendas = [];
+        // ═══════════════════════════════════════════
+        // PARSE CSV
+        // ═══════════════════════════════════════════
+        function parseCSV(csv) {
+            const lines = csv.trim().split('\n');
+            const headers = lines[0].split(';').map(h => h.trim());
+            const data = [];
             for (let i = 1; i < lines.length; i++) {
-                const line = lines[i].trim();
-                if (line === '') continue; // pula linhas vazias
-
-                const cols = line.split(';');
-                if (cols.length < 3) continue; // linha muito curta, ignorar
-
-                // Função helper para pegar valor de coluna pelo nome
-                const get = (colName) => {
-                    const key = colName.toUpperCase().replace(/\s+/g, ' ').trim();
-                    const idx = idxMap[key];
-                    if (idx === undefined || idx >= cols.length) return '';
-                    return (cols[idx] || '').trim();
+                const vals = lines[i].split(';');
+                if (vals.length < 5) continue;
+                const obj = {};
+                headers.forEach((h, idx) => {
+                    obj[h] = (vals[idx] || '').trim();
+                });
+                // Parse numéricos
+                const numParse = (v) => {
+                    if (!v) return 0;
+                    return parseFloat(v.replace(/\./g, '').replace(',', '.')) || 0;
                 };
-
-                const valorNegociado = parseNumberBR(get('VALOR NEGOCIADO'));
-                const entradaEfetiva = parseNumberBR(get('ENTRADA EFETIVA'));
-                const dataStr = get('DATA');
-                const dataObj = parseDateBR(dataStr);
-                const statusRaw = get('STATUS');
-                const status = statusRaw ? statusRaw.toUpperCase() : '';
-
-                // Pular linhas sem valor negociado (provavelmente inválidas)
-                if (valorNegociado === 0 && entradaEfetiva === 0 && !dataStr) continue;
-
-                const venda = {
-                    dataStr: dataStr,
-                    data: dataObj,
-                    valorNegociado: valorNegociado,
-                    entradaEfetiva: entradaEfetiva,
-                    percEntradaEfetiva: valorNegociado > 0 ? (entradaEfetiva / valorNegociado) * 100 : 0,
-                    status: status,
-                    numero: get('NÚMERO') || get('NUMERO') || '',
-                    cessionario: get('CESSIONÁRIO') || get('CESSIONARIO') || '',
-                    closer: get('CLOSER') || '',
-                    promotor: get('PROMOTOR DE MARKETING') || get('PROMOTOR') || '',
-                    liner: get('LINER') || '',
-                    sala: get('SALA DE VENDAS') || '',
-                    totalEntradaOriginal: parseNumberBR(get('TOTAL DA ENTRADA')),
-                    percentualEntradaOriginal: parseNumberBR(get('PERCENTUAL DE ENTRADA (%)')),
-                    // Formas de pagamento
-                    valorCartao: parseNumberBR(get('R$ CARTAO') || get('R$ CARTÃO')),
-                    valorBoleto: parseNumberBR(get('R$ BOLETO')),
-                    valorDinheiro: parseNumberBR(get('R$ DINHEIRO')),
-                    valorTransferencia: parseNumberBR(get('R$ TRANSFERENCIA') || get('R$ TRANSFERÊNCIA')),
-                    valorCheque: parseNumberBR(get('VALOR PARCELAS CHEQUE ENTRADA')),
-                };
-
-                vendas.push(venda);
+                obj._valorNegociado = numParse(obj['Valor negociado']);
+                obj._totalEntrada = numParse(obj['Total da entrada']);
+                obj._percEntrada = numParse(obj['Percentual de entrada (%)']);
+                obj._totalSaldo = numParse(obj['Total do saldo']);
+                obj._entradaEfetiva = numParse(obj['ENTRADA EFETIVA']);
+                obj._data = obj['Data'];
+                obj._status = obj['Status'] || 'ATIVO';
+                obj._closer = obj['Closer'] || 'N/I';
+                obj._promotor = obj['Promotor de marketing'] || 'N/I';
+                obj._liner = obj['Liner'] || 'N/I';
+                obj._cessionario = obj['Cessionário'] || 'N/I';
+                obj._numero = obj['Número'] || 'N/I';
+                obj._qtdParcelas = parseInt(obj['Qtd Total Parcelas']) || 0;
+                data.push(obj);
             }
-
-            console.log('✅ ' + vendas.length + ' vendas parseadas com sucesso!');
-            console.log('💰 VGV Total: R$ ' + vendas.reduce((s, v) => s + v.valorNegociado, 0).toLocaleString('pt-BR'));
-            console.log('📥 Entrada Efetiva Total: R$ ' + vendas.reduce((s, v) => s + v.entradaEfetiva, 0).toLocaleString('pt-BR'));
-
-            return vendas;
+            return data;
         }
 
-        // ═══════════════════════════════════════════════════════
-        //  CARREGAR CSV
-        // ═══════════════════════════════════════════════════════
-        function loadCSV() {
-            const textarea = document.getElementById('csvInput');
-            const statusEl = document.getElementById('importStatus');
-            const csvText = textarea.value.trim();
+        const allData = parseCSV(csvRaw);
 
-            if (!csvText) {
-                statusEl.className = 'import-status error';
-                statusEl.textContent = '❌ Cole o CSV antes de carregar.';
-                return;
-            }
-
-            try {
-                const vendas = parseCSV(csvText);
-                if (vendas.length === 0) {
-                    statusEl.className = 'import-status error';
-                    statusEl.textContent = '❌ Nenhuma venda encontrada. Verifique o formato do CSV.';
-                    return;
-                }
-
-                allVendas = vendas;
-                filtered = [...vendas];
-
-                // Salvar no localStorage
-                try {
-                    localStorage.setItem('collina_csv', csvText);
-                } catch (e) {
-                    console.warn('⚠️ CSV muito grande para localStorage. Os dados NÃO serão persistidos.');
-                }
-
-                statusEl.className = 'import-status success';
-                statusEl.textContent = '✅ ' + vendas.length + ' vendas carregadas! VGV Total: R$ ' +
-                    vendas.reduce((s, v) => s + v.valorNegociado, 0).toLocaleString('pt-BR');
-
-                // Mostrar dashboard
-                setTimeout(() => {
-                    document.getElementById('importScreen').style.display = 'none';
-                    document.getElementById('dashboardScreen').style.display = 'block';
-                    initDashboard();
-                }, 600);
-
-            } catch (err) {
-                statusEl.className = 'import-status error';
-                statusEl.textContent = '❌ Erro: ' + err.message;
-                console.error(err);
-            }
+        // ═══════════════════════════════════════════
+        // FUNÇÕES AUXILIARES
+        // ═══════════════════════════════════════════
+        function fmtBRL(v) {
+            if (Math.abs(v) >= 1e6) return 'R$ ' + (v / 1e6).toFixed(2) + 'M';
+            return 'R$ ' + v.toLocaleString('pt-BR', { minimumFractionDigits: 2, maximumFractionDigits: 2 });
         }
 
-        // ═══════════════════════════════════════════════════════
-        //  INICIALIZAÇÃO
-        // ═══════════════════════════════════════════════════════
-        function initApp() {
-            // Tentar carregar do localStorage
-            const saved = localStorage.getItem('collina_csv');
-            if (saved && saved.trim().length > 50) {
-                try {
-                    allVendas = parseCSV(saved);
-                    filtered = [...allVendas];
-                    document.getElementById('importScreen').style.display = 'none';
-                    document.getElementById('dashboardScreen').style.display = 'block';
-                    document.getElementById('csvInput').value = saved;
-                    initDashboard();
-                    return;
-                } catch (e) {
-                    console.warn('⚠️ Dados salvos corrompidos, mostrando tela de importação.');
-                    localStorage.removeItem('collina_csv');
-                }
-            }
-            // Mostrar tela de importação
-            document.getElementById('importScreen').style.display = 'flex';
-            document.getElementById('dashboardScreen').style.display = 'none';
+        function fmtPct(v) {
+            return v.toFixed(2).replace('.', ',') + '%';
         }
 
-        function resetarDados() {
-            if (confirm('Tem certeza que deseja carregar um novo CSV? Os dados atuais serão perdidos.')) {
-                localStorage.removeItem('collina_csv');
-                allVendas = [];
-                filtered = [];
-                destroyAllCharts();
-                document.getElementById('importScreen').style.display = 'flex';
-                document.getElementById('dashboardScreen').style.display = 'none';
-                document.getElementById('csvInput').value = '';
-                document.getElementById('importStatus').textContent = '';
-                document.getElementById('importStatus').className = 'import-status';
-            }
+        function getFaixaPercEntrada(perc) {
+            if (perc >= 0.1 && perc <= 0.5) return '0,1% – 0,5%';
+            if (perc >= 0.6 && perc <= 1.0) return '0,6% – 1%';
+            if (perc >= 1.1 && perc <= 1.5) return '1,1% – 1,5%';
+            if (perc >= 1.6 && perc <= 2.0) return '1,6% – 2%';
+            if (perc >= 2.1 && perc <= 5.0) return '2,1% – 5%';
+            if (perc > 5.0) return 'Acima de 5,1%';
+            return '0% (sem entrada)';
         }
 
-        // ═══════════════════════════════════════════════════════
-        //  DASHBOARD
-        // ═══════════════════════════════════════════════════════
-
-        // Flatpickr
-        let fp;
-        let rangeStart = null;
-        let rangeEnd = null;
-
-        function initDashboard() {
-            // Configurar Flatpickr
-            if (fp) fp.destroy();
-
-            // Definir range inicial (min/max datas)
-            const validDates = allVendas.filter(v => v.data).map(v => v.data.getTime());
-            let minDate, maxDate;
-            if (validDates.length > 0) {
-                minDate = new Date(Math.min(...validDates));
-                maxDate = new Date(Math.max(...validDates));
-            } else {
-                minDate = new Date(2025, 0, 1);
-                maxDate = new Date();
-            }
-
-            fp = flatpickr('#dateRange', {
-                mode: 'range',
-                dateFormat: 'd/m/Y',
-                locale: 'pt',
-                defaultDate: [minDate, maxDate],
-                onChange: function(selectedDates) {
-                    if (selectedDates.length === 2) {
-                        rangeStart = selectedDates[0];
-                        rangeEnd = selectedDates[1];
-                    }
-                }
-            });
-
-            rangeStart = minDate;
-            rangeEnd = maxDate;
-
-            aplicarFiltro();
-        }
-
-        function aplicarFiltro() {
-            if (rangeStart && rangeEnd) {
-                const s = new Date(rangeStart.getFullYear(), rangeStart.getMonth(), rangeStart.getDate());
-                const e = new Date(rangeEnd.getFullYear(), rangeEnd.getMonth(), rangeEnd.getDate(), 23, 59, 59);
-                filtered = allVendas.filter(v => v.data && v.data >= s && v.data <= e);
-            } else {
-                filtered = [...allVendas];
-            }
-            renderDashboard();
-        }
-
-        function resetarFiltro() {
-            const validDates = allVendas.filter(v => v.data).map(v => v.data.getTime());
-            if (validDates.length > 0) {
-                rangeStart = new Date(Math.min(...validDates));
-                rangeEnd = new Date(Math.max(...validDates));
-                fp.setDate([rangeStart, rangeEnd]);
-            }
-            filtered = [...allVendas];
-            renderDashboard();
-        }
-
-        function destroyAllCharts() {
-            Object.values(charts).forEach(c => {
-                try { c.destroy(); } catch (e) { /* ignore */ }
-            });
-            charts = {};
-        }
-
-        function fmtBRL(val) {
-            return val.toLocaleString('pt-BR', { style: 'currency', currency: 'BRL', minimumFractionDigits: 0,
-                maximumFractionDigits: 0 });
-        }
-
-        function fmtBRL2(val) {
-            return val.toLocaleString('pt-BR', { style: 'currency', currency: 'BRL', minimumFractionDigits: 2,
-                maximumFractionDigits: 2 });
-        }
-
-        function getFaixa(perc) {
-            if (perc <= 0.0099) return '0% (sem entrada)';
-            if (perc <= 0.5) return '0,1% a 0,5%';
-            if (perc <= 1.0) return '0,6% a 1%';
-            if (perc <= 1.5) return '1,1% a 1,5%';
-            if (perc <= 2.0) return '1,6% a 2%';
-            if (perc <= 5.0) return '2,1% a 5%';
-            return 'Acima de 5,1%';
-        }
-
-        const FAIXAS = ['0% (sem entrada)', '0,1% a 0,5%', '0,6% a 1%', '1,1% a 1,5%', '1,6% a 2%', '2,1% a 5%',
+        const FAIXA_ORDER = ['0% (sem entrada)', '0,1% – 0,5%', '0,6% – 1%', '1,1% – 1,5%', '1,6% – 2%', '2,1% – 5%',
             'Acima de 5,1%'
         ];
 
-        function rankClass(i) {
-            if (i === 0) return 'rd-1';
-            if (i === 1) return 'rd-2';
-            if (i === 2) return 'rd-3';
-            return 'rd-n';
+        // ═══════════════════════════════════════════
+        // FILTRO DE PERÍODO
+        // ═══════════════════════════════════════════
+        let filtroInicio = null;
+        let filtroFim = null;
+
+        function filtrarPorPeriodo(dataArr) {
+            if (!filtroInicio && !filtroFim) return dataArr;
+            return dataArr.filter(d => {
+                const parts = d._data.split('/');
+                if (parts.length !== 3) return true;
+                const dDate = new Date(parts[2], parts[1] - 1, parts[0]);
+                if (filtroInicio && dDate < filtroInicio) return false;
+                if (filtroFim && dDate > filtroFim) return false;
+                return true;
+            });
         }
 
-        function renderDashboard() {
-            destroyAllCharts();
-            const qtd = filtered.length;
+        function getFilteredData() {
+            return filtrarPorPeriodo(allData);
+        }
 
-            // ═══ KPIs ═══
-            const totalVGV = filtered.reduce((s, v) => s + v.valorNegociado, 0);
-            const totalEntradaEf = filtered.reduce((s, v) => s + v.entradaEfetiva, 0);
-            const ticketMedio = qtd > 0 ? totalVGV / qtd : 0;
-            const percEfMedio = qtd > 0 ? filtered.reduce((s, v) => s + v.percEntradaEfetiva, 0) / qtd : 0;
-            const ativos = filtered.filter(v => v.status === 'ATIVO').length;
-            const cancelados = filtered.filter(v => v.status === 'CANCELADO').length;
-            const taxaCancel = qtd > 0 ? (cancelados / qtd) * 100 : 0;
-            const entradaMediaPorVenda = qtd > 0 ? totalEntradaEf / qtd : 0;
-
-            document.getElementById('kpiGrid').innerHTML = `
-            <div class="kpi-card">
-              <div class="kpi-label">💰 VGV Geral (Col. G)</div>
-              <div class="kpi-value" style="color:#fff;">${fmtBRL(totalVGV)}</div>
-            </div>
-            <div class="kpi-card">
-              <div class="kpi-label">📥 Entrada Efetiva (Col. BH)</div>
-              <div class="kpi-value" style="color:#64b5f6;">${fmtBRL(totalEntradaEf)}</div>
-            </div>
-            <div class="kpi-card">
-              <div class="kpi-label">🛒 Qtd. Vendas</div>
-              <div class="kpi-value" style="color:#fff;">${qtd}</div>
-              <div class="kpi-sub">${ativos} ativas | ${cancelados} canceladas</div>
-            </div>
-            <div class="kpi-card">
-              <div class="kpi-label">🎟️ Ticket Médio</div>
-              <div class="kpi-value" style="color:#ffb74d;">${fmtBRL(ticketMedio)}</div>
-            </div>
-            <div class="kpi-card">
-              <div class="kpi-label">📊 % Entrada Ef. Médio</div>
-              <div class="kpi-value" style="color:#4caf84;">${percEfMedio.toFixed(2)}%</div>
-              <div class="kpi-sub">BH ÷ G × 100</div>
-            </div>
-            <div class="kpi-card">
-              <div class="kpi-label">🚫 Taxa Cancelamento</div>
-              <div class="kpi-value" style="color:${taxaCancel>30?'#ff5252':taxaCancel>15?'#ffb74d':'#4caf84'}">${taxaCancel.toFixed(1)}%</div>
-              <div class="kpi-sub">${cancelados} de ${qtd}</div>
-            </div>
-          `;
-
-            // ═══ GRÁFICO VGV & ENTRADA POR DIA ═══
-            const dayMap = {};
-            filtered.forEach(v => {
-                if (!v.data) return;
-                const key = v.data.toLocaleDateString('pt-BR');
-                if (!dayMap[key]) dayMap[key] = { vgv: 0, entrada: 0 };
-                dayMap[key].vgv += v.valorNegociado;
-                dayMap[key].entrada += v.entradaEfetiva;
-            });
-            const dayEntries = Object.entries(dayMap).sort((a, b) => {
-                const [da, ma, aa] = a[0].split('/');
-                const [db, mb, ab] = b[0].split('/');
-                return new Date(aa, ma - 1, da) - new Date(ab, mb - 1, db);
-            });
-
-            const ctx1 = document.getElementById('chartVgvDia').getContext('2d');
-            charts.vgvDia = new Chart(ctx1, {
-                type: 'line',
-                data: {
-                    labels: dayEntries.map(e => e[0]),
-                    datasets: [
-                        { label: 'VGV (R$)', data: dayEntries.map(e => e[1].vgv), borderColor: '#448aff',
-                            backgroundColor: 'rgba(68,138,255,0.06)', fill: true, tension: 0.35, yAxisID: 'yL',
-                            pointRadius: 2, pointBackgroundColor: '#448aff' },
-                        { label: 'Entrada Efetiva (R$)', data: dayEntries.map(e => e[1].entrada),
-                            borderColor: '#64b5f6', backgroundColor: 'rgba(100,181,246,0.04)', fill: true,
-                            tension: 0.35, yAxisID: 'yR', pointRadius: 2, pointBackgroundColor: '#64b5f6' }
-                    ]
-                },
-                options: {
-                    responsive: true, maintainAspectRatio: false, aspectRatio: 2.3,
-                    interaction: { mode: 'index', intersect: false },
-                    plugins: { legend: { labels: { color: '#8a90b0', usePointStyle: true, padding: 16,
-                                font: { size: 10 } } },
-                        tooltip: { callbacks: { label: ctx => ctx.dataset.label + ': ' + fmtBRL(ctx.parsed.y) } } },
-                    scales: {
-                        x: { ticks: { color: '#8a90b0', maxTicksLimit: 14, font: { size: 9 } },
-                            grid: { color: 'rgba(26,38,80,0.4)' } },
-                        yL: { type: 'linear', position: 'left',
-                            ticks: { color: '#448aff', callback: v => 'R$' + (v / 1000).toFixed(0) + 'k',
-                                font: { size: 9 } }, grid: { color: 'rgba(26,38,80,0.4)' } },
-                        yR: { type: 'linear', position: 'right',
-                            ticks: { color: '#64b5f6', callback: v => 'R$' + (v / 1000).toFixed(0) + 'k',
-                                font: { size: 9 } }, grid: { display: false } }
-                    }
+        // ═══════════════════════════════════════════
+        // FLATPICKR
+        // ═══════════════════════════════════════════
+        const fpStart = flatpickr("#date-start", {
+            dateFormat: "d/m/Y",
+            locale: "pt",
+            onChange: function(selectedDates) {
+                if (selectedDates.length > 0) {
+                    filtroInicio = selectedDates[0];
+                } else {
+                    filtroInicio = null;
                 }
+                atualizarTudo();
+            },
+        });
+
+        const fpEnd = flatpickr("#date-end", {
+            dateFormat: "d/m/Y",
+            locale: "pt",
+            onChange: function(selectedDates) {
+                if (selectedDates.length > 0) {
+                    filtroFim = selectedDates[0];
+                } else {
+                    filtroFim = null;
+                }
+                atualizarTudo();
+            },
+        });
+
+        function resetFilters() {
+            fpStart.clear();
+            fpEnd.clear();
+            filtroInicio = null;
+            filtroFim = null;
+            atualizarTudo();
+        }
+
+        // ═══════════════════════════════════════════
+        // GRÁFICOS (Chart.js)
+        // ═══════════════════════════════════════════
+        let chartCancelFaixa, chartVgvMes, chartStatus, chartClosers, chartPromotores, chartPercEntrada, chartCancelDia;
+
+        const chartColors = {
+            blue1: 'rgba(56,189,248,0.85)',
+            blue2: 'rgba(99,102,241,0.75)',
+            blue3: 'rgba(14,165,233,0.7)',
+            red: 'rgba(248,113,113,0.8)',
+            green: 'rgba(74,222,128,0.8)',
+            gradientBlue: (ctx, alpha1 = 0.6, alpha2 = 0.05) => {
+                const g = ctx.chart.ctx.createLinearGradient(0, 0, 0, 400);
+                g.addColorStop(0, `rgba(56,189,248,${alpha1})`);
+                g.addColorStop(1, `rgba(14,165,233,${alpha2})`);
+                return g;
+            },
+            gradientBlue2: (ctx) => {
+                const g = ctx.chart.ctx.createLinearGradient(0, 0, 0, 400);
+                g.addColorStop(0, 'rgba(99,102,241,0.7)');
+                g.addColorStop(1, 'rgba(56,189,248,0.1)');
+                return g;
+            },
+        };
+
+        function destroyCharts() {
+            [chartCancelFaixa, chartVgvMes, chartStatus, chartClosers, chartPromotores, chartPercEntrada, chartCancelDia]
+            .forEach(c => { if (c) c.destroy(); });
+        }
+
+        function atualizarGraficos() {
+            destroyCharts();
+            const data = getFilteredData();
+
+            // ── 1. Cancelamentos por Faixa de % Entrada ──
+            const faixaMap = {};
+            const faixaTotalMap = {};
+            FAIXA_ORDER.forEach(f => { faixaMap[f] = 0;
+                faixaTotalMap[f] = 0; });
+
+            data.forEach(d => {
+                const faixa = getFaixaPercEntrada(d._percEntrada);
+                if (faixaTotalMap[faixa] !== undefined) faixaTotalMap[faixa]++;
+                if (d._status === 'CANCELADO' && faixaMap[faixa] !== undefined) faixaMap[faixa]++;
             });
 
-            // ═══ GRÁFICO CANCELAMENTO POR FAIXA ═══
-            const faixaData = {};
-            FAIXAS.forEach(f => { faixaData[f] = { total: 0, cancelados: 0 }; });
-            filtered.forEach(v => {
-                const f = getFaixa(v.percEntradaEfetiva);
-                if (!faixaData[f]) faixaData[f] = { total: 0, cancelados: 0 };
-                faixaData[f].total++;
-                if (v.status === 'CANCELADO') faixaData[f].cancelados++;
-            });
+            const faixasLabels = FAIXA_ORDER.filter(f => faixaTotalMap[f] > 0 || faixaMap[f] > 0);
+            const cancelCounts = faixasLabels.map(f => faixaMap[f]);
+            const totalCounts = faixasLabels.map(f => faixaTotalMap[f]);
+            const cancelPercents = faixasLabels.map((f, i) => totalCounts[i] > 0 ? (cancelCounts[i] / totalCounts[i] *
+                100) : 0);
 
-            const ctx2 = document.getElementById('chartCancelFaixa').getContext('2d');
-            charts.cancelFaixa = new Chart(ctx2, {
+            const ctx1 = document.getElementById('chartCancelFaixa').getContext('2d');
+            chartCancelFaixa = new Chart(ctx1, {
                 type: 'bar',
                 data: {
-                    labels: FAIXAS,
+                    labels: faixasLabels,
                     datasets: [
-                        { label: 'Qtd. Cancelados', data: FAIXAS.map(f => faixaData[f].cancelados),
-                            backgroundColor: 'rgba(255,82,82,0.7)', borderColor: '#ff5252', borderWidth: 1,
-                            borderRadius: 6, yAxisID: 'yA' },
-                        { label: '% Cancelamento', data: FAIXAS.map(f => faixaData[f].total > 0 ? (faixaData[f]
-                                .cancelados / faixaData[f].total) * 100 : 0),
-                            type: 'line', borderColor: '#ffb74d', backgroundColor: 'rgba(255,183,77,0.1)',
-                            yAxisID: 'yB', tension: 0.3, fill: false, pointRadius: 4,
-                            pointBackgroundColor: '#ffb74d', borderWidth: 2 }
-                    ]
-                },
-                options: {
-                    responsive: true, maintainAspectRatio: false, aspectRatio: 2.3,
-                    interaction: { mode: 'index', intersect: false },
-                    plugins: { legend: { labels: { color: '#8a90b0', usePointStyle: true, padding: 16,
-                                font: { size: 10 } } },
-                        tooltip: { callbacks: { label: function(ctx) { if (ctx.dataset.type === 'line')
-                                    return '% Cancelamento: ' + ctx.parsed.y.toFixed(1) + '%'; const f =
-                                    FAIXAS[ctx.dataIndex]; return 'Cancelados: ' + ctx.parsed.y + ' / ' +
-                                    faixaData[f].total + ' total'; } } } },
-                    scales: {
-                        x: { ticks: { color: '#8a90b0', font: { size: 9 } }, grid: { display: false } },
-                        yA: { type: 'linear', position: 'left', ticks: { color: '#ff5252', font: { size: 9 } },
-                            grid: { color: 'rgba(26,38,80,0.4)' }, title: { display: true, text: 'Qtd.',
-                                color: '#ff5252' } },
-                        yB: { type: 'linear', position: 'right', ticks: { color: '#ffb74d',
-                                callback: v => v.toFixed(0) + '%', font: { size: 9 } }, grid: { display: false },
-                            min: 0, max: 100, title: { display: true, text: '%', color: '#ffb74d' } }
-                    }
-                }
-            });
-
-            // ═══ GRÁFICO STATUS ═══
-            const ctx3 = document.getElementById('chartStatus').getContext('2d');
-            charts.status = new Chart(ctx3, {
-                type: 'doughnut',
-                data: {
-                    labels: ['Ativas (' + ativos + ')', 'Canceladas (' + cancelados + ')'],
-                    datasets: [{ data: [ativos, cancelados], backgroundColor: ['rgba(76,175,132,0.8)',
-                            'rgba(255,82,82,0.8)'
-                        ], borderColor: ['#4caf84', '#ff5252'], borderWidth: 2 }]
-                },
-                options: {
-                    responsive: true, maintainAspectRatio: false, aspectRatio: 1.5,
-                    plugins: { legend: { labels: { color: '#8a90b0', usePointStyle: true, padding: 14,
-                                font: { size: 11 } } } }
-                }
-            });
-
-            // ═══ GRÁFICO PAGAMENTO ═══
-            const totC = filtered.reduce((s, v) => s + (v.valorCartao || 0), 0);
-            const totB = filtered.reduce((s, v) => s + (v.valorBoleto || 0), 0);
-            const totD = filtered.reduce((s, v) => s + (v.valorDinheiro || 0), 0);
-            const totT = filtered.reduce((s, v) => s + (v.valorTransferencia || 0), 0);
-            const totCh = filtered.reduce((s, v) => s + (v.valorCheque || 0), 0);
-
-            const pLabels = [],
-                pData = [],
-                pColors = [];
-            if (totC > 0) { pLabels.push('Cartão');
-                pData.push(totC);
-                pColors.push('rgba(68,138,255,0.85)'); }
-            if (totB > 0) { pLabels.push('Boleto');
-                pData.push(totB);
-                pColors.push('rgba(100,181,246,0.85)'); }
-            if (totD > 0) { pLabels.push('Dinheiro');
-                pData.push(totD);
-                pColors.push('rgba(33,150,243,0.85)'); }
-            if (totT > 0) { pLabels.push('Transferência');
-                pData.push(totT);
-                pColors.push('rgba(30,136,229,0.85)'); }
-            if (totCh > 0) { pLabels.push('Cheque');
-                pData.push(totCh);
-                pColors.push('rgba(25,118,210,0.85)'); }
-
-            const ctx4 = document.getElementById('chartPagamento').getContext('2d');
-            charts.pagamento = new Chart(ctx4, {
-                type: 'polarArea',
-                data: {
-                    labels: pLabels,
-                    datasets: [{ data: pData, backgroundColor: pColors,
-                        borderColor: pColors.map(c => c.replace('0.85', '1')), borderWidth: 2 }]
-                },
-                options: {
-                    responsive: true, maintainAspectRatio: false, aspectRatio: 1.5,
-                    plugins: { legend: { labels: { color: '#8a90b0', usePointStyle: true, padding: 14,
-                                font: { size: 10 } } },
-                        tooltip: { callbacks: { label: ctx => ctx.label + ': ' + fmtBRL2(ctx.parsed.r) } } }
-                }
-            });
-
-            // ═══ RANKING ENTRADA EFETIVA (R$) ═══
-            const closerEntradaMap = {};
-            filtered.forEach(v => {
-                const name = v.closer || 'Sem info';
-                if (!closerEntradaMap[name]) closerEntradaMap[name] = { entrada: 0, qtd: 0 };
-                closerEntradaMap[name].entrada += v.entradaEfetiva;
-                closerEntradaMap[name].qtd++;
-            });
-            const topValor = Object.entries(closerEntradaMap)
-                .sort((a, b) => b[1].entrada - a[1].entrada).slice(0, 10);
-
-            document.getElementById('rankValor').innerHTML = topValor.map(([n, d], i) => `
-            <tr>
-              <td><span class="rank-dot ${rankClass(i)}">${i+1}</span></td>
-              <td><b>${n.length>22?n.slice(0,20)+'…':n}</b></td>
-              <td style="color:#64b5f6;font-weight:600;">${fmtBRL(d.entrada)}</td>
-              <td>${d.qtd}</td>
-            </tr>`).join('');
-
-            // ═══ RANKING % ENTRADA EFETIVA ═══
-            const closerPercMap = {};
-            filtered.forEach(v => {
-                const name = v.closer || 'Sem info';
-                if (!closerPercMap[name]) closerPercMap[name] = { soma: 0, qtd: 0, vgvTotal: 0,
-                    entradaTotal: 0 };
-                closerPercMap[name].soma += v.percEntradaEfetiva;
-                closerPercMap[name].qtd++;
-                closerPercMap[name].vgvTotal += v.valorNegociado;
-                closerPercMap[name].entradaTotal += v.entradaEfetiva;
-            });
-            const topPerc = Object.entries(closerPercMap)
-                .map(([n, d]) => ({
-                    name: n,
-                    percMedio: d.qtd > 0 ? d.soma / d.qtd : 0,
-                    percGlobal: d.vgvTotal > 0 ? (d.entradaTotal / d.vgvTotal) * 100 : 0,
-                    qtd: d.qtd
-                }))
-                .sort((a, b) => b.percGlobal - a.percGlobal).slice(0, 10);
-
-            document.getElementById('rankPerc').innerHTML = topPerc.map((o, i) => `
-            <tr>
-              <td><span class="rank-dot ${rankClass(i)}">${i+1}</span></td>
-              <td><b>${o.name.length>22?o.name.slice(0,20)+'…':o.name}</b></td>
-              <td style="color:#ffb74d;font-weight:600;">${o.percGlobal.toFixed(2)}%</td>
-              <td>${o.qtd}</td>
-            </tr>`).join('');
-
-            // ═══ RANKING CANCELAMENTOS ═══
-            const closerCancelMap = {};
-            filtered.forEach(v => {
-                const name = v.closer || 'Sem info';
-                if (!closerCancelMap[name]) closerCancelMap[name] = { total: 0, cancelados: 0 };
-                closerCancelMap[name].total++;
-                if (v.status === 'CANCELADO') closerCancelMap[name].cancelados++;
-            });
-            const topCancel = Object.entries(closerCancelMap)
-                .map(([n, d]) => ({ name: n, cancelados: d.cancelados, total: d.total,
-                    taxa: d.total > 0 ? (d.cancelados / d.total) * 100 : 0 }))
-                .sort((a, b) => b.cancelados - a.cancelados).slice(0, 10);
-
-            document.getElementById('rankCancel').innerHTML = topCancel.map((o, i) => `
-            <tr>
-              <td><span class="rank-dot ${rankClass(i)}">${i+1}</span></td>
-              <td><b>${o.name.length>22?o.name.slice(0,20)+'…':o.name}</b></td>
-              <td style="color:#ff5252;font-weight:600;">${o.cancelados}</td>
-              <td>${o.total}</td>
-              <td style="color:${o.taxa>50?'#ff5252':o.taxa>20?'#ffb74d':'#4caf84'};font-weight:600;">${o.taxa.toFixed(1)}%</td>
-            </tr>`).join('');
-
-            // ═══ GRÁFICO CLOSERS POR VGV ═══
-            const closerVGVMAP = {};
-            filtered.forEach(v => {
-                const name = v.closer || 'Sem info';
-                if (!closerVGVMAP[name]) closerVGVMAP[name] = { vgv: 0, qtd: 0 };
-                closerVGVMAP[name].vgv += v.valorNegociado;
-                closerVGVMAP[name].qtd++;
-            });
-            const topClosers = Object.entries(closerVGVMAP)
-                .sort((a, b) => b[1].vgv - a[1].vgv).slice(0, 10);
-
-            const ctx5 = document.getElementById('chartClosers').getContext('2d');
-            charts.closers = new Chart(ctx5, {
-                type: 'bar',
-                data: {
-                    labels: topClosers.map(c => c[0].length > 20 ? c[0].slice(0, 18) + '…' : c[0]),
-                    datasets: [{
-                        label: 'VGV (R$)',
-                        data: topClosers.map(c => c[1].vgv),
-                        backgroundColor: topClosers.map((_, i) =>
-                            `rgba(68,138,255,${[0.9,0.8,0.7,0.6,0.55,0.5,0.45,0.4,0.35,0.3][i]||0.3})`),
-                        borderColor: '#448aff',
-                        borderWidth: 1,
-                        borderRadius: 8
-                    }]
+                        {
+                            label: 'Qtd. Cancelamentos',
+                            data: cancelCounts,
+                            backgroundColor: 'rgba(248,113,113,0.7)',
+                            borderColor: 'rgba(248,113,113,1)',
+                            borderWidth: 1,
+                            borderRadius: 8,
+                            borderSkipped: false,
+                            order: 0,
+                        },
+                        {
+                            label: 'Total de Vendas na Faixa',
+                            data: totalCounts,
+                            backgroundColor: 'rgba(56,189,248,0.4)',
+                            borderColor: 'rgba(56,189,248,0.6)',
+                            borderWidth: 1,
+                            borderRadius: 8,
+                            borderSkipped: false,
+                            order: 1,
+                        },
+                    ],
                 },
                 options: {
                     responsive: true,
                     maintainAspectRatio: false,
-                    indexAxis: 'y',
+                    interaction: { mode: 'index', intersect: false },
                     plugins: {
-                        legend: { display: false },
-                        tooltip: { callbacks: { label: ctx => 'VGV: ' + fmtBRL(ctx.parsed.x) + '  |  ' +
-                                    topClosers[ctx.dataIndex][1].qtd + ' vendas' } }
+                        legend: {
+                            labels: { color: '#94a3b8', usePointStyle: true, pointStyleWidth: 8,
+                                padding: 20 },
+                        },
+                        tooltip: {
+                            callbacks: {
+                                afterLabel: function(ctx) {
+                                    if (ctx.datasetIndex === 0 && totalCounts[ctx.dataIndex] >
+                                        0) {
+                                        return 'Taxa Cancelamento: ' + cancelPercents[ctx
+                                            .dataIndex].toFixed(1) + '%';
+                                    }
+                                }
+                            }
+                        }
                     },
                     scales: {
-                        x: { ticks: { color: '#8a90b0', callback: v => 'R$' + (v / 1000).toFixed(0) + 'k',
-                                font: { size: 9 } }, grid: { color: 'rgba(26,38,80,0.4)' } },
-                        y: { ticks: { color: '#e0e4f0', font: { size: 10 } }, grid: { display: false } }
-                    }
-                }
+                        x: {
+                            ticks: { color: '#94a3b8', font: { size: 11 } },
+                            grid: { color: 'rgba(59,130,246,0.07)' },
+                        },
+                        y: {
+                            ticks: { color: '#94a3b8' },
+                            grid: { color: 'rgba(59,130,246,0.07)' },
+                            beginAtZero: true,
+                        },
+                    },
+                },
             });
 
-            // ═══ TABELA DETALHADA ═══
-            document.getElementById('tabelaCount').textContent = '(' + filtered.length + ' vendas)';
-            document.querySelector('#tabelaVendas thead').innerHTML = `
-            <tr>
-              <th>Data</th><th>Número</th><th>Cessionário</th><th>VGV (G)</th>
-              <th>Entrada Ef. (BH)</th><th>% Entrada Ef.</th><th>Status</th><th>Closer</th>
-            </tr>`;
-
-            const sorted = [...filtered].sort((a, b) => {
-                if (!a.data) return 1;
-                if (!b.data) return -1;
-                return b.data - a.data;
+            // ── 2. VGV por Mês ──
+            const vgvMesMap = {};
+            data.forEach(d => {
+                const parts = d._data.split('/');
+                const mesKey = parts.length === 3 ? parts[1] + '/' + parts[2] : d._data;
+                if (!vgvMesMap[mesKey]) vgvMesMap[mesKey] = { vgv: 0, entrada: 0, count: 0 };
+                vgvMesMap[mesKey].vgv += d._valorNegociado;
+                vgvMesMap[mesKey].entrada += d._entradaEfetiva;
+                vgvMesMap[mesKey].count++;
+            });
+            const mesesSorted = Object.keys(vgvMesMap).sort();
+            const ctx2 = document.getElementById('chartVgvMes').getContext('2d');
+            chartVgvMes = new Chart(ctx2, {
+                type: 'bar',
+                data: {
+                    labels: mesesSorted,
+                    datasets: [{
+                        label: 'VGV (R$)',
+                        data: mesesSorted.map(m => vgvMesMap[m].vgv),
+                        backgroundColor: function(ctx) { return chartColors.gradientBlue(ctx, 0.7,
+                                0.2); },
+                        borderColor: 'rgba(56,189,248,0.9)',
+                        borderWidth: 1.5,
+                        borderRadius: 8,
+                        borderSkipped: false,
+                    }, ],
+                },
+                options: {
+                    responsive: true,
+                    maintainAspectRatio: false,
+                    plugins: { legend: { labels: { color: '#94a3b8', usePointStyle: true,
+                                padding: 16 } } },
+                    scales: {
+                        x: { ticks: { color: '#94a3b8' }, grid: { color: 'rgba(59,130,246,0.07)' } },
+                        y: {
+                            ticks: { color: '#94a3b8', callback: v => fmtBRL(v) },
+                            grid: { color: 'rgba(59,130,246,0.07)' },
+                        },
+                    },
+                },
             });
 
-            document.querySelector('#tabelaVendas tbody').innerHTML = sorted.map(v => `
-            <tr>
-              <td>${v.dataStr}</td>
-              <td>${v.numero}</td>
-              <td>${(v.cessionario||'').length>25?(v.cessionario||'').slice(0,23)+'…':(v.cessionario||'')}</td>
-              <td style="font-weight:600;">${fmtBRL(v.valorNegociado)}</td>
-              <td style="color:#64b5f6;font-weight:600;">${fmtBRL2(v.entradaEfetiva)}</td>
-              <td style="color:#ffb74d;font-weight:600;">${v.percEntradaEfetiva.toFixed(2)}%</td>
-              <td><span class="badge ${v.status==='ATIVO'?'badge-ativo':'badge-cancelado'}">${v.status||'N/A'}</span></td>
-              <td>${(v.closer||'').length>20?(v.closer||'').slice(0,18)+'…':(v.closer||'')}</td>
-            </tr>`).join('');
+            // ── 3. Status Pizza ──
+            const ativoCount = data.filter(d => d._status === 'ATIVO').length;
+            const cancelCount = data.filter(d => d._status === 'CANCELADO').length;
+            const ctx3 = document.getElementById('chartStatus').getContext('2d');
+            chartStatus = new Chart(ctx3, {
+                type: 'doughnut',
+                data: {
+                    labels: ['Ativo', 'Cancelado'],
+                    datasets: [{
+                        data: [ativoCount, cancelCount],
+                        backgroundColor: ['rgba(74,222,128,0.75)', 'rgba(248,113,113,0.75)'],
+                        borderColor: ['rgba(74,222,128,1)', 'rgba(248,113,113,1)'],
+                        borderWidth: 2,
+                        hoverBorderWidth: 3,
+                    }],
+                },
+                options: {
+                    responsive: true,
+                    maintainAspectRatio: false,
+                    plugins: {
+                        legend: {
+                            position: 'bottom',
+                            labels: { color: '#94a3b8', usePointStyle: true, padding: 20,
+                                font: { size: 13 } },
+                        },
+                    },
+                },
+            });
+
+            // ── 4. Top Closers ──
+            const closerMap = {};
+            data.forEach(d => {
+                const c = d._closer || 'N/I';
+                if (!closerMap[c]) closerMap[c] = { vgv: 0, count: 0 };
+                closerMap[c].vgv += d._valorNegociado;
+                closerMap[c].count++;
+            });
+            const closerSorted = Object.entries(closerMap).sort((a, b) => b[1].vgv - a[1].vgv).slice(0, 8);
+            const ctx4 = document.getElementById('chartClosers').getContext('2d');
+            chartClosers = new Chart(ctx4, {
+                type: 'bar',
+                data: {
+                    labels: closerSorted.map(e => e[0]),
+                    datasets: [{
+                        label: 'VGV (R$)',
+                        data: closerSorted.map(e => e[1].vgv),
+                        backgroundColor: function(ctx) { return chartColors.gradientBlue2(ctx); },
+                        borderColor: 'rgba(99,102,241,0.9)',
+                        borderWidth: 1.5,
+                        borderRadius: 8,
+                        borderSkipped: false,
+                    }, ],
+                },
+                options: {
+                    indexAxis: 'y',
+                    responsive: true,
+                    maintainAspectRatio: false,
+                    plugins: { legend: { display: false } },
+                    scales: {
+                        x: {
+                            ticks: { color: '#94a3b8', callback: v => fmtBRL(v) },
+                            grid: { color: 'rgba(59,130,246,0.07)' },
+                        },
+                        y: { ticks: { color: '#e2e8f0', font: { size: 11 } },
+                            grid: { display: false } },
+                    },
+                },
+            });
+
+            // ── 5. Top Promotores ──
+            const promMap = {};
+            data.forEach(d => {
+                const p = d._promotor || 'N/I';
+                if (!promMap[p]) promMap[p] = { vgv: 0, count: 0 };
+                promMap[p].vgv += d._valorNegociado;
+                promMap[p].count++;
+            });
+            const promSorted = Object.entries(promMap).sort((a, b) => b[1].vgv - a[1].vgv).slice(0, 8);
+            const ctx5 = document.getElementById('chartPromotores').getContext('2d');
+            chartPromotores = new Chart(ctx5, {
+                type: 'bar',
+                data: {
+                    labels: promSorted.map(e => e[0]),
+                    datasets: [{
+                        label: 'VGV (R$)',
+                        data: promSorted.map(e => e[1].vgv),
+                        backgroundColor: function(ctx) { return chartColors.gradientBlue(ctx, 0.55,
+                                0.1); },
+                        borderColor: 'rgba(56,189,248,0.85)',
+                        borderWidth: 1.5,
+                        borderRadius: 8,
+                        borderSkipped: false,
+                    }, ],
+                },
+                options: {
+                    indexAxis: 'y',
+                    responsive: true,
+                    maintainAspectRatio: false,
+                    plugins: { legend: { display: false } },
+                    scales: {
+                        x: {
+                            ticks: { color: '#94a3b8', callback: v => fmtBRL(v) },
+                            grid: { color: 'rgba(59,130,246,0.07)' },
+                        },
+                        y: { ticks: { color: '#e2e8f0', font: { size: 11 } },
+                            grid: { display: false } },
+                    },
+                },
+            });
+
+            // ── 6. % Médio de Entrada por Mês ──
+            const ctx6 = document.getElementById('chartPercEntrada').getContext('2d');
+            chartPercEntrada = new Chart(ctx6, {
+                type: 'line',
+                data: {
+                    labels: mesesSorted,
+                    datasets: [{
+                        label: '% Médio de Entrada',
+                        data: mesesSorted.map(m => {
+                            const avg = vgvMesMap[m].count > 0 ? data.filter(d => {
+                                const p = d._data.split('/');
+                                const k = p.length === 3 ? p[1] + '/' + p[2] : '';
+                                return k === m;
+                            }).reduce((s, d2) => s + d2._percEntrada, 0) / vgvMesMap[m]
+                                .count : 0;
+                            return avg;
+                        }),
+                        borderColor: '#38bdf8',
+                        backgroundColor: 'rgba(56,189,248,0.1)',
+                        fill: true,
+                        tension: 0.4,
+                        pointBackgroundColor: '#38bdf8',
+                        pointBorderColor: '#0d1530',
+                        pointBorderWidth: 2,
+                        pointRadius: 6,
+                        pointHoverRadius: 9,
+                        borderWidth: 2.5,
+                    }, ],
+                },
+                options: {
+                    responsive: true,
+                    maintainAspectRatio: false,
+                    plugins: { legend: { labels: { color: '#94a3b8', usePointStyle: true,
+                                padding: 16 } } },
+                    scales: {
+                        x: { ticks: { color: '#94a3b8' }, grid: { color: 'rgba(59,130,246,0.07)' } },
+                        y: {
+                            ticks: { color: '#94a3b8', callback: v => v.toFixed(1) + '%' },
+                            grid: { color: 'rgba(59,130,246,0.07)' },
+                        },
+                    },
+                },
+            });
+
+            // ── 7. Cancelamentos por Dia ──
+            const cancelDiaMap = {};
+            data.filter(d => d._status === 'CANCELADO').forEach(d => {
+                const dia = d._data;
+                if (!cancelDiaMap[dia]) cancelDiaMap[dia] = 0;
+                cancelDiaMap[dia]++;
+            });
+            const diasSorted = Object.keys(cancelDiaMap).sort();
+            const ctx7 = document.getElementById('chartCancelDia').getContext('2d');
+            chartCancelDia = new Chart(ctx7, {
+                type: 'bar',
+                data: {
+                    labels: diasSorted,
+                    datasets: [{
+                        label: 'Qtd. Cancelamentos',
+                        data: diasSorted.map(d => cancelDiaMap[d]),
+                        backgroundColor: 'rgba(248,113,113,0.65)',
+                        borderColor: 'rgba(248,113,113,0.9)',
+                        borderWidth: 1,
+                        borderRadius: 6,
+                        borderSkipped: false,
+                    }, ],
+                },
+                options: {
+                    responsive: true,
+                    maintainAspectRatio: false,
+                    plugins: { legend: { display: false } },
+                    scales: {
+                        x: {
+                            ticks: { color: '#94a3b8', font: { size: 10 }, maxRotation: 45,
+                                minRotation: 45 },
+                            grid: { color: 'rgba(59,130,246,0.05)' },
+                        },
+                        y: { ticks: { color: '#94a3b8', stepSize: 1 },
+                            grid: { color: 'rgba(59,130,246,0.07)' }, beginAtZero: true },
+                    },
+                },
+            });
         }
 
-        // ═══════════════════════════════════════════════════════
-        //  INICIAR APP
-        // ═══════════════════════════════════════════════════════
-        initApp();
+        // ═══════════════════════════════════════════
+        // ATUALIZAR KPIs
+        // ═══════════════════════════════════════════
+        function atualizarKPIs() {
+            const data = getFilteredData();
+            const vgvTotal = data.reduce((s, d) => s + d._valorNegociado, 0);
+            const entradaTotal = data.reduce((s, d) => s + d._entradaEfetiva, 0);
+            const qtdVendas = data.length;
+            const ticketMedio = qtdVendas > 0 ? vgvTotal / qtdVendas : 0;
+            const cancelados = data.filter(d => d._status === 'CANCELADO').length;
+            const ativos = data.filter(d => d._status === 'ATIVO').length;
+            const taxaConv = qtdVendas > 0 ? (ativos / qtdVendas * 100) : 0;
+            const taxaCancel = qtdVendas > 0 ? (cancelados / qtdVendas * 100) : 0;
 
-        console.log('🏙️ Borderô Collina Dreams — Pronto!');
-        console.log('   Cole o CSV completo e clique em "Carregar Dados"');
+            document.getElementById('kpi-vgv').textContent = fmtBRL(vgvTotal);
+            document.getElementById('kpi-vgv-sub').textContent = qtdVendas + ' vendas';
+            document.getElementById('kpi-entrada').textContent = fmtBRL(entradaTotal);
+            document.getElementById('kpi-entrada-sub').textContent = 'Entrada efetiva total';
+            document.getElementById('kpi-vendas').textContent = qtdVendas;
+            document.getElementById('kpi-vendas-sub').textContent = ativos + ' ativas · ' + cancelados +
+                ' canceladas';
+            document.getElementById('kpi-ticket').textContent = fmtBRL(ticketMedio);
+            document.getElementById('kpi-ticket-sub').textContent = 'Média por venda';
+            document.getElementById('kpi-cancel').textContent = cancelados;
+            document.getElementById('kpi-cancel-sub').textContent = 'Taxa: ' + fmtPct(taxaCancel);
+            document.getElementById('kpi-conv').textContent = fmtPct(taxaConv);
+            document.getElementById('kpi-conv-sub').textContent = 'Vendas ativas';
+
+            const fi = filtroInicio ? filtroInicio.toLocaleDateString('pt-BR') : 'início';
+            const ff = filtroFim ? filtroFim.toLocaleDateString('pt-BR') : 'fim';
+            document.getElementById('filter-info').textContent = (filtroInicio || filtroFim) ?
+                `Filtro: ${fi} – ${ff} · ${qtdVendas} registros` : 'Todos os registros · ' + qtdVendas +
+                ' vendas';
+        }
+
+        // ═══════════════════════════════════════════
+        // ATUALIZAR TABELA
+        // ═══════════════════════════════════════════
+        function atualizarTabela() {
+            const data = getFilteredData();
+            const sorted = [...data].sort((a, b) => {
+                const pa = a._data.split('/');
+                const pb = b._data.split('/');
+                const da = new Date(pa[2], pa[1] - 1, pa[0]);
+                const db = new Date(pb[2], pb[1] - 1, pb[0]);
+                return db - da;
+            });
+            document.getElementById('table-count').textContent = sorted.length + ' registros';
+            const tbody = document.getElementById('table-body');
+            tbody.innerHTML = sorted.map(d => `
+            <tr>
+              <td>${d._data}</td>
+              <td>${d._numero}</td>
+              <td>${d._cessionario}</td>
+              <td>${fmtBRL(d._valorNegociado)}</td>
+              <td>${fmtBRL(d._entradaEfetiva)}</td>
+              <td>${fmtPct(d._percEntrada)}</td>
+              <td><span class="status-badge ${d._status === 'ATIVO' ? 'status-ativo' : 'status-cancelado'}">${d._status}</span></td>
+              <td>${d._closer}</td>
+              <td>${d._promotor}</td>
+              <td>${d._liner}</td>
+              <td>${fmtBRL(d._totalSaldo)}</td>
+            </tr>
+          `).join('');
+        }
+
+        // ═══════════════════════════════════════════
+        // ATUALIZAR TUDO
+        // ═══════════════════════════════════════════
+        function atualizarTudo() {
+            atualizarKPIs();
+            atualizarTabela();
+            atualizarGraficos();
+        }
+
+        // ═══════════════════════════════════════════
+        // INIT
+        // ═══════════════════════════════════════════
+        atualizarTudo();
     </script>
 </body>
 </html>
