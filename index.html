@@ -13,7 +13,6 @@
         :root {
             --bg-deep: #060b1a;
             --bg-card: #0b1229;
-            --bg-card-hover: #101d40;
             --blue-1: #0ea5e9;
             --blue-2: #3b82f6;
             --blue-3: #6366f1;
@@ -31,13 +30,11 @@
             --radius-sm: 11px;
             --transition: 0.28s cubic-bezier(0.4, 0, 0.2, 1);
         }
-
         * {
             margin: 0;
             padding: 0;
             box-sizing: border-box;
         }
-
         body {
             font-family: 'Inter', 'Segoe UI', system-ui, -apple-system, sans-serif;
             background: var(--bg-deep);
@@ -49,14 +46,11 @@
                 radial-gradient(ellipse at 50% 60%, rgba(59, 130, 246, 0.03) 0%, transparent 70%);
             background-attachment: fixed;
         }
-
         .dashboard {
             max-width: 1520px;
             margin: 0 auto;
             padding: 22px 18px 44px;
         }
-
-        /* ── Header ───────────────────── */
         .header {
             display: flex;
             align-items: center;
@@ -121,8 +115,6 @@
                 box-shadow: 0 0 22px 5px rgba(14, 165, 233, 0.14);
             }
         }
-
-        /* ── Filter Bar ──────────────── */
         .filter-bar {
             display: flex;
             align-items: center;
@@ -176,8 +168,6 @@
             background: rgba(14, 165, 233, 0.20);
             box-shadow: 0 0 16px rgba(14, 165, 233, 0.18);
         }
-
-        /* ── KPI Cards ───────────────── */
         .kpi-grid {
             display: grid;
             grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
@@ -246,8 +236,6 @@
             color: var(--green-soft);
             -webkit-text-fill-color: var(--green-soft);
         }
-
-        /* ── Chart Grid ──────────────── */
         .chart-grid {
             display: grid;
             grid-template-columns: repeat(auto-fit, minmax(430px, 1fr));
@@ -289,8 +277,6 @@
         .chart-wrap.short {
             height: 270px;
         }
-
-        /* ── Data Table ──────────────── */
         .table-card {
             background: var(--bg-card);
             border: 1px solid var(--border);
@@ -372,8 +358,6 @@
             color: #f87171;
             border: 1px solid rgba(239, 68, 68, 0.28);
         }
-
-        /* ── Footer ──────────────────── */
         .footer {
             text-align: center;
             padding: 14px;
@@ -381,8 +365,6 @@
             color: var(--text-dim);
             letter-spacing: 0.05em;
         }
-
-        /* ── Scrollbar ───────────────── */
         ::-webkit-scrollbar {
             width: 5px;
             height: 5px;
@@ -397,8 +379,6 @@
         ::-webkit-scrollbar-thumb:hover {
             background: rgba(14, 165, 233, 0.42);
         }
-
-        /* ── Flatpickr Overrides ────── */
         .flatpickr-calendar {
             background: #0b1229 !important;
             border: 1px solid rgba(59, 130, 246, 0.30) !important;
@@ -438,8 +418,6 @@
         .flatpickr-months .flatpickr-next-month:hover svg {
             fill: #38bdf8 !important;
         }
-
-        /* ── Responsive ─────────────── */
         @media (max-width: 768px) {
             .dashboard {
                 padding: 10px 8px 24px;
@@ -471,7 +449,6 @@
 </head>
 <body>
     <div class="dashboard">
-        <!-- ═══════════ HEADER ═══════════ -->
         <div class="header">
             <div class="header-title">
                 <span>Collina Dreams · Sala Diurno</span>
@@ -480,7 +457,6 @@
             <div class="header-badge">📊 Dashboard Interativo</div>
         </div>
 
-        <!-- ═══════════ FILTROS ═══════════ -->
         <div class="filter-bar">
             <label>📅 Período</label>
             <input type="text" id="date-start" class="filter-input" placeholder="Data Inicial" readonly>
@@ -490,7 +466,6 @@
             <span style="margin-left:auto;font-size:0.76rem;color:var(--text-dim)" id="filter-info"></span>
         </div>
 
-        <!-- ═══════════ KPI CARDS ═══════════ -->
         <div class="kpi-grid">
             <div class="kpi-card">
                 <div class="kpi-label">💰 VGV Total</div>
@@ -524,20 +499,17 @@
             </div>
         </div>
 
-        <!-- ═══════════ GRÁFICOS ═══════════ -->
         <div class="chart-grid">
-            <!-- ★ GRÁFICO PRINCIPAL: Cancelamentos por Faixa de % Entrada Efetiva -->
             <div class="chart-card full">
                 <div class="chart-title">
                     ❌ Cancelamentos por Faixa de % Entrada Efetiva &nbsp;
-                    <span style="font-weight:400;font-size:0.7rem;color:var(--text-dim)">(Entrada Efetiva ÷ VGV)</span>
+                    <span style="font-weight:400;font-size:0.7rem;color:var(--text-dim)">(Entrada Efetiva ÷ VGV × 100)</span>
                 </div>
                 <div class="chart-wrap tall">
                     <canvas id="chartCancelFaixa"></canvas>
                 </div>
             </div>
 
-            <!-- VGV por Mês -->
             <div class="chart-card half">
                 <div class="chart-title">📈 VGV por Mês</div>
                 <div class="chart-wrap">
@@ -545,7 +517,6 @@
                 </div>
             </div>
 
-            <!-- Status (Ativo vs Cancelado) -->
             <div class="chart-card half">
                 <div class="chart-title">📊 Status das Vendas</div>
                 <div class="chart-wrap">
@@ -553,7 +524,6 @@
                 </div>
             </div>
 
-            <!-- Top Closers -->
             <div class="chart-card half">
                 <div class="chart-title">🏆 Top Closers (por VGV)</div>
                 <div class="chart-wrap">
@@ -561,7 +531,6 @@
                 </div>
             </div>
 
-            <!-- Top Promotores -->
             <div class="chart-card half">
                 <div class="chart-title">📣 Top Promotores de Marketing (por VGV)</div>
                 <div class="chart-wrap">
@@ -569,7 +538,6 @@
                 </div>
             </div>
 
-            <!-- % Entrada Efetiva Médio por Mês -->
             <div class="chart-card half">
                 <div class="chart-title">📐 % Médio de Entrada Efetiva por Mês</div>
                 <div class="chart-wrap short">
@@ -577,7 +545,6 @@
                 </div>
             </div>
 
-            <!-- Cancelamentos por Dia -->
             <div class="chart-card half">
                 <div class="chart-title">📉 Cancelamentos por Dia</div>
                 <div class="chart-wrap short">
@@ -586,7 +553,6 @@
             </div>
         </div>
 
-        <!-- ═══════════ TABELA ═══════════ -->
         <div class="table-card">
             <div class="table-header-bar">
                 <h3>📋 Detalhamento de Vendas</h3>
@@ -620,10 +586,11 @@
     </div>
 
     <script>
-        // ═══════════════════════════════════════════════════════
-        // DADOS DO CSV INCORPORADOS
-        // Substitua o conteúdo de csvRaw pelo CSV completo ao publicar
-        // ═══════════════════════════════════════════════════════
+        // ╔══════════════════════════════════════════════════════════════╗
+        // ║  ⚠️  SUBSTITUA O CONTEÚDO DESTA VARIÁVEL PELO CSV COMPLETO  ║
+        // ║     Abra seu arquivo .CSV no Bloco de Notas, copie TUDO     ║
+        // ║     (Ctrl+A, Ctrl+C) e cole aqui entre as crases (``).      ║
+        // ╚══════════════════════════════════════════════════════════════╝
         const csvRaw = `Qtd Total Parcelas;Sala de vendas;Data;Número;Cessionário;Pontos;Valor negociado;Status;Promotor de marketing;Promotor de telemarketing;Liner;Closer;Pep;Total da entrada;Percentual de entrada (%);Parcelas;Quantidade CARTÃO;R$ CARTAO;Quantidade CHEQUE;Valor Parcelas Cheque Entrada;Quantidade BOLETO;R$ BOLETO;Quantidade DINHEIRO;R$ DINHEIRO;;Quantidade de parcelas de crédito recorrente da entrada;Total em crédito recorrente da entrada em valor monetário (R$);Quantidade TRANSFERENCIA;R$ TRANSFERENCIA;;Qtd Parcelas Saldo;;Total do saldo;Percentual de saldo (%);;Qtd Parcelas Cartao Saldo Restante;Valor Parcelas Cartao Saldo Restante;Quantidade de parcelas em crédito recorrente do saldo;Total em crédito recorrente do saldo em valor monetário (R$);Valor Parcelas Dinheiro Saldo Restante;Qtd Parcelas Dinheiro Saldo Restante;Valor Parcelas Boleto Saldo Restante;Qtd Parcelas Boleto Saldo Restante;Valor Parcelas Cheque Saldo Restante;Qtd Parcelas Cheque Saldo Restante;Total Intermediárias;Qtd Parcelas Itermediárias;Percentual Intermediárias;Qtd Parcelas Intermediaria Cartao;Total Intermediaria Cartao;Total Intermediaria Boleto;Qtd Parcelas Intermediaria Boleto;Total Intermediária Dinheiro;Qtd Parcelas Intermediária Dinheiro;Total Intermediaria Cartao Recorrente;Qtd Parcelas Intermediaria Cartao Recorrente;Qtd Parcelas Intermediaria Transferencia;Total Intermediaria Transferencia;Total Intermediaria Cheque;ENTRADA EFETIVA;Qtd Parcelas Intermediaria Cheque
 132;COLLINA - DREAMS DIURNO;02/01/2026;COLLINA- 04/01;THALES DO CARMO ZULCAO;0;80000;ATIVO;JOSYENE FREITAS;;AMANDA DORADO;LUIS ALVES DO AMARAL NETO;;15999,96;20;12;1;1333,33;0;0;11;14666,63;0;0;;0;0;0;0;;120;;64000,04;80;0;0;0;0;0;0;64000,04;120;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0;1333,33;0
 135;COLLINA - DREAMS DIURNO;02/01/2026;COLLINA - 12/41;RODRIGO FAUSTINO DA SILVA;0;80000;ATIVO;RAPHAEL BUENO DA SILVA ;;ALEX FONSECA VIVIAN;MARCEL VINICIUS DORADO EUGENI;;18000;22,5;15;1;800;0;0;14;17200;0;0;;0;0;0;0;;120;;62000;77,5;0;0;0;0;0;0;62000;120;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0;800;0
@@ -640,7 +607,7 @@
 0;COLLINA - DREAMS DIURNO;04/01/2026;COLLINA - 17/11;ADALMIR RODRIGUES SANTOS;0;80000;CANCELADO;PEDRO HENRIQUE GOMES SANTOS;;AMANDA DORADO;FABRICIO LELIS BIGNARDI;;0;0;0;0;0;0;0;0;0;0;0;;0;0;0;0;;0;;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0`;
 
         // ═══════════════════════════════════════════════════════
-        // PARSE CSV
+        // PARSE DO CSV — NÃO MEXER DAQUI PRA BAIXO
         // ═══════════════════════════════════════════════════════
         function parseCSV(csv) {
             const lines = csv.trim().split('\n');
@@ -654,7 +621,6 @@
                     obj[h] = (vals[idx] || '').trim();
                 });
 
-                // Parse numérico (formato BR: 1.234,56 → 1234.56)
                 const numParse = (v) => {
                     if (!v || v === '') return 0;
                     return parseFloat(v.replace(/\./g, '').replace(',', '.')) || 0;
@@ -679,10 +645,8 @@
                     (obj._entradaEfetiva / obj._valorNegociado) * 100 :
                     0;
 
-                // Parse data para Date (formato DD/MM/YYYY)
                 const dateParts = obj._data.split('/');
                 if (dateParts.length === 3) {
-                    // Normaliza para meia-noite UTC evitando problemas de timezone
                     obj._dateObj = new Date(
                         parseInt(dateParts[2]),
                         parseInt(dateParts[1]) - 1,
@@ -700,9 +664,6 @@
 
         const allData = parseCSV(csvRaw);
 
-        // ═══════════════════════════════════════════════════════
-        // FUNÇÕES AUXILIARES
-        // ═══════════════════════════════════════════════════════
         function fmtBRL(v) {
             if (Math.abs(v) >= 1e6) return 'R$ ' + (v / 1e6).toFixed(2) + 'M';
             return 'R$ ' + v.toLocaleString('pt-BR', { minimumFractionDigits: 2, maximumFractionDigits: 2 });
@@ -733,10 +694,7 @@
             'Acima de 5,1%'
         ];
 
-        // ═══════════════════════════════════════════════════════
-        // FILTRO DE PERÍODO (CORRIGIDO)
-        // ═══════════════════════════════════════════════════════
-        let filtroInicio = null; // Date com horas zeradas
+        let filtroInicio = null;
         let filtroFim = null;
 
         function filtrarPorPeriodo(dataArr) {
@@ -753,9 +711,6 @@
             return filtrarPorPeriodo(allData);
         }
 
-        // ═══════════════════════════════════════════════════════
-        // FLATPICKR
-        // ═══════════════════════════════════════════════════════
         const fpStart = flatpickr("#date-start", {
             dateFormat: "d/m/Y",
             locale: "pt",
@@ -792,10 +747,8 @@
             atualizarTudo();
         }
 
-        // ═══════════════════════════════════════════════════════
-        // GRÁFICOS (Chart.js)
-        // ═══════════════════════════════════════════════════════
-        let chartCancelFaixa, chartVgvMes, chartStatus, chartClosers, chartPromotores, chartPercEntrada, chartCancelDia;
+        let chartCancelFaixa, chartVgvMes, chartStatus, chartClosers, chartPromotores, chartPercEntrada,
+            chartCancelDia;
 
         function destroyCharts() {
             [chartCancelFaixa, chartVgvMes, chartStatus, chartClosers, chartPromotores, chartPercEntrada,
@@ -807,7 +760,7 @@
             destroyCharts();
             const data = getFilteredData();
 
-            // ── 1. ★ Cancelamentos por Faixa de % Entrada Efetiva ★ ──
+            // 1. Cancelamentos por Faixa de % Entrada Efetiva
             const faixaCancelMap = {};
             const faixaTotalMap = {};
             FAIXA_ORDER.forEach(f => { faixaCancelMap[f] = 0;
@@ -816,7 +769,8 @@
             data.forEach(d => {
                 const faixa = getFaixaPercEntradaEfetiva(d._percEntradaEfetiva);
                 if (faixaTotalMap[faixa] !== undefined) faixaTotalMap[faixa]++;
-                if (d._status === 'CANCELADO' && faixaCancelMap[faixa] !== undefined) faixaCancelMap[faixa]++;
+                if (d._status === 'CANCELADO' && faixaCancelMap[faixa] !== undefined) faixaCancelMap[
+                    faixa]++;
             });
 
             const faixasLabels = FAIXA_ORDER.filter(f => faixaTotalMap[f] > 0 || faixaCancelMap[f] > 0);
@@ -842,7 +796,7 @@
                         order: 0,
                         yAxisID: 'y',
                     }, {
-                        label: '% de Cancelamento na Faixa',
+                        label: '% Cancelamento na Faixa',
                         data: cancelPercents,
                         type: 'line',
                         borderColor: '#fbbf24',
@@ -885,10 +839,8 @@
                         }
                     },
                     scales: {
-                        x: {
-                            ticks: { color: '#8899b4', font: { size: 10.5 } },
-                            grid: { color: 'rgba(59,130,246,0.06)' },
-                        },
+                        x: { ticks: { color: '#8899b4', font: { size: 10.5 } },
+                            grid: { color: 'rgba(59,130,246,0.06)' } },
                         y: {
                             type: 'linear',
                             position: 'left',
@@ -910,7 +862,7 @@
                 },
             });
 
-            // ── 2. VGV por Mês ──
+            // 2. VGV por Mês
             const vgvMesMap = {};
             data.forEach(d => {
                 const parts = d._data.split('/');
@@ -952,15 +904,13 @@
                                 padding: 16 } } },
                     scales: {
                         x: { ticks: { color: '#8899b4' }, grid: { color: 'rgba(59,130,246,0.06)' } },
-                        y: {
-                            ticks: { color: '#8899b4', callback: v => fmtBRL(v) },
-                            grid: { color: 'rgba(59,130,246,0.06)' },
-                        },
+                        y: { ticks: { color: '#8899b4', callback: v => fmtBRL(v) },
+                            grid: { color: 'rgba(59,130,246,0.06)' } },
                     },
                 },
             });
 
-            // ── 3. Status Pizza ──
+            // 3. Status Pizza
             const ativoCount = data.filter(d => d._status === 'ATIVO').length;
             const cancelCount = data.filter(d => d._status === 'CANCELADO').length;
             const ctx3 = document.getElementById('chartStatus').getContext('2d');
@@ -991,7 +941,7 @@
                 },
             });
 
-            // ── 4. Top Closers ──
+            // 4. Top Closers
             const closerMap = {};
             data.forEach(d => {
                 const c = d._closer || 'N/I';
@@ -1024,17 +974,15 @@
                     maintainAspectRatio: false,
                     plugins: { legend: { display: false } },
                     scales: {
-                        x: {
-                            ticks: { color: '#8899b4', callback: v => fmtBRL(v) },
-                            grid: { color: 'rgba(59,130,246,0.06)' },
-                        },
+                        x: { ticks: { color: '#8899b4', callback: v => fmtBRL(v) },
+                            grid: { color: 'rgba(59,130,246,0.06)' } },
                         y: { ticks: { color: '#e2e8f0', font: { size: 10.5 } },
                             grid: { display: false } },
                     },
                 },
             });
 
-            // ── 5. Top Promotores ──
+            // 5. Top Promotores
             const promMap = {};
             data.forEach(d => {
                 const p = d._promotor || 'N/I';
@@ -1067,17 +1015,15 @@
                     maintainAspectRatio: false,
                     plugins: { legend: { display: false } },
                     scales: {
-                        x: {
-                            ticks: { color: '#8899b4', callback: v => fmtBRL(v) },
-                            grid: { color: 'rgba(59,130,246,0.06)' },
-                        },
+                        x: { ticks: { color: '#8899b4', callback: v => fmtBRL(v) },
+                            grid: { color: 'rgba(59,130,246,0.06)' } },
                         y: { ticks: { color: '#e2e8f0', font: { size: 10.5 } },
                             grid: { display: false } },
                     },
                 },
             });
 
-            // ── 6. % Médio de Entrada Efetiva por Mês ──
+            // 6. % Médio de Entrada Efetiva por Mês
             const ctx6 = document.getElementById('chartPercEntrada').getContext('2d');
             chartPercEntrada = new Chart(ctx6, {
                 type: 'line',
@@ -1087,8 +1033,8 @@
                         label: '% Médio Entrada Efetiva',
                         data: mesesSorted.map(m =>
                             vgvMesMap[m].count > 0 ?
-                            parseFloat((vgvMesMap[m].percSum / vgvMesMap[m].count).toFixed(2)) :
-                            0
+                            parseFloat((vgvMesMap[m].percSum / vgvMesMap[m].count).toFixed(
+                                2)) : 0
                         ),
                         borderColor: '#38bdf8',
                         backgroundColor: 'rgba(56,189,248,0.10)',
@@ -1118,7 +1064,7 @@
                 },
             });
 
-            // ── 7. Cancelamentos por Dia ──
+            // 7. Cancelamentos por Dia
             const cancelDiaMap = {};
             data.filter(d => d._status === 'CANCELADO').forEach(d => {
                 const dia = d._data;
@@ -1165,9 +1111,6 @@
             });
         }
 
-        // ═══════════════════════════════════════════════════════
-        // ATUALIZAR KPIs
-        // ═══════════════════════════════════════════════════════
         function atualizarKPIs() {
             const data = getFilteredData();
             const vgvTotal = data.reduce((s, d) => s + d._valorNegociado, 0);
@@ -1200,9 +1143,6 @@
                 'Todos os registros · ' + qtdVendas + ' vendas';
         }
 
-        // ═══════════════════════════════════════════════════════
-        // ATUALIZAR TABELA
-        // ═══════════════════════════════════════════════════════
         function atualizarTabela() {
             const data = getFilteredData();
             const sorted = [...data].sort((a, b) => {
@@ -1228,18 +1168,13 @@
           `).join('');
         }
 
-        // ═══════════════════════════════════════════════════════
-        // ATUALIZAR TUDO
-        // ═══════════════════════════════════════════════════════
         function atualizarTudo() {
             atualizarKPIs();
             atualizarTabela();
             atualizarGraficos();
         }
 
-        // ═══════════════════════════════════════════════════════
         // INIT
-        // ═══════════════════════════════════════════════════════
         atualizarTudo();
     </script>
 </body>
