@@ -22,6 +22,9 @@
   --success: #00d68f;
   --danger: #ff4470;
   --warning: #ffb800;
+  --gold: #ffd700;
+  --silver: #c0c0c0;
+  --bronze: #cd7f32;
   --radius: 16px;
   --radius-sm: 10px;
 }
@@ -45,6 +48,7 @@ body {
 
 .container { max-width: 1440px; margin: auto; }
 
+/* HEADER */
 .header {
   display:flex; align-items:center; justify-content:space-between; padding:24px 32px; margin-bottom:28px;
   background: var(--bg-card); border:1px solid var(--border); border-radius:var(--radius);
@@ -72,6 +76,7 @@ h1 {
 }
 @keyframes pulse-dot { 0%,100%{opacity:1;} 50%{opacity:0.4;} }
 
+/* LOADING / ERROR */
 .loading-area {
   background: var(--bg-card); border:1px solid var(--border); border-radius:var(--radius);
   padding:60px 40px; text-align:center;
@@ -84,78 +89,79 @@ h1 {
   animation: spin 1s linear infinite; margin: 0 auto 16px;
 }
 @keyframes spin { to { transform: rotate(360deg); } }
-
 .error-area {
   background: rgba(255,68,112,0.08); border:1px solid rgba(255,68,112,0.3);
   border-radius:var(--radius); padding:30px; text-align:center; color:#ff6b8a;
 }
 .error-area h2 { margin-bottom:10px; }
 
+/* TABS */
 .tabs {
   display:flex; gap:4px; margin-bottom:24px; background:var(--bg-card); border:1px solid var(--border);
-  border-radius:var(--radius); padding:6px;
+  border-radius:var(--radius); padding:6px; flex-wrap:wrap;
 }
 .tab-btn {
-  flex:1; padding:12px 20px; border:none; background:transparent; color:var(--text-muted);
-  font-weight:600; font-size:0.88rem; border-radius:var(--radius-sm); cursor:pointer;
-  transition:all 0.3s; font-family:inherit;
+  flex:1; padding:11px 16px; border:none; background:transparent; color:var(--text-muted);
+  font-weight:600; font-size:0.84rem; border-radius:var(--radius-sm); cursor:pointer;
+  transition:all 0.3s; font-family:inherit; white-space:nowrap; min-width:100px;
 }
 .tab-btn.active {
   background:linear-gradient(135deg, var(--blue-primary), var(--blue-glow));
   color:#fff; box-shadow:0 4px 16px rgba(10,108,255,0.3);
 }
 .tab-btn:hover:not(.active) { color:var(--text-primary); background:rgba(10,108,255,0.08); }
-
 .tab-content { display:none; }
 .tab-content.active { display:block; }
 
+/* SUB-TABS (Rankings) */
+.sub-tabs {
+  display:flex; gap:4px; margin-bottom:20px; background:rgba(10,108,255,0.05); border:1px solid var(--border);
+  border-radius:var(--radius-sm); padding:4px; width:fit-content;
+}
+.sub-tab-btn {
+  padding:8px 22px; border:none; background:transparent; color:var(--text-muted);
+  font-weight:600; font-size:0.8rem; border-radius:8px; cursor:pointer;
+  transition:all 0.3s; font-family:inherit;
+}
+.sub-tab-btn.active {
+  background:linear-gradient(135deg, var(--blue-primary), var(--blue-glow));
+  color:#fff; box-shadow:0 2px 10px rgba(10,108,255,0.3);
+}
+.sub-tab-btn:hover:not(.active) { color:var(--text-primary); background:rgba(10,108,255,0.1); }
+.sub-tab-content { display:none; }
+.sub-tab-content.active { display:block; }
+
+/* FILTER BAR */
 .filter-bar {
-  display:flex; flex-wrap:wrap; gap:16px; align-items:center; padding:20px 24px; margin-bottom:24px;
+  display:flex; flex-wrap:wrap; gap:14px; align-items:center; padding:18px 22px; margin-bottom:22px;
   background: var(--bg-card); border:1px solid var(--border); border-radius:var(--radius);
 }
-.filter-group { display:flex; align-items:center; gap:10px; }
+.filter-group { display:flex; align-items:center; gap:8px; }
 .filter-group label {
-  font-size:0.78rem; color:var(--text-secondary); text-transform:uppercase; font-weight:600; white-space:nowrap;
+  font-size:0.76rem; color:var(--text-secondary); text-transform:uppercase; font-weight:600; white-space:nowrap;
   cursor:pointer; user-select:none;
 }
-
 input[type="date"] {
-  background: var(--bg-deep);
-  border:1px solid var(--border);
-  padding:10px 14px;
-  border-radius:var(--radius-sm);
-  outline:none;
-  font-family:inherit;
-  font-size:0.88rem;
-  color:var(--text-primary);
-  cursor:pointer;
-  min-width:150px;
-  color-scheme: dark;
+  background: var(--bg-deep); border:1px solid var(--border); padding:9px 12px;
+  border-radius:var(--radius-sm); outline:none; font-family:inherit; font-size:0.85rem;
+  color:var(--text-primary); cursor:pointer; min-width:140px; color-scheme: dark;
   transition: border-color 0.3s, box-shadow 0.3s;
 }
-input[type="date"]:focus {
-  border-color:var(--blue-glow);
-  box-shadow:0 0 0 3px rgba(10,108,255,0.12);
-}
+input[type="date"]:focus { border-color:var(--blue-glow); box-shadow:0 0 0 3px rgba(10,108,255,0.12); }
 input[type="date"]::-webkit-calendar-picker-indicator {
-  filter: invert(0.7) sepia(1) saturate(500%) hue-rotate(180deg);
-  cursor:pointer;
-  opacity:0.8;
+  filter: invert(0.7) sepia(1) saturate(500%) hue-rotate(180deg); cursor:pointer; opacity:0.8;
 }
-input[type="date"]::-webkit-calendar-picker-indicator:hover {
-  opacity:1;
-}
-
+input[type="date"]::-webkit-calendar-picker-indicator:hover { opacity:1; }
 select {
-  background: var(--bg-deep); border:1px solid var(--border); padding:10px 14px;
-  border-radius:var(--radius-sm); outline:none; font-family:inherit; font-size:0.88rem;
-  color:var(--text-primary); cursor:pointer; min-width:130px;
+  background: var(--bg-deep); border:1px solid var(--border); padding:9px 12px;
+  border-radius:var(--radius-sm); outline:none; font-family:inherit; font-size:0.85rem;
+  color:var(--text-primary); cursor:pointer; min-width:120px;
 }
 select:focus { border-color:var(--blue-glow); box-shadow:0 0 0 3px rgba(10,108,255,0.12); }
 select option { background: var(--bg-deep); color:var(--text-primary); }
 
 button {
-  padding:10px 20px; border-radius:50px; border:none; font-weight:600; font-size:0.85rem;
+  padding:9px 18px; border-radius:50px; border:none; font-weight:600; font-size:0.82rem;
   cursor:pointer; transition:all 0.3s; font-family:inherit;
 }
 .btn-filter {
@@ -167,98 +173,131 @@ button {
   background:transparent; border:1px solid var(--border); color:var(--text-secondary);
 }
 .btn-reset:hover { border-color:var(--blue-glow); color:var(--text-primary); }
-
 .period-indicator {
-  margin-left:auto; font-size:0.78rem; color:var(--blue-light); font-weight:500;
-  padding:8px 12px; background:rgba(10,108,255,0.1); border-radius:50px;
+  margin-left:auto; font-size:0.76rem; color:var(--blue-light); font-weight:500;
+  padding:7px 12px; background:rgba(10,108,255,0.1); border-radius:50px; white-space:nowrap;
 }
+.filter-active-badge {
+  display:none;
+  background: linear-gradient(135deg, var(--blue-primary), var(--blue-glow));
+  color:#fff; padding:4px 12px; border-radius:50px; font-size:0.73rem; font-weight:600;
+  margin-left:6px; align-items:center; gap:6px;
+}
+.filter-active-badge.show { display:inline-flex; }
 
-.kpi-grid { display:grid; grid-template-columns:repeat(5,1fr); gap:18px; margin-bottom:24px; }
+/* KPIs */
+.kpi-grid { display:grid; grid-template-columns:repeat(5,1fr); gap:16px; margin-bottom:22px; }
+.kpi-grid.kpi-6 { grid-template-columns:repeat(6,1fr); }
 .kpi-card {
   background:var(--bg-card); border:1px solid var(--border); border-radius:var(--radius);
-  padding:22px 20px; position:relative; overflow:hidden; backdrop-filter:blur(20px);
+  padding:20px 18px; position:relative; overflow:hidden; backdrop-filter:blur(20px);
   transition:all 0.3s; display:flex; flex-direction:column; justify-content:center;
 }
 .kpi-card:hover { border-color:var(--border-glow); box-shadow:0 12px 40px rgba(10,108,255,0.15); }
-.kpi-icon { font-size:1.6rem; margin-bottom:8px; }
-.kpi-label { font-size:0.72rem; text-transform:uppercase; color:var(--text-muted); margin-bottom:4px; font-weight:600; }
+.kpi-icon { font-size:1.5rem; margin-bottom:6px; }
+.kpi-label { font-size:0.7rem; text-transform:uppercase; color:var(--text-muted); margin-bottom:4px; font-weight:600; }
 .kpi-value {
-  font-size:1.8rem; font-weight:700;
+  font-size:1.7rem; font-weight:700;
   background: linear-gradient(135deg, #e8f0ff, #b0d4ff);
   -webkit-background-clip:text; -webkit-text-fill-color:transparent;
 }
-.kpi-sub { font-size:0.75rem; color:var(--text-muted); margin-top:2px; }
+.kpi-sub { font-size:0.72rem; color:var(--text-muted); margin-top:2px; }
 
-.content-grid { display:grid; grid-template-columns:1fr 1fr; gap:20px; margin-bottom:24px; }
+/* CONTENT GRID */
+.content-grid { display:grid; grid-template-columns:1fr 1fr; gap:18px; margin-bottom:22px; }
 .content-grid.full { grid-template-columns:1fr; }
 .panel {
   background:var(--bg-card); border:1px solid var(--border); border-radius:var(--radius);
   display:flex; flex-direction:column; overflow:hidden; backdrop-filter:blur(20px);
 }
 .panel-header {
-  padding:18px 22px; border-bottom:1px solid var(--border);
+  padding:16px 20px; border-bottom:1px solid var(--border);
   display:flex; align-items:center; justify-content:space-between;
 }
-.panel-header h3 { font-size:0.95rem; font-weight:700; color:var(--text-primary); }
+.panel-header h3 { font-size:0.9rem; font-weight:700; color:var(--text-primary); }
 .panel-header .badge {
-  font-size:0.7rem; background:rgba(10,108,255,0.15); color:var(--blue-light);
-  padding:4px 12px; border-radius:50px; font-weight:600;
+  font-size:0.68rem; background:rgba(10,108,255,0.15); color:var(--blue-light);
+  padding:4px 10px; border-radius:50px; font-weight:600;
 }
-.panel-body { padding:20px 22px; overflow:auto; max-height:500px; }
+.panel-body { padding:18px 20px; overflow:auto; max-height:480px; }
 
-.data-table { width:100%; border-collapse:collapse; font-size:0.8rem; }
+/* TABLES */
+.data-table { width:100%; border-collapse:collapse; font-size:0.78rem; }
 .data-table thead th {
-  background:var(--bg-card); padding:12px 10px; font-weight:700; font-size:0.68rem;
+  background:var(--bg-card); padding:10px 8px; font-weight:700; font-size:0.66rem;
   text-align:left; text-transform:uppercase; color:var(--text-muted); border-bottom:2px solid var(--border);
+  white-space:nowrap;
 }
 .data-table tbody td {
-  padding:10px; border-bottom:1px solid rgba(10,108,255,0.08); color:var(--text-secondary); white-space:nowrap;
+  padding:8px; border-bottom:1px solid rgba(10,108,255,0.08); color:var(--text-secondary); white-space:nowrap;
 }
 .data-table tbody tr:hover { background:rgba(10,108,255,0.04); }
 
-.status-badge { display:inline-block; padding:3px 10px; border-radius:50px; font-weight:600; font-size:0.72rem; }
+/* RANKING TABLE */
+.ranking-table { width:100%; border-collapse:collapse; font-size:0.78rem; }
+.ranking-table thead th {
+  background:rgba(10,108,255,0.08); padding:11px 8px; font-weight:700; font-size:0.66rem;
+  text-align:left; text-transform:uppercase; color:var(--text-muted); border-bottom:2px solid var(--border);
+  white-space:nowrap;
+}
+.ranking-table tbody td {
+  padding:9px 8px; border-bottom:1px solid rgba(10,108,255,0.06); color:var(--text-secondary); white-space:nowrap;
+}
+.ranking-table tbody tr:hover { background:rgba(10,108,255,0.05); }
+.ranking-table tbody tr.top-1 { background:rgba(255,215,0,0.06); }
+.ranking-table tbody tr.top-1 td:first-child { color:var(--gold); }
+.ranking-table tbody tr.top-2 td:first-child { color:var(--silver); }
+.ranking-table tbody tr.top-3 td:first-child { color:var(--bronze); }
+.rank-pos { font-weight:800; font-size:1.1rem; text-align:center; width:40px; }
+.rank-name { font-weight:600; color:var(--text-primary); }
+
+/* STATUS & BADGES */
+.status-badge { display:inline-block; padding:3px 10px; border-radius:50px; font-weight:600; font-size:0.7rem; }
 .status-badge.ativo { background:rgba(0,214,143,0.15); color:#00d68f; }
 .status-badge.cancelado { background:rgba(255,68,112,0.18); color:#ff4470; }
-
-.cancel-rate { font-weight:700; font-size:0.78rem; }
+.cancel-rate { font-weight:700; font-size:0.76rem; }
 .cancel-rate.low { color:var(--success); }
 .cancel-rate.mid { color:var(--warning); }
 .cancel-rate.high { color:var(--danger); }
 
+/* PROF SUMMARY */
 .prof-summary {
-  display:grid; grid-template-columns:repeat(auto-fit, minmax(200px,1fr)); gap:16px; margin-bottom:24px;
+  display:grid; grid-template-columns:repeat(auto-fit, minmax(180px,1fr)); gap:14px; margin-bottom:22px;
 }
 .prof-card {
   background:var(--bg-card); border:1px solid var(--border); border-radius:var(--radius);
-  padding:20px; text-align:center; transition:all 0.3s;
+  padding:18px; text-align:center; transition:all 0.3s;
 }
 .prof-card:hover { border-color:var(--border-glow); box-shadow:0 8px 30px rgba(10,108,255,0.12); }
-.prof-card .prof-icon { font-size:2rem; margin-bottom:8px; }
-.prof-card .prof-value { font-size:1.6rem; font-weight:700; background: linear-gradient(135deg, #e8f0ff, #b0d4ff); -webkit-background-clip:text; -webkit-text-fill-color:transparent; }
-.prof-card .prof-label { font-size:0.72rem; text-transform:uppercase; color:var(--text-muted); font-weight:600; }
+.prof-card .prof-icon { font-size:1.8rem; margin-bottom:6px; }
+.prof-card .prof-value { font-size:1.4rem; font-weight:700; background: linear-gradient(135deg, #e8f0ff, #b0d4ff); -webkit-background-clip:text; -webkit-text-fill-color:transparent; }
+.prof-card .prof-label { font-size:0.7rem; text-transform:uppercase; color:var(--text-muted); font-weight:600; }
 
-/* Destaque quando filtro de profissional está ativo */
-.filter-active-badge {
-  display:none;
-  background: linear-gradient(135deg, var(--blue-primary), var(--blue-glow));
-  color:#fff;
-  padding:4px 12px;
-  border-radius:50px;
-  font-size:0.75rem;
-  font-weight:600;
-  margin-left:8px;
-  align-items:center;
-  gap:6px;
+/* NO DATA */
+.no-data {
+  text-align:center; padding:40px 20px; color:var(--text-muted);
 }
-.filter-active-badge.show { display:inline-flex; }
+.no-data .icon { font-size:2.5rem; margin-bottom:12px; }
+.no-data p { font-size:0.88rem; }
 
-@media(max-width:768px){
+/* RESPONSIVE */
+@media(max-width:1024px){
   .kpi-grid { grid-template-columns:repeat(3,1fr); }
+  .kpi-grid.kpi-6 { grid-template-columns:repeat(3,1fr); }
+}
+@media(max-width:768px){
   .content-grid { grid-template-columns:1fr; }
+  .kpi-grid { grid-template-columns:repeat(2,1fr); }
+  .kpi-grid.kpi-6 { grid-template-columns:repeat(2,1fr); }
 }
 @media(max-width:480px){
-  .kpi-grid { grid-template-columns:repeat(2,1fr); }
-  body { padding:12px; }
+  body { padding:10px; }
+  .kpi-grid { grid-template-columns:1fr 1fr; }
+  .kpi-grid.kpi-6 { grid-template-columns:1fr 1fr; }
+  .tabs { flex-direction:column; }
+  .tab-btn { min-width:auto; }
+  .header { flex-direction:column; gap:10px; text-align:center; }
+  .header .title { flex-direction:column; }
 }
 </style>
 </head>
@@ -296,16 +335,18 @@ button {
   <!-- TABS -->
   <div class="tabs">
     <button type="button" class="tab-btn active" data-tab="geral">📊 Visão Geral</button>
+    <button type="button" class="tab-btn" data-tab="rankings">🏆 Rankings</button>
+    <button type="button" class="tab-btn" data-tab="parcelamento">📅 Parcelamento</button>
     <button type="button" class="tab-btn" data-tab="profissional">👤 Por Profissional</button>
   </div>
 
-  <!-- ==================== TAB: VISÃO GERAL ==================== -->
+  <!-- ==================== TAB 1: VISÃO GERAL ==================== -->
   <div class="tab-content active" id="tab-geral">
     <div class="filter-bar">
       <div class="filter-group">
         <label for="geralProfissional">👤 Profissional</label>
         <select id="geralProfissional">
-          <option value="all">Todos</option>
+          <option value="all">Todos os Profissionais</option>
         </select>
         <span class="filter-active-badge" id="geralProfBadge">🎯 Filtrado</span>
       </div>
@@ -417,6 +458,7 @@ button {
                 <th>% Entrada</th>
                 <th>Ent. Efetiva</th>
                 <th>% Ent. Efetiva</th>
+                <th>Parcelas</th>
                 <th>Status</th>
                 <th>Liner</th>
                 <th>Closer</th>
@@ -430,7 +472,176 @@ button {
     </div>
   </div>
 
-  <!-- ==================== TAB: POR PROFISSIONAL ==================== -->
+  <!-- ==================== TAB 2: RANKINGS ==================== -->
+  <div class="tab-content" id="tab-rankings">
+    <div class="filter-bar">
+      <div class="filter-group">
+        <label for="rankDateStart">📅 De</label>
+        <input type="date" id="rankDateStart" />
+      </div>
+      <div class="filter-group">
+        <label for="rankDateEnd">Até</label>
+        <input type="date" id="rankDateEnd" />
+      </div>
+      <button type="button" class="btn-filter" onclick="updateRankings()">🔍 Filtrar</button>
+      <button type="button" class="btn-reset" onclick="resetFilterRank()">↺ Limpar</button>
+      <div class="period-indicator" id="periodLabelRank">📆 Período: Todos</div>
+    </div>
+
+    <!-- Sub-tabs Closer / Liner -->
+    <div class="sub-tabs">
+      <button type="button" class="sub-tab-btn active" data-subtab="rank-closer">🥇 Ranking Closers</button>
+      <button type="button" class="sub-tab-btn" data-subtab="rank-liner">🥈 Ranking Liners</button>
+    </div>
+
+    <!-- Closer Ranking -->
+    <div class="sub-tab-content active" id="subtab-rank-closer">
+      <div class="content-grid full">
+        <div class="panel">
+          <div class="panel-header">
+            <h3>🥇 Ranking de Closers</h3>
+            <span class="badge" id="rankCloserCount">0 closers</span>
+          </div>
+          <div class="panel-body" style="overflow:auto; max-height:550px;">
+            <table class="ranking-table" id="rankCloserTable">
+              <thead>
+                <tr>
+                  <th>#</th>
+                  <th>Closer</th>
+                  <th>Vendas</th>
+                  <th>Ativas</th>
+                  <th>VGV</th>
+                  <th>Ent. Efetiva</th>
+                  <th>Cancel.</th>
+                  <th>Taxa Cancel.</th>
+                  <th>Média Parcelas</th>
+                  <th>Ticket Médio</th>
+                </tr>
+              </thead>
+              <tbody></tbody>
+            </table>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Liner Ranking -->
+    <div class="sub-tab-content" id="subtab-rank-liner">
+      <div class="content-grid full">
+        <div class="panel">
+          <div class="panel-header">
+            <h3>🥈 Ranking de Liners</h3>
+            <span class="badge" id="rankLinerCount">0 liners</span>
+          </div>
+          <div class="panel-body" style="overflow:auto; max-height:550px;">
+            <table class="ranking-table" id="rankLinerTable">
+              <thead>
+                <tr>
+                  <th>#</th>
+                  <th>Liner</th>
+                  <th>Vendas</th>
+                  <th>Ativas</th>
+                  <th>VGV</th>
+                  <th>Ent. Efetiva</th>
+                  <th>Cancel.</th>
+                  <th>Taxa Cancel.</th>
+                  <th>Média Parcelas</th>
+                  <th>Ticket Médio</th>
+                </tr>
+              </thead>
+              <tbody></tbody>
+            </table>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- ==================== TAB 3: PARCELAMENTO ==================== -->
+  <div class="tab-content" id="tab-parcelamento">
+    <div class="filter-bar">
+      <div class="filter-group">
+        <label for="parcDateStart">📅 De</label>
+        <input type="date" id="parcDateStart" />
+      </div>
+      <div class="filter-group">
+        <label for="parcDateEnd">Até</label>
+        <input type="date" id="parcDateEnd" />
+      </div>
+      <button type="button" class="btn-filter" onclick="updateParcelamento()">🔍 Filtrar</button>
+      <button type="button" class="btn-reset" onclick="resetFilterParc()">↺ Limpar</button>
+      <div class="period-indicator" id="periodLabelParc">📆 Período: Todos</div>
+    </div>
+
+    <!-- KPIs Parcelamento -->
+    <div class="kpi-grid kpi-6">
+      <div class="kpi-card">
+        <div class="kpi-icon">📋</div>
+        <div class="kpi-label">Cotas com Parcelamento</div>
+        <div class="kpi-value" id="parcKpiCotasParceladas">0</div>
+      </div>
+      <div class="kpi-card">
+        <div class="kpi-icon">📊</div>
+        <div class="kpi-label">Média de Parcelas</div>
+        <div class="kpi-value" id="parcKpiMedia">0</div>
+      </div>
+      <div class="kpi-card">
+        <div class="kpi-icon">💵</div>
+        <div class="kpi-label">Cotas à Vista</div>
+        <div class="kpi-value" id="parcKpiAVista">0</div>
+      </div>
+      <div class="kpi-card">
+        <div class="kpi-icon">📈</div>
+        <div class="kpi-label">Maior Prazo</div>
+        <div class="kpi-value" id="parcKpiMax">0 parcelas</div>
+      </div>
+      <div class="kpi-card">
+        <div class="kpi-icon">🎯</div>
+        <div class="kpi-label">Parcelas + Comum</div>
+        <div class="kpi-value" id="parcKpiModa">-</div>
+      </div>
+      <div class="kpi-card">
+        <div class="kpi-icon">📉</div>
+        <div class="kpi-label">Tx Cancel. Parceladas</div>
+        <div class="kpi-value" id="parcKpiTxCancel">0%</div>
+      </div>
+    </div>
+
+    <!-- Faixas + Gráfico -->
+    <div class="content-grid">
+      <div class="panel">
+        <div class="panel-header">
+          <h3>📅 Faixas por Quantidade de Parcelas</h3>
+          <span class="badge" id="parcFaixaCount">Total: 0</span>
+        </div>
+        <div class="panel-body">
+          <table class="data-table" id="parcFaixaTable">
+            <thead>
+              <tr>
+                <th>Faixa</th>
+                <th>Qtd Cotas</th>
+                <th>% Total</th>
+                <th>VGV</th>
+                <th>Cancel.</th>
+                <th>% Cancel.</th>
+                <th>Média Parcelas</th>
+                <th>Distribuição</th>
+              </tr>
+            </thead>
+            <tbody></tbody>
+          </table>
+        </div>
+      </div>
+      <div class="panel">
+        <div class="panel-header"><h3>📊 Distribuição por Faixa de Parcelas</h3></div>
+        <div class="panel-body" style="height:370px; display:flex; align-items:center; justify-content:center;">
+          <canvas id="chartParcelas"></canvas>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- ==================== TAB 4: POR PROFISSIONAL ==================== -->
   <div class="tab-content" id="tab-profissional">
     <div class="filter-bar">
       <div class="filter-group">
@@ -507,6 +718,11 @@ button {
         <div class="prof-value" id="profCotasAtivas">0</div>
         <div class="prof-label">Cotas Ativas</div>
       </div>
+      <div class="prof-card">
+        <div class="prof-icon">📅</div>
+        <div class="prof-value" id="profMediaParcelas">-</div>
+        <div class="prof-label">Média Parcelas</div>
+      </div>
     </div>
 
     <!-- Faixas cancelamento + gráfico -->
@@ -558,6 +774,7 @@ button {
                 <th>% Entrada</th>
                 <th>Ent. Efetiva</th>
                 <th>% Ent. Efetiva</th>
+                <th>Parcelas</th>
                 <th>Status</th>
                 <th>Liner</th>
                 <th>Closer</th>
@@ -571,9 +788,9 @@ button {
     </div>
   </div>
 
-</div>
+</div><!-- /dashboardContent -->
 
-</div>
+</div><!-- /container -->
 
 <script>
 // ==================== CONFIGURAÇÃO ====================
@@ -581,12 +798,12 @@ const CSV_FILE = 'dados.csv';
 
 // ==================== VARIÁVEIS GLOBAIS ====================
 let todasVendas = [];
-let chartFaixas, chartStatus, chartVgvMes, chartProfFaixas;
+let chartFaixas, chartStatus, chartVgvMes, chartProfFaixas, chartParcelas;
 let profLiners = [], profClosers = [], profPromotores = [], profTodos = [];
 
-// ==================== FAIXAS ====================
+// ==================== FAIXAS ENTRADA ====================
 const FAIXAS = [
-  { label: '0,0% (Cliente Reembolsado)',   min: 0,    max: 0    },
+  { label: '0,0% (sem entrada)',   min: 0,    max: 0    },
   { label: '0,1% a 0,5%',          min: 0.1,  max: 0.5  },
   { label: '0,6% a 1%',            min: 0.6,  max: 1.0  },
   { label: '1,1% a 1,5%',          min: 1.1,  max: 1.5  },
@@ -596,7 +813,7 @@ const FAIXAS = [
 ];
 
 const FAIXAS_COLORS = {
-  '0,0% (Cliente Reembolsado)': '#e74c3c',
+  '0,0% (sem entrada)': '#e74c3c',
   '0,1% a 0,5%':        '#ff6b6b',
   '0,6% a 1%':          '#ffa502',
   '1,1% a 1,5%':        '#ffd000',
@@ -604,6 +821,16 @@ const FAIXAS_COLORS = {
   '2,1% a 5%':          '#1e90ff',
   'Acima de 5%':         '#0a6cff'
 };
+
+// ==================== FAIXAS PARCELAMENTO ====================
+const FAIXAS_PARC = [
+  { label: 'Sem parcelas',       min: 0,  max: 0,   color: '#95a5a6' },
+  { label: 'Até 6 parcelas',     min: 1,  max: 6,   color: '#e74c3c' },
+  { label: '7 a 13 parcelas',    min: 7,  max: 13,  color: '#ffa502' },
+  { label: '14 a 18 parcelas',   min: 14, max: 18,  color: '#2ed573' },
+  { label: '19 a 24 parcelas',   min: 19, max: 24,  color: '#1e90ff' },
+  { label: 'Acima de 25 parcelas', min: 25, max: 9999, color: '#0a6cff' }
+];
 
 // ==================== FUNÇÕES AUXILIARES ====================
 function parseCurrency(str) {
@@ -640,8 +867,41 @@ function classifyFaixa(pct) {
   return FAIXAS[FAIXAS.length - 1].label;
 }
 
+function classifyFaixaParcelas(p) {
+  for (let i = 0; i < FAIXAS_PARC.length; i++) {
+    if (p >= FAIXAS_PARC[i].min && p <= FAIXAS_PARC[i].max) return FAIXAS_PARC[i].label;
+  }
+  return FAIXAS_PARC[FAIXAS_PARC.length - 1].label;
+}
+
+function getParcColor(faixaLabel) {
+  const found = FAIXAS_PARC.find(f => f.label === faixaLabel);
+  return found ? found.color : '#6db3ff';
+}
+
 function formatCurrency(v) {
   return 'R$ ' + (v || 0).toLocaleString('pt-BR', { minimumFractionDigits: 2, maximumFractionDigits: 2 });
+}
+
+function extractParcelas(cols) {
+  // Tenta coluna P (índice 15), depois fallbacks
+  const candidates = [15, 14, 16, 13, 17, 18];
+  for (const idx of candidates) {
+    if (cols.length > idx) {
+      const raw = (cols[idx] || '').toString().trim();
+      if (raw === '' || raw === '-' || raw === '0') continue;
+      const p = parseInt(raw);
+      if (!isNaN(p) && p > 0 && p <= 240) return p;
+    }
+  }
+  // Se encontrou 0 explícito, retorna 0
+  for (const idx of candidates) {
+    if (cols.length > idx) {
+      const raw = (cols[idx] || '').toString().trim();
+      if (raw === '0') return 0;
+    }
+  }
+  return 0;
 }
 
 // ==================== CARREGAR CSV ====================
@@ -700,6 +960,9 @@ function processRows(rows) {
     const statusRaw   = (cols[7] || '').toString().toUpperCase().trim();
     const colsLen     = cols.length;
 
+    // --- Extração de parcelas (coluna P) ---
+    const parcelas = extractParcelas(cols);
+
     let entradaEfetiva = 0, percentEntradaEfetiva = 0;
     if (colsLen >= 3) {
       const last1 = cols[colsLen - 1];
@@ -745,7 +1008,9 @@ function processRows(rows) {
       totalEntrada: 0, percentEntrada: 0,
       entradaEfetiva, percentEntradaEfetiva,
       liner, closer, promotor,
-      faixa: classifyFaixa(percentEntradaEfetiva)
+      parcelas,
+      faixa: classifyFaixa(percentEntradaEfetiva),
+      faixaParcelas: classifyFaixaParcelas(parcelas)
     });
   }
 
@@ -760,6 +1025,8 @@ function processRows(rows) {
 
   populateProfissionais();
   updateGeral();
+  updateRankings();
+  updateParcelamento();
   console.log('✅ Dashboard carregado:', todasVendas.length, 'vendas.');
 }
 
@@ -782,10 +1049,7 @@ function populateProfissionais() {
   profClosers = Array.from(closersSet).sort();
   profPromotores = Array.from(promotoresSet).sort();
   profTodos = Array.from(new Set([...profLiners, ...profClosers, ...profPromotores])).sort();
-
-  // Popula o select da aba Visão Geral
   populateGeralProfissional();
-  // Popula o select da aba Por Profissional
   updateProfList();
 }
 
@@ -823,7 +1087,7 @@ function updateProfList() {
   });
 }
 
-// ==================== FILTROS ====================
+// ==================== FILTROS GENÉRICOS ====================
 function filterByDate(array, startId, endId) {
   const startVal = document.getElementById(startId).value;
   const endVal   = document.getElementById(endId).value;
@@ -840,12 +1104,9 @@ function filterByDate(array, startId, endId) {
   return res;
 }
 
-// Filtro de profissional para a aba Visão Geral
 function filterByProfGeral(array) {
   const nome = document.getElementById('geralProfissional').value;
   if (nome === 'all') return array;
-
-  // Busca o profissional em qualquer papel (liner, closer ou promotor)
   return array.filter(v =>
     v.liner === nome || v.closer === nome || v.promotor === nome
   );
@@ -854,9 +1115,7 @@ function filterByProfGeral(array) {
 function filterByProf(array) {
   const tipo = document.getElementById('profTipo').value;
   const nome = document.getElementById('profNome').value;
-
   if (tipo === 'all' && nome === 'all') return array;
-
   return array.filter(v => {
     if (tipo === 'liner')   return v.liner === nome;
     if (tipo === 'closer')  return v.closer === nome;
@@ -877,19 +1136,17 @@ function getPeriodLabel(startId, endId) {
   return '📆 ' + s.split('-').reverse().join('/') + ' — ' + e.split('-').reverse().join('/');
 }
 
-// ==================== VISÃO GERAL ====================
+// ==================== TAB 1: VISÃO GERAL ====================
 function updateGeral() {
   let lista = filterByDate(todasVendas, 'dateStart', 'dateEnd');
   lista = filterByProfGeral(lista);
-
   document.getElementById('periodLabelGeral').innerText = getPeriodLabel('dateStart', 'dateEnd');
 
-  // Badge indicando filtro ativo
-  const profNome = document.getElementById('geralProfissional').value;
+  const profSel = document.getElementById('geralProfissional').value;
   const badge = document.getElementById('geralProfBadge');
-  if (profNome !== 'all') {
+  if (profSel !== 'all') {
     badge.classList.add('show');
-    badge.innerHTML = '🎯 ' + profNome;
+    badge.innerHTML = '🎯 ' + profSel;
   } else {
     badge.classList.remove('show');
   }
@@ -966,6 +1223,7 @@ function renderTabelaDetalhes(lista, tableId, countId) {
       <td>${v.percentEntrada.toFixed(1)}%</td>
       <td>${formatCurrency(v.entradaEfetiva)}</td>
       <td>${v.percentEntradaEfetiva.toFixed(1)}%</td>
+      <td>${v.parcelas > 0 ? v.parcelas : '-'}</td>
       <td><span class="status-badge ${v.status === 'ATIVO' ? 'ativo' : 'cancelado'}">${v.status}</span></td>
       <td>${v.liner || '-'}</td>
       <td>${v.closer || '-'}</td>
@@ -976,7 +1234,6 @@ function renderTabelaDetalhes(lista, tableId, countId) {
   document.getElementById(countId).innerText = lista.length + ' registros';
 }
 
-// ==================== GRÁFICOS ====================
 function renderGraficosGeral(lista) {
   const countFaixas = {};
   FAIXAS.forEach(f => { countFaixas[f.label] = 0; });
@@ -1099,7 +1356,234 @@ function renderGraficosGeral(lista) {
   });
 }
 
-// ==================== ABA PROFISSIONAL ====================
+// ==================== TAB 2: RANKINGS ====================
+function computeRanking(lista, tipo) {
+  const map = {};
+  lista.forEach(v => {
+    const nome = tipo === 'closer' ? v.closer : v.liner;
+    if (!nome || nome === '') return;
+    if (!map[nome]) {
+      map[nome] = {
+        nome, total: 0, ativos: 0, cancelados: 0,
+        vgv: 0, entradaEfetiva: 0,
+        somaParcelas: 0, countParcelas: 0
+      };
+    }
+    map[nome].total++;
+    map[nome].vgv += v.valorNeg;
+    map[nome].entradaEfetiva += v.entradaEfetiva;
+    if (v.status === 'CANCELADO') map[nome].cancelados++;
+    else map[nome].ativos++;
+    if (v.parcelas > 0) {
+      map[nome].somaParcelas += v.parcelas;
+      map[nome].countParcelas++;
+    }
+  });
+
+  return Object.values(map)
+    .map(r => ({
+      ...r,
+      taxaCancel: r.total > 0 ? (r.cancelados / r.total * 100) : 0,
+      mediaParcelas: r.countParcelas > 0 ? (r.somaParcelas / r.countParcelas) : 0,
+      ticketMedio: r.ativos > 0 ? (r.vgv / r.ativos) : 0
+    }))
+    .sort((a, b) => b.total - a.total)
+    .map((r, i) => ({ ...r, pos: i + 1 }));
+}
+
+function renderRankingTable(ranking, tableId, countId, tipoLabel) {
+  const tbody = document.querySelector('#' + tableId + ' tbody');
+  tbody.innerHTML = '';
+
+  if (ranking.length === 0) {
+    tbody.innerHTML = `<tr><td colspan="10" style="text-align:center; padding:30px; color:var(--text-muted);">Nenhum ${tipoLabel} encontrado.</td></tr>`;
+    document.getElementById(countId).innerText = '0 ' + tipoLabel.toLowerCase() + 's';
+    return;
+  }
+
+  ranking.forEach(r => {
+    let rowClass = '';
+    if (r.pos === 1) rowClass = 'top-1';
+    else if (r.pos === 2) rowClass = 'top-2';
+    else if (r.pos === 3) rowClass = 'top-3';
+
+    let posIcon = r.pos;
+    if (r.pos === 1) posIcon = '🥇';
+    else if (r.pos === 2) posIcon = '🥈';
+    else if (r.pos === 3) posIcon = '🥉';
+
+    let cancelClass = 'low';
+    if (r.taxaCancel > 40) cancelClass = 'high';
+    else if (r.taxaCancel > 15) cancelClass = 'mid';
+
+    const mediaParcStr = r.mediaParcelas > 0 ? r.mediaParcelas.toFixed(1) : '-';
+
+    tbody.innerHTML += `<tr class="${rowClass}">
+      <td class="rank-pos">${posIcon}</td>
+      <td class="rank-name">${r.nome}</td>
+      <td><strong>${r.total}</strong></td>
+      <td>${r.ativos}</td>
+      <td>${formatCurrency(r.vgv)}</td>
+      <td>${formatCurrency(r.entradaEfetiva)}</td>
+      <td>${r.cancelados}</td>
+      <td><span class="cancel-rate ${cancelClass}">${r.taxaCancel.toFixed(1)}%</span></td>
+      <td>${mediaParcStr}</td>
+      <td>${formatCurrency(r.ticketMedio)}</td>
+    </tr>`;
+  });
+
+  document.getElementById(countId).innerText = ranking.length + ' ' + tipoLabel.toLowerCase() + 's';
+}
+
+function updateRankings() {
+  let lista = filterByDate(todasVendas, 'rankDateStart', 'rankDateEnd');
+  document.getElementById('periodLabelRank').innerText = getPeriodLabel('rankDateStart', 'rankDateEnd');
+
+  const closerRank = computeRanking(lista, 'closer');
+  const linerRank  = computeRanking(lista, 'liner');
+
+  renderRankingTable(closerRank, 'rankCloserTable', 'rankCloserCount', 'Closer');
+  renderRankingTable(linerRank,  'rankLinerTable',  'rankLinerCount',  'Liner');
+}
+
+// ==================== TAB 3: PARCELAMENTO ====================
+function updateParcelamento() {
+  let lista = filterByDate(todasVendas, 'parcDateStart', 'parcDateEnd');
+  document.getElementById('periodLabelParc').innerText = getPeriodLabel('parcDateStart', 'parcDateEnd');
+
+  renderKPIsParcelamento(lista);
+  renderFaixasParcelamento(lista);
+}
+
+function renderKPIsParcelamento(lista) {
+  const comParcelas = lista.filter(v => v.parcelas > 0);
+  const semParcelas = lista.filter(v => v.parcelas === 0);
+  const somaParcelas = comParcelas.reduce((s, v) => s + v.parcelas, 0);
+  const media = comParcelas.length > 0 ? (somaParcelas / comParcelas.length) : 0;
+  const maxParc = comParcelas.length > 0 ? Math.max(...comParcelas.map(v => v.parcelas)) : 0;
+
+  // Moda
+  const freq = {};
+  comParcelas.forEach(v => { freq[v.parcelas] = (freq[v.parcelas] || 0) + 1; });
+  let moda = '-';
+  let maxFreq = 0;
+  Object.entries(freq).forEach(([k, v]) => {
+    if (v > maxFreq) { maxFreq = v; moda = k; }
+  });
+  const modaStr = moda !== '-' ? moda + 'x (' + maxFreq + ' cotas)' : '-';
+
+  // Taxa de cancelamento entre parceladas
+  const cancelParc = comParcelas.filter(v => v.status === 'CANCELADO').length;
+  const txCancelParc = comParcelas.length > 0 ? (cancelParc / comParcelas.length * 100).toFixed(1) : '0.0';
+
+  document.getElementById('parcKpiCotasParceladas').innerText = comParcelas.length;
+  document.getElementById('parcKpiMedia').innerText          = media.toFixed(1) + 'x';
+  document.getElementById('parcKpiAVista').innerText         = semParcelas.length;
+  document.getElementById('parcKpiMax').innerText            = maxParc > 0 ? maxParc + ' parcelas' : '-';
+  document.getElementById('parcKpiModa').innerText           = modaStr;
+  document.getElementById('parcKpiTxCancel').innerText       = txCancelParc + '%';
+}
+
+function renderFaixasParcelamento(lista) {
+  const countObj = {};
+  FAIXAS_PARC.forEach(f => {
+    countObj[f.label] = { total: 0, cancel: 0, vgv: 0, somaParcelas: 0, countParcelas: 0 };
+  });
+
+  lista.forEach(v => {
+    const faixa = v.faixaParcelas;
+    if (countObj[faixa]) {
+      countObj[faixa].total++;
+      countObj[faixa].vgv += v.valorNeg;
+      if (v.status === 'CANCELADO') countObj[faixa].cancel++;
+      if (v.parcelas > 0) {
+        countObj[faixa].somaParcelas += v.parcelas;
+        countObj[faixa].countParcelas++;
+      }
+    }
+  });
+
+  const totalVendas = lista.length;
+  const maxTotal = Math.max(...Object.values(countObj).map(o => o.total), 1);
+
+  const tbody = document.querySelector('#parcFaixaTable tbody');
+  tbody.innerHTML = '';
+  let totalGeral = 0;
+
+  Object.entries(countObj).forEach(([faixa, d]) => {
+    totalGeral += d.total;
+    const pctTotal = totalVendas > 0 ? (d.total / totalVendas * 100).toFixed(1) : '0.0';
+    const percCancel = d.total > 0 ? (d.cancel / d.total * 100).toFixed(1) : '0.0';
+    const mediaParc = d.countParcelas > 0 ? (d.somaParcelas / d.countParcelas).toFixed(1) : '-';
+    const barW = Math.round((d.total / maxTotal) * 150) || 2;
+    let cancelClass = 'low';
+    const pc = parseFloat(percCancel);
+    if (pc > 40) cancelClass = 'high';
+    else if (pc > 15) cancelClass = 'mid';
+    const color = getParcColor(faixa);
+
+    tbody.innerHTML += `<tr>
+      <td style="font-weight:600; color:#e8f0ff;">${faixa}</td>
+      <td><strong>${d.total}</strong></td>
+      <td>${pctTotal}%</td>
+      <td>${formatCurrency(d.vgv)}</td>
+      <td>${d.cancel}</td>
+      <td><span class="cancel-rate ${cancelClass}">${percCancel}%</span></td>
+      <td>${mediaParc}</td>
+      <td><div style="width:${barW}px; height:8px; background:${color}; border-radius:4px; min-width:2px;"></div></td>
+    </tr>`;
+  });
+
+  document.getElementById('parcFaixaCount').innerText = 'Total: ' + totalGeral;
+
+  // Chart
+  const labels = FAIXAS_PARC.filter(f => countObj[f.label].total > 0).map(f => f.label);
+  const data   = labels.map(f => countObj[f].total);
+  const cores  = labels.map(f => getParcColor(f));
+
+  if (chartParcelas) chartParcelas.destroy();
+  chartParcelas = new Chart(document.getElementById('chartParcelas').getContext('2d'), {
+    type: 'bar',
+    data: {
+      labels: labels,
+      datasets: [{
+        label: 'Qtd Cotas',
+        data: data,
+        backgroundColor: cores.map(c => c + '99'),
+        borderColor: cores,
+        borderWidth: 1.5,
+        borderRadius: 8
+      }]
+    },
+    options: {
+      responsive: true,
+      maintainAspectRatio: true,
+      plugins: {
+        legend: { display: false },
+        tooltip: {
+          callbacks: {
+            label: function (ctx) {
+              const pct = totalVendas > 0 ? (ctx.raw / totalVendas * 100).toFixed(1) : '0';
+              return ctx.raw + ' cotas (' + pct + '%)';
+            }
+          }
+        }
+      },
+      scales: {
+        x: {
+          ticks: { color: '#6080a8', font: { size: 9 }, maxRotation: 45 },
+          grid: { display: false }
+        },
+        y: {
+          ticks: { color: '#6080a8', font: { size: 10 }, stepSize: 1 },
+          grid: { color: 'rgba(10,108,255,0.08)' }
+        }
+      }
+    }
+  });
+}
+
+// ==================== TAB 4: POR PROFISSIONAL ====================
 function updateProf() {
   let lista = filterByDate(todasVendas, 'profDateStart', 'profDateEnd');
   lista = filterByProf(lista);
@@ -1123,6 +1607,11 @@ function renderKPIsProf(lista) {
     : '0.0';
   const ticketMedio = ativos > 0 ? somaVgv / ativos : 0;
 
+  // Média parcelas
+  const comParcelas = lista.filter(v => v.parcelas > 0);
+  const somaParc = comParcelas.reduce((s, v) => s + v.parcelas, 0);
+  const mediaParc = comParcelas.length > 0 ? (somaParc / comParcelas.length).toFixed(1) + 'x' : '-';
+
   document.getElementById('profKpiTotal').innerText      = total;
   document.getElementById('profKpiVgv').innerText        = formatCurrency(somaVgv);
   document.getElementById('profKpiEfetiva').innerText    = formatCurrency(somaEf);
@@ -1131,6 +1620,7 @@ function renderKPIsProf(lista) {
   document.getElementById('profPercEfetiva').innerText    = percEfetivaMed + '%';
   document.getElementById('profTicketMedio').innerText    = formatCurrency(ticketMedio);
   document.getElementById('profCotasAtivas').innerText    = ativos;
+  document.getElementById('profMediaParcelas').innerText  = mediaParc;
 }
 
 function renderChartProfFaixas(lista) {
@@ -1170,7 +1660,7 @@ function renderChartProfFaixas(lista) {
   });
 }
 
-// ==================== BOTÕES DE FILTRO ====================
+// ==================== BOTÕES DE AÇÃO ====================
 function applyFilterGeral() { updateGeral(); }
 function resetFilterGeral() {
   document.getElementById('dateStart').value = '';
@@ -1178,6 +1668,19 @@ function resetFilterGeral() {
   document.getElementById('geralProfissional').value = 'all';
   updateGeral();
 }
+
+function resetFilterRank() {
+  document.getElementById('rankDateStart').value = '';
+  document.getElementById('rankDateEnd').value   = '';
+  updateRankings();
+}
+
+function resetFilterParc() {
+  document.getElementById('parcDateStart').value = '';
+  document.getElementById('parcDateEnd').value   = '';
+  updateParcelamento();
+}
+
 function resetFilterProf() {
   document.getElementById('profDateStart').value = '';
   document.getElementById('profDateEnd').value   = '';
@@ -1186,7 +1689,7 @@ function resetFilterProf() {
   updateProf();
 }
 
-// ==================== TABS ====================
+// ==================== TABS & SUB-TABS ====================
 function switchTab(tabName) {
   document.querySelectorAll('.tab-btn').forEach(btn => btn.classList.remove('active'));
   document.querySelectorAll('.tab-content').forEach(c => c.classList.remove('active'));
@@ -1197,22 +1700,47 @@ function switchTab(tabName) {
   if (btn) btn.classList.add('active');
   if (content) content.classList.add('active');
 
-  if (tabName === 'profissional') {
-    updateProf();
-  }
+  if (tabName === 'rankings')    updateRankings();
+  if (tabName === 'parcelamento') updateParcelamento();
+  if (tabName === 'profissional') updateProf();
+}
+
+function switchSubTab(subtabName) {
+  document.querySelectorAll('.sub-tab-btn').forEach(btn => btn.classList.remove('active'));
+  document.querySelectorAll('.sub-tab-content').forEach(c => c.classList.remove('active'));
+
+  const btn = document.querySelector('.sub-tab-btn[data-subtab="' + subtabName + '"]');
+  const content = document.getElementById('subtab-' + subtabName);
+
+  if (btn) btn.classList.add('active');
+  if (content) content.classList.add('active');
 }
 
 // ==================== INICIALIZAÇÃO ====================
 document.addEventListener('DOMContentLoaded', function () {
   loadCSVFromRepo();
 
-  // Tabs
+  // Tabs principais
   document.querySelector('.tabs').addEventListener('click', function (e) {
     const btn = e.target.closest('.tab-btn');
     if (btn) {
       const tabName = btn.getAttribute('data-tab');
       if (tabName) switchTab(tabName);
     }
+  });
+
+  // Sub-tabs (rankings)
+  document.querySelector('.sub-tabs').addEventListener('click', function (e) {
+    const btn = e.target.closest('.sub-tab-btn');
+    if (btn) {
+      const subtabName = btn.getAttribute('data-subtab');
+      if (subtabName) switchSubTab(subtabName);
+    }
+  });
+
+  // Filtro profissional na aba geral
+  document.getElementById('geralProfissional').addEventListener('change', () => {
+    updateGeral();
   });
 });
 </script>
